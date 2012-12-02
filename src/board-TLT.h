@@ -5,10 +5,6 @@
 
 #include <cstring>
 
-const Point EMPTY_POINT = 0;
-const Point BLACK_POINT = 1;
-const Point WHITE_POINT = 2;
-
 
 template <BoardLen BOARD_LEN>
 Board<BOARD_LEN>::Board()
@@ -18,12 +14,6 @@ Board<BOARD_LEN>::Board()
 
 
 template <BoardLen BOARD_LEN>
-Board<BOARD_LEN>::~Board()
-{
-}
-
-
-template<BoardLen BOARD_LEN>
 Point Board<BOARD_LEN>::GetPoint(const Position &pos) const
 {
     BoardLen index = this->GetIndexByPos(pos);
@@ -31,7 +21,7 @@ Point Board<BOARD_LEN>::GetPoint(const Position &pos) const
 }
 
 
-template<BoardLen BOARD_LEN>
+template <BoardLen BOARD_LEN>
 void Board<BOARD_LEN>::SetPoint(const Position &pos, Point point)
 {
     BoardLen index = this->GetIndexByPos(pos);

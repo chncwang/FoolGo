@@ -11,6 +11,7 @@ int main(int argc, const char *argv[])
 #else
 
 #include "board.h"
+#include "board_in_gm.h"
 #include "pos_cal.h"
 
 int main(int argc, const char *argv[])

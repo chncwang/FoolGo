@@ -7,9 +7,9 @@
 
 typedef char Point;
 
-extern const Point EMPTY_POINT;
-extern const Point BLACK_POINT;
-extern const Point WHITE_POINT;
+const Point EMPTY_POINT = 0;
+const Point BLACK_POINT = 1;
+const Point WHITE_POINT = 2;
 
 
 
@@ -18,11 +18,11 @@ class Board
 {
 public:
     explicit Board();
-    ~Board();
 
     Point GetPoint(BoardLen index) const {return points_[(int)index];}
-    void SetPoint(BoardLen index, Point point) {points_[index] = point;}
     inline Point GetPoint(const Position &pos) const;
+
+    void SetPoint(BoardLen index, Point point) {points_[(int)index] = point;}
     inline void SetPoint(const Position &pos, Point point);
 
 #ifdef FOO_TEST

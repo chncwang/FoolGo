@@ -17,15 +17,18 @@ public:
         return indexes_[(int)pos.y_][(int)pos.x_];
     }
 
+    bool IsInBoard(const Position &pos) const {
+        return pos.x_ >= 0 && pos.x_ < BOARD_LEN
+            && pos.y_ >= 0 && pos.y_ < BOARD_LEN;
+    }
+
 #ifdef FOO_TEST
     static void TEST();
 #endif
 
-protected:
-
 private:
     explicit PosCalculator();
-    ~PosCalculator();
+    ~PosCalculator() {}
 
     Position position_[BOARD_LEN * BOARD_LEN];
     PointIndex indexes_[BOARD_LEN][BOARD_LEN];

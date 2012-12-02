@@ -25,10 +25,4 @@ PosCalculator<BOARD_LEN>::PosCalculator()
 }
 
 
-template<BoardLen BOARD_LEN>
-PosCalculator<BOARD_LEN>::~PosCalculator()
-{
-}
-
-
 #endif
