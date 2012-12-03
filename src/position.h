@@ -19,6 +19,6 @@ struct Position {
     }
 };
 
-const BoardLen Position::DIR_ARRAY[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+const BoardLen Position::DIR_ARRAY[4][2] = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
 
 #endif

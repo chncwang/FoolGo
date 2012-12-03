@@ -3,11 +3,9 @@
 
 #include "board.h"
 
-#ifdef FOO_TEST
-
 
 template<BoardLen BOARD_LEN>
-void Board<BOARD_LEN>::PRINT()
+void Board<BOARD_LEN>::PRINT() const
 {
     printf("  ");
     for (int i=0; i<BOARD_LEN; ++i) printf("%d ", i);
@@ -41,7 +39,5 @@ void Board<BOARD_LEN>::TEST()
     board.PRINT();
 }
 
-
-#endif
 
 #endif

@@ -3,9 +3,11 @@
 #include <cstdio>
 #include <cassert>
 
+#define FOO_SQUARE(a) ((a) * (a))
+
 #ifdef FOO_TEST
 
-#define FOO_ASSERT(a) assert(a);
+#define FOO_ASSERT(a) assert(a)
 #define FOO_PRINT_LINE(...) {\
             printf(__VA_ARGS__);\
             printf("\n");\

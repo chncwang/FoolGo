@@ -17,14 +17,21 @@ template <BoardLen BOARD_LEN>
 class ChainSet
 {
 public:
-    typedef std::bitset<BOARD_LEN> AirSet;
+    typedef std::bitset<FOO_SQUARE(BOARD_LEN)> AirSet;
 
     explicit ChainSet();
 
-    AirCount GetAirCountOfAPiece(PointIndex piece_i) const;
+    AirCount GetAirCountByPiece(PointIndex piece_i) const;
     PntIndxVector GetPieces(PointIndex piece_i) const;
+
     void AddAPiece(const Position &pos, const AirSet &air_set);
-    void DeleteAnAir(const Position &pos);
+    void RemoveAir(const Position &pos);
+    void RemoveListByPiece(PointIndex piece_i);
+
+#ifdef FOO_TEST
+    void PRINT() const;
+    static void TEST();
+#endif
 
 private:
     struct Node {
@@ -35,11 +42,8 @@ private:
         AirSet air_set_;
     };
 
-    const Position &GetPosByIndex(PointIndex index) const {
-        return PosCalculator<BOARD_LEN>::Ins().GetPos(index);
-    }
-    PointIndex GetIndexByPos(const Position &pos) const {
-        return PosCalculator<BOARD_LEN>::Ins().GetIndex(pos);
+    PosCalculator<BOARD_LEN> &GetPosClcltr() const {
+        return PosCalculator<BOARD_LEN>::Ins();
     }
 
     PointIndex GetListHead(PointIndex node_i) const {
@@ -51,15 +55,15 @@ private:
     PointIndex MergeLists(PointIndex list_a, PointIndex list_b);
 //return the merged list head.
 
-    void DeleteList(PointIndex head);
+    void RemoveList(PointIndex head);
 
     AirCount GetAirCountOfAChain(PointIndex list_i) const;
     PntIndxVector GetPiecesOfAChain(PointIndex list_i) const;
 
     static const PointIndex NONE_LIST;
 
-    Node nodes_[BOARD_LEN * BOARD_LEN];
-    List lists_[BOARD_LEN * BOARD_LEN];
+    Node nodes_[FOO_SQUARE(BOARD_LEN)];
+    List lists_[FOO_SQUARE(BOARD_LEN)];
 };
 
 
@@ -68,5 +72,9 @@ template <BoardLen BOARD_LEN>
 const PointIndex ChainSet<BOARD_LEN>::NONE_LIST = -1;
 
 #include "chain_set-TLT.h"
+
+#ifdef FOO_TEST
+#include "chain_set_TEST.h"
+#endif
 
 #endif

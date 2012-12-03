@@ -30,13 +30,16 @@ private:
     explicit PosCalculator();
     ~PosCalculator() {}
 
-    Position position_[BOARD_LEN * BOARD_LEN];
+    Position position_[FOO_SQUARE(BOARD_LEN)];
     PointIndex indexes_[BOARD_LEN][BOARD_LEN];
 };
 
 
 
 #include "pos_cal-TLT.h"
+
+#ifdef FOO_TEST
 #include "pos_cal_TEST.h"
+#endif
 
 #endif

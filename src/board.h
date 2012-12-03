@@ -26,7 +26,7 @@ public:
     inline void SetPoint(const Position &pos, Point point);
 
 #ifdef FOO_TEST
-    void PRINT();
+    void PRINT() const;
     static void TEST();
 #endif
 
@@ -38,12 +38,15 @@ private:
         return PosCalculator<BOARD_LEN>::Ins().GetIndex(pos);
     }
 
-    Point points_[BOARD_LEN * BOARD_LEN];
+    Point points_[FOO_SQUARE(BOARD_LEN)];
 };
 
 
 
 #include "board-TLT.h"
+
+#ifdef FOO_TEST
 #include "board_TEST.h"
+#endif
 
 #endif
