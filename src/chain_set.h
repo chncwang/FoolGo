@@ -22,11 +22,15 @@ public:
     explicit ChainSet();
 
     AirCount GetAirCountByPiece(PointIndex piece_i) const;
+    AirCount GetAirCountByPiece(const Position &pos) const;
     PntIndxVector GetPieces(PointIndex piece_i) const;
+    inline PntIndxVector GetPieces(const Position &pos) const;
 
-    void AddAPiece(const Position &pos, const AirSet &air_set);
-    void RemoveAir(const Position &pos);
+    void AddPiece(const Position &pos, const AirSet &air_set);
+    void LetAdjcntChainsSetAir(const Position &pos, bool v);
+    void LetAdjcntChainsSetAir(PointIndex indx, bool v);
     void RemoveListByPiece(PointIndex piece_i);
+    void RemoveListByPiece(const Position &pos);
 
 #ifdef FOO_TEST
     void PRINT() const;
@@ -52,12 +56,14 @@ private:
     void CreateList(PointIndex node_i, const AirSet &air_set);
 //    void AppendToList(PointIndex node_i, const AirSet &air_set,
 //                      PointIndex list_i);
+
     PointIndex MergeLists(PointIndex list_a, PointIndex list_b);
 //return the merged list head.
 
     void RemoveList(PointIndex head);
 
     AirCount GetAirCountOfAChain(PointIndex list_i) const;
+    AirCount GetAirCountOfAChain(const Position &pos) const;
     PntIndxVector GetPiecesOfAChain(PointIndex list_i) const;
 
     static const PointIndex NONE_LIST;

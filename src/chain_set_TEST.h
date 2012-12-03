@@ -64,26 +64,26 @@ void ChainSet<BOARD_LEN>::TEST()
         Position n = a1.AdjcntPos(i);
         SetAir<9>(&air1, n);
     }
-    s.AddAPiece(a1, air1);
+    s.AddPiece(a1, air1);
 
     Position a2(1, 0);
     ChainSet<9>::AirSet air2;
     SetAir<9>(&air2, a2.AdjcntPos(1));
     SetAir<9>(&air2, a2.AdjcntPos(3));
-    s.AddAPiece(a2, air2);
+    s.AddPiece(a2, air2);
 
     Position a3(0, 2);
     ChainSet<9>::AirSet air3;
     SetAir<9>(&air3, a3.AdjcntPos(0));
     SetAir<9>(&air3, a3.AdjcntPos(1));
     SetAir<9>(&air3, a3.AdjcntPos(2));
-    s.AddAPiece(a3, air3);
+    s.AddPiece(a3, air3);
 
     Position a4(1, 2);
     ChainSet<9>::AirSet air4;
     SetAir<9>(&air4, a4.AdjcntPos(1));
     SetAir<9>(&air4, a4.AdjcntPos(2));
-    s.AddAPiece(a4, air4);
+    s.AddPiece(a4, air4);
 
     s.PRINT();
 

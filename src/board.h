@@ -7,9 +7,9 @@
 
 typedef char Point;
 
-const Point EMPTY_POINT = 0;
-const Point BLACK_POINT = 1;
-const Point WHITE_POINT = 2;
+const Point BLACK_POINT = 0;
+const Point WHITE_POINT = 1;
+const Point EMPTY_POINT = 2;
 
 
 
@@ -25,19 +25,16 @@ public:
     void SetPoint(BoardLen index, Point point) {points_[(int)index] = point;}
     inline void SetPoint(const Position &pos, Point point);
 
+    PosCalculator<BOARD_LEN> &GetPosClcltr() const {
+        return PosCalculator<BOARD_LEN>::Ins();
+    }
+
 #ifdef FOO_TEST
     void PRINT() const;
     static void TEST();
 #endif
 
 private:
-    const Position &GetPosByIndex(PointIndex index) const {
-        return PosCalculator<BOARD_LEN>::Ins().GetPos(index);
-    }
-    PointIndex GetIndexByPos(const Position &pos) const {
-        return PosCalculator<BOARD_LEN>::Ins().GetIndex(pos);
-    }
-
     Point points_[FOO_SQUARE(BOARD_LEN)];
 };
 

@@ -16,7 +16,7 @@ Board<BOARD_LEN>::Board()
 template <BoardLen BOARD_LEN>
 Point Board<BOARD_LEN>::GetPoint(const Position &pos) const
 {
-    BoardLen index = this->GetIndexByPos(pos);
+    BoardLen index = this->GetPosClcltr().GetIndex(pos);
     return this->GetPoint(index);
 }
 
@@ -24,7 +24,7 @@ Point Board<BOARD_LEN>::GetPoint(const Position &pos) const
 template <BoardLen BOARD_LEN>
 void Board<BOARD_LEN>::SetPoint(const Position &pos, Point point)
 {
-    BoardLen index = this->GetIndexByPos(pos);
+    BoardLen index = this->GetPosClcltr().GetIndex(pos);
     this->SetPoint(index, point);
 }
 
