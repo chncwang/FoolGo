@@ -14,6 +14,21 @@ Board<BOARD_LEN>::Board()
 
 
 template <BoardLen BOARD_LEN>
+Board<BOARD_LEN>::Board(const Board<BOARD_LEN> &b)
+{
+    this->Copy(b);
+}
+
+
+template <BoardLen BOARD_LEN>
+const Board<BOARD_LEN> &Board<BOARD_LEN>::operator =(const Board<BOARD_LEN> &b)
+{
+    this->Copy(b);
+    return *this;
+}
+
+
+template <BoardLen BOARD_LEN>
 Point Board<BOARD_LEN>::GetPoint(const Position &pos) const
 {
     BoardLen index = this->GetPosClcltr().GetIndex(pos);
@@ -26,6 +41,13 @@ void Board<BOARD_LEN>::SetPoint(const Position &pos, Point point)
 {
     BoardLen index = this->GetPosClcltr().GetIndex(pos);
     this->SetPoint(index, point);
+}
+
+
+template <BoardLen BOARD_LEN>
+void Board<BOARD_LEN>::Copy(const Board<BOARD_LEN> &b)
+{
+    memcpy(points_, b.points_, sizeof(points_));
 }
 
 

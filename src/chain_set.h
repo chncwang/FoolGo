@@ -20,6 +20,8 @@ public:
     typedef std::bitset<FOO_SQUARE(BOARD_LEN)> AirSet;
 
     explicit ChainSet();
+    ChainSet(const ChainSet &c);
+    const ChainSet &operator =(const ChainSet &c);
 
     AirCount GetAirCountByPiece(PointIndex piece_i) const;
     AirCount GetAirCountByPiece(const Position &pos) const;
@@ -46,6 +48,8 @@ private:
         AirSet air_set_;
     };
 
+    void Copy(const ChainSet<BOARD_LEN> &c);
+
     PosCalculator<BOARD_LEN> &GetPosClcltr() const {
         return PosCalculator<BOARD_LEN>::Ins();
     }
@@ -66,16 +70,13 @@ private:
     AirCount GetAirCountOfAChain(const Position &pos) const;
     PntIndxVector GetPiecesOfAChain(PointIndex list_i) const;
 
-    static const PointIndex NONE_LIST;
+    static const PointIndex NONE_LIST = -1;
 
     Node nodes_[FOO_SQUARE(BOARD_LEN)];
     List lists_[FOO_SQUARE(BOARD_LEN)];
 };
 
 
-
-template <BoardLen BOARD_LEN>
-const PointIndex ChainSet<BOARD_LEN>::NONE_LIST = -1;
 
 #include "chain_set-TLT.h"
 

@@ -19,11 +19,26 @@ template <BoardLen BOARD_LEN>
 ChainSet<BOARD_LEN>::ChainSet()
 {
     memset(nodes_, 0, sizeof(nodes_));
-    memset(lists_, 0, sizeof(lists_));
 
     for (int i=0; i<FOO_SQUARE(BOARD_LEN); ++i) {
         nodes_[i].list_head_ = ChainSet<BOARD_LEN>::NONE_LIST;
     }
+}
+
+
+template <BoardLen BOARD_LEN>
+ChainSet<BOARD_LEN>::ChainSet(const ChainSet &c)
+{
+    this->Copy(c);
+}
+
+
+template <BoardLen BOARD_LEN>
+const ChainSet<BOARD_LEN>
+&ChainSet<BOARD_LEN>::operator =(const ChainSet<BOARD_LEN> &c)
+{
+    this->Copy(c);
+    return *this;
 }
 
 
@@ -135,6 +150,18 @@ void ChainSet<BOARD_LEN>::RemoveListByPiece(const Position &pos)
 {
     PointIndex indx = this->GetPosClcltr().GetIndex(pos);
     this->RemoveListByPiece(indx);
+}
+
+
+template <BoardLen BOARD_LEN>
+void ChainSet<BOARD_LEN>::Copy(const ChainSet<BOARD_LEN> &c)
+{
+    memcpy(nodes_, c.nodes_, sizeof(nodes_));
+    for (int i=0; i<FOO_SQUARE(BOARD_LEN); ++i) {
+        lists_[i].tail_ = c.lists_[i].tail_;
+        lists_[i].len_ = c.lists_[i].len_;
+        lists_[i].air_set_ = c.lists_[i].air_set_;
+    }
 }
 
 

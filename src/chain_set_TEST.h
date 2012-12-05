@@ -86,6 +86,8 @@ void ChainSet<BOARD_LEN>::TEST()
     s.AddPiece(a4, air4);
 
     s.PRINT();
+    ChainSet<9> sc = s;
+    sc.PRINT();
 
     FOO_PRINT_LINE("air count = %d.", s.GetAirCountByPiece(1));
     PntIndxVector v = s.GetPieces(18);

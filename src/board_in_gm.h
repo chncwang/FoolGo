@@ -16,13 +16,19 @@ class BoardInGm
 public:
     explicit BoardInGm() {}
 
-    void Move(PlayerColor color, const Position &pos);
+    bool Move(PlayerColor color, const Position &pos);
 
 #ifdef FOO_TEST
     static void TEST();
 #endif
 
 private:
+    bool IsMoveSuiside(PlayerColor color, const Position &pos) const;
+
+    void RemoveChain(const Position &pos, PlayerColor color);
+
+    bool IsRealEye(const Position &pos, PlayerColor color) const;
+
     Board<BOARD_LEN> board_;
     ChainSet<BOARD_LEN> chain_sets_[2];
 };

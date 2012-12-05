@@ -18,6 +18,8 @@ class Board
 {
 public:
     explicit Board();
+    Board(const Board &b);
+    const Board &operator =(const Board &b);
 
     Point GetPoint(BoardLen index) const {return points_[(int)index];}
     inline Point GetPoint(const Position &pos) const;
@@ -35,6 +37,8 @@ public:
 #endif
 
 private:
+    void Copy(const Board<BOARD_LEN> &b);
+
     Point points_[FOO_SQUARE(BOARD_LEN)];
 };
 

@@ -13,4 +13,4 @@ edit : $(objects)
 foolishgo.o : def.h $(board_h) $(pos_cal_h) $(board_in_gm_h) $(chain_set_h)
 .PHONY : clean
 clean :
-	-rm a *.o
+	-rm a.out *.o
