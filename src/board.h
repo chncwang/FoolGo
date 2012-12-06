@@ -18,13 +18,13 @@ class Board
 {
 public:
     explicit Board();
-    Board(const Board &b);
-    const Board &operator =(const Board &b);
+    void Init();
+    void Copy(const Board<BOARD_LEN> &b);
 
-    Point GetPoint(BoardLen index) const {return points_[(int)index];}
+    inline Point GetPoint(PointIndex index) const;
     inline Point GetPoint(const Position &pos) const;
 
-    void SetPoint(BoardLen index, Point point) {points_[(int)index] = point;}
+    inline void SetPoint(PointIndex index, Point point);
     inline void SetPoint(const Position &pos, Point point);
 
     PosCalculator<BOARD_LEN> &GetPosClcltr() const {
@@ -37,9 +37,9 @@ public:
 #endif
 
 private:
-    void Copy(const Board<BOARD_LEN> &b);
-
     Point points_[FOO_SQUARE(BOARD_LEN)];
+
+    DISALLOW_COPY_AND_ASSIGN(Board);
 };
 
 

@@ -3,7 +3,10 @@
 
 #include "board_in_gm.h"
 
+#include <cstring>
+
 #include <bitset>
+#include <algorithm>
 
 #include "airset_util.h"
 
@@ -17,86 +20,103 @@ inline static PlayerColor OppstColor(PlayerColor color)
 
 
 template <BoardLen BOARD_LEN>
-bool BoardInGm<BOARD_LEN>::Move(PlayerColor color, const Position &pos)
+BoardInGm<BOARD_LEN>::BoardInGm() {}
+
+
+template <BoardLen BOARD_LEN>
+void BoardInGm<BOARD_LEN>::Init()
 {
-    FOO_ASSERT(board_.GetPoint(pos) == EMPTY_POINT);
-    board_.SetPoint(pos, color);
-    for (int i=0; i<2; ++i) chain_sets_[i].LetAdjcntChainsSetAir(pos, false);
-    PlayerColor oc = OppstColor(color);
+    board_.Init();
+    for (int i=0; i<2; ++i) chain_sets_[i].Init();
+    for (int i=0; i<2; ++i) pntindx_sets_[i].Init();
+}
+
+
+template <BoardLen BOARD_LEN>
+void BoardInGm<BOARD_LEN>::Copy(const BoardInGm &b)
+{
+    board_.Copy(b.board_);
+    for (int i=0; i<2; ++i) chain_sets_[i].Copy(b.chain_sets_[i]);
+}
+
+
+template <BoardLen BOARD_LEN>
+bool BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
+{
+    FOO_ASSERT(board_.GetPoint(move.indx_) == EMPTY_POINT);
+    board_.SetPoint(move.indx_, move.color_);
+    for (int i=0; i<2; ++i) {
+        chain_sets_[i].LetAdjcntChainsSetAir(move.indx_, false);
+    }
+    PlayerColor oc = OppstColor(move.color_);
     bitset<FOO_SQUARE(BOARD_LEN)> air_set;
+    const PosCalculator<BOARD_LEN> &ins = this->GetPosClcltr();
+    const Position &pos = ins.GetPos(move.indx_);
 
     for (int i=0; i<4; ++i) {
         Position adj_pos = pos.AdjcntPos(i);
-        if (!board_.GetPosClcltr().IsInBoard(adj_pos)) continue;
+        if (!ins.IsInBoard(adj_pos)) continue;
+        PointIndex adj_indx = ins.GetIndex(adj_pos);
 
         if (board_.GetPoint(adj_pos) == oc &&
-                chain_sets_[(int)oc].GetAirCountByPiece(adj_pos) == 0) {
-            this->RemoveChain(adj_pos, oc);
+                chain_sets_[(int)oc].GetAirCountByPiece(adj_indx) == 0) {
+            Move toremove = {oc, adj_indx};
+            this->RemoveChain(toremove);
         }
         if (board_.GetPoint(adj_pos) == EMPTY_POINT) {
             SetAir<BOARD_LEN>(&air_set, adj_pos);
         }
     }
 
-    chain_sets_[(int)color].AddPiece(pos, air_set);
-    return chain_sets_[(int)color].GetAirCountByPiece(pos) == 0 ? false : true;
+    chain_sets_[(int)move.color_].AddPiece(move.indx_, air_set);
+    return chain_sets_[(int)move.color_].GetAirCountByPiece(move.indx_) == 0 ?
+        false : true;
 }
 
 
 template <BoardLen BOARD_LEN>
-bool BoardInGm<BOARD_LEN>::IsMoveSuiside(PlayerColor color,
-                                         const Position &pos) const
+PosCalculator<BOARD_LEN> &BoardInGm<BOARD_LEN>::GetPosClcltr() const
 {
-    FOO_ASSERT(board_.GetPoint(pos) == EMPTY_POINT);
-    BoardInGm<BOARD_LEN> copy(*this);
-    return !copy.Move(color, pos);
-
-//    ChainSet<BOARD_LEN> store[2];
-//    for (int i=0; i<2; ++i) store[i] = chain_sets_[i];
-//    Board<BOARD_LEN> sboard(board_);
-//    bool r = const_cast<BoardInGm<BOARD_LEN> *>(this)->Move(color, pos);
-
-//    for (int i=0; i<2; ++i) {
-//        swap(store[i], chain_sets_[i]);
-//    }
-
-//    swap(sboard, board_);
-//    return !r;
+    return board_.GetPosClcltr();
 }
 
 
 template <BoardLen BOARD_LEN>
-void
-BoardInGm<BOARD_LEN>::RemoveChain(const Position &pos, PlayerColor color)
+bool BoardInGm<BOARD_LEN>::IsEye(const Move &move) const
 {
-    ChainSet<BOARD_LEN> *p_chnset = chain_sets_ + color;
-    PntIndxVector trp = p_chnset->GetPieces(pos);
-    chain_sets_[(int)color].RemoveListByPiece(pos);
+    FOO_ASSERT(board_.GetPoint(move.indx_) == EMPTY_POINT);
+    const Position &pos = this->GetPosClcltr().GetPos(move.indx_);
+
+    for (int i=0; i<4; ++i) {
+        if (board_.GetPoint(pos.AdjcntPos(i)) != move.color_) return false;
+    }
+
+    return true;
+}
+
+
+template <BoardLen BOARD_LEN>
+bool BoardInGm<BOARD_LEN>::IsMoveSuiside(const Move &move) const
+{
+    FOO_ASSERT(board_.GetPoint(move.indx_) == EMPTY_POINT);
+    BoardInGm<BOARD_LEN> copy;
+    copy.Copy(*this);
+    return !copy.PlayMove(move);
+}
+
+
+template <BoardLen BOARD_LEN>
+void BoardInGm<BOARD_LEN>::RemoveChain(const Move &move)
+{
+    ChainSet<BOARD_LEN> *p_chnset = chain_sets_ + move.color_;
+    PntIndxVector trp = p_chnset->GetPieces(move.indx_);
+    chain_sets_[(int)move.color_].RemoveListByPiece(move.indx_);
     PntIndxVector::iterator it;
-    PlayerColor oc = OppstColor(color);
+    PlayerColor oc = OppstColor(move.color_);
 
     for (it=trp.begin(); it!=trp.end(); ++it) {
         board_.SetPoint(*it, EMPTY_POINT);
         chain_sets_[(int)oc].LetAdjcntChainsSetAir(*it, true);
-    }
-}
-
-
-template <BoardLen BOARD_LEN>
-bool
-BoardInGm<BOARD_LEN>::IsRealEye(const Position &pos, PlayerColor color) const
-{
-    FOO_ASSERT(board_.GetPoint(pos) == EMPTY_POINT);
-    PointIndex illegal_c(0), empty_c(0);
-
-    for (int i=0; i<8; ++i) {
-        Position adj_pos = pos.AdjcntPos(i);
-        if (!board_.GetPosClcltr().IsInBoard(adj_pos)) {
-            ++illegal_c;
-            continue;
-        }
-
-//        if (board_.GetPoint(adj_pos) == 
     }
 }
 

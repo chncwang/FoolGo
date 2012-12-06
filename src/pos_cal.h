@@ -12,14 +12,21 @@ class PosCalculator
 public:
     inline static PosCalculator &Ins();
 
-    const Position &GetPos(PointIndex index) const {return position_[index];}
+    const Position &GetPos(PointIndex index) const {
+        FOO_ASSERT(this->IsInBoard(index));
+        return position_[index];
+    }
     PointIndex GetIndex(const Position &pos) const {
+        FOO_ASSERT(this->IsInBoard(pos));
         return indexes_[(int)pos.y_][(int)pos.x_];
     }
 
     bool IsInBoard(const Position &pos) const {
         return pos.x_ >= 0 && pos.x_ < BOARD_LEN
             && pos.y_ >= 0 && pos.y_ < BOARD_LEN;
+    }
+    bool IsInBoard(PointIndex indx) const {
+        return indx >= 0 && indx < FOO_SQUARE(BOARD_LEN);
     }
 
 #ifdef FOO_TEST

@@ -3,10 +3,16 @@
 
 #include "board.h"
 #include "chain_set.h"
+#include "pnt_indx_set.h"
 
 typedef char PlayerColor;
 const PlayerColor BLACK_PLAYER = 0;
 const PlayerColor WHITE_PLAYER = 1;
+
+typedef struct {
+    PlayerColor color_;
+    PointIndex indx_;
+} Move;
 
 
 
@@ -14,23 +20,28 @@ template <BoardLen BOARD_LEN>
 class BoardInGm
 {
 public:
-    explicit BoardInGm() {}
+    BoardInGm();
+    void Init();
+    void Copy(const BoardInGm &b);
 
-    bool Move(PlayerColor color, const Position &pos);
+    bool PlayMove(const Move &move);
 
 #ifdef FOO_TEST
     static void TEST();
 #endif
 
 private:
-    bool IsMoveSuiside(PlayerColor color, const Position &pos) const;
-
-    void RemoveChain(const Position &pos, PlayerColor color);
-
-    bool IsRealEye(const Position &pos, PlayerColor color) const;
-
     Board<BOARD_LEN> board_;
     ChainSet<BOARD_LEN> chain_sets_[2];
+    PntIndxSet<BOARD_LEN> pntindx_sets_[2];
+
+    DISALLOW_COPY_AND_ASSIGN(BoardInGm);
+
+    PosCalculator<BOARD_LEN> &GetPosClcltr() const;
+    bool IsEye(const Move &move) const;
+    bool IsMoveSuiside(const Move &move) const;
+
+    void RemoveChain(const Move &move);
 };
 
 

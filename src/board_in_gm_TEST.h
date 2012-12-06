@@ -7,6 +7,8 @@ template <BoardLen BOARD_LEN>
 void BoardInGm<BOARD_LEN>::TEST()
 {
     BoardInGm<3> brd;
+    brd.Init();
+    FOO_PRINT_LINE("%d", (int)sizeof(brd));
     PlayerColor color = BLACK_PLAYER;
     while (true) {
         brd.board_.PRINT();
@@ -22,11 +24,13 @@ void BoardInGm<BOARD_LEN>::TEST()
         }
         int x, y;
         scanf("%d%d", &x, &y);
-        if (brd.IsMoveSuiside(color, Position(x, y))) {
+        PointIndex index = brd.GetPosClcltr().GetIndex(Position(x, y));
+        Move move = {color, index};
+        if (brd.IsMoveSuiside(move)) {
             printf("suiside move.\n");
         } else {
             printf("legal move.\n");
-            brd.Move(color, Position(x, y));
+            brd.PlayMove(move);
         color = ~color & 1;
         }
     }

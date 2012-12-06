@@ -56,46 +56,46 @@ void ChainSet<BOARD_LEN>::PRINT() const
 template <BoardLen BOARD_LEN>
 void ChainSet<BOARD_LEN>::TEST()
 {
-    ChainSet<9> s;
+//    ChainSet<9> s;
 
-    Position a1(1, 1);
-    ChainSet<9>::AirSet air1;
-    for (int i=0; i<4; ++i) {
-        Position n = a1.AdjcntPos(i);
-        SetAir<9>(&air1, n);
-    }
-    s.AddPiece(a1, air1);
+//    Position a1(1, 1);
+//    ChainSet<9>::AirSet air1;
+//    for (int i=0; i<4; ++i) {
+//        Position n = a1.AdjcntPos(i);
+//        SetAir<9>(&air1, n);
+//    }
+//    s.AddPiece(a1, air1);
 
-    Position a2(1, 0);
-    ChainSet<9>::AirSet air2;
-    SetAir<9>(&air2, a2.AdjcntPos(1));
-    SetAir<9>(&air2, a2.AdjcntPos(3));
-    s.AddPiece(a2, air2);
+//    Position a2(1, 0);
+//    ChainSet<9>::AirSet air2;
+//    SetAir<9>(&air2, a2.AdjcntPos(1));
+//    SetAir<9>(&air2, a2.AdjcntPos(3));
+//    s.AddPiece(a2, air2);
 
-    Position a3(0, 2);
-    ChainSet<9>::AirSet air3;
-    SetAir<9>(&air3, a3.AdjcntPos(0));
-    SetAir<9>(&air3, a3.AdjcntPos(1));
-    SetAir<9>(&air3, a3.AdjcntPos(2));
-    s.AddPiece(a3, air3);
+//    Position a3(0, 2);
+//    ChainSet<9>::AirSet air3;
+//    SetAir<9>(&air3, a3.AdjcntPos(0));
+//    SetAir<9>(&air3, a3.AdjcntPos(1));
+//    SetAir<9>(&air3, a3.AdjcntPos(2));
+//    s.AddPiece(a3, air3);
 
-    Position a4(1, 2);
-    ChainSet<9>::AirSet air4;
-    SetAir<9>(&air4, a4.AdjcntPos(1));
-    SetAir<9>(&air4, a4.AdjcntPos(2));
-    s.AddPiece(a4, air4);
+//    Position a4(1, 2);
+//    ChainSet<9>::AirSet air4;
+//    SetAir<9>(&air4, a4.AdjcntPos(1));
+//    SetAir<9>(&air4, a4.AdjcntPos(2));
+//    s.AddPiece(a4, air4);
 
-    s.PRINT();
-    ChainSet<9> sc = s;
-    sc.PRINT();
+//    s.PRINT();
+//    ChainSet<9> sc = s;
+//    sc.PRINT();
 
-    FOO_PRINT_LINE("air count = %d.", s.GetAirCountByPiece(1));
-    PntIndxVector v = s.GetPieces(18);
-    PntIndxVector::iterator it;
-    for (it=v.begin(); it!=v.end(); ++it) {
-        printf("%d, ", *it);
-    }
-    FOO_PRINT_LINE(" ");
+//    FOO_PRINT_LINE("air count = %d.", s.GetAirCountByPiece(1));
+//    PntIndxVector v = s.GetPieces(18);
+//    PntIndxVector::iterator it;
+//    for (it=v.begin(); it!=v.end(); ++it) {
+//        printf("%d, ", *it);
+//    }
+//    FOO_PRINT_LINE(" ");
 }
 
 
