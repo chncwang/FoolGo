@@ -30,7 +30,7 @@ const BoardLen Position::STRAIGHT_ORNTTIONS[4][2] = {
 
 
 template <BoardLen BOARD_LEN>
-inline PointIndex BoardLenSquare()
+constexpr inline PointIndex BoardLenSquare()
 {
     return BOARD_LEN * BOARD_LEN;
 }

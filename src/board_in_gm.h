@@ -33,7 +33,7 @@ public:
 private:
     Board<BOARD_LEN> board_;
     ChainSet<BOARD_LEN> chain_sets_[2];
-    PntIndxSet<BOARD_LEN> pntindx_sets_[2];
+    PntIndxSet<BOARD_LEN> playable_indxs_[2];
 
     DISALLOW_COPY_AND_ASSIGN(BoardInGm);
 

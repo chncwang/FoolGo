@@ -3,8 +3,6 @@
 #include <cstdio>
 #include <cassert>
 
-#define FOO_SQUARE(a) ((a) * (a))
-
 #ifdef FOO_TEST
 
 #define FOO_ASSERT(a) assert(a)

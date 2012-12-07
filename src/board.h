@@ -37,7 +37,7 @@ public:
 #endif
 
 private:
-    Point points_[FOO_SQUARE(BOARD_LEN)];
+    Point points_[BoardLenSquare<BOARD_LEN>()];
 
     DISALLOW_COPY_AND_ASSIGN(Board);
 };

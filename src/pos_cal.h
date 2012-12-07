@@ -26,7 +26,7 @@ public:
             && pos.y_ >= 0 && pos.y_ < BOARD_LEN;
     }
     bool IsInBoard(PointIndex indx) const {
-        return indx >= 0 && indx < FOO_SQUARE(BOARD_LEN);
+        return indx >= 0 && indx < BoardLenSquare<BOARD_LEN>();
     }
 
 #ifdef FOO_TEST
@@ -37,7 +37,7 @@ private:
     explicit PosCalculator();
     ~PosCalculator() {}
 
-    Position position_[FOO_SQUARE(BOARD_LEN)];
+    Position position_[BoardLenSquare<BOARD_LEN>()];
     PointIndex indexes_[BOARD_LEN][BOARD_LEN];
 };
 

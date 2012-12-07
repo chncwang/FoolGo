@@ -9,7 +9,6 @@
 #include "pos_cal.h"
 
 typedef char AirCount;
-typedef std::vector<PointIndex> PntIndxVector;
 
 
 
@@ -17,14 +16,14 @@ template <BoardLen BOARD_LEN>
 class ChainSet
 {
 public:
-    typedef std::bitset<FOO_SQUARE(BOARD_LEN)> AirSet;
+    typedef std::bitset<BoardLenSquare<BOARD_LEN>()> AirSet;
+    typedef std::vector<PointIndex> PntIndxArray;
 
     explicit ChainSet();
-    void Init();
     void Copy(const ChainSet &c);
 
     AirCount GetAirCountByPiece(PointIndex piece_i) const;
-    PntIndxVector GetPieces(PointIndex piece_i) const;
+    PntIndxArray GetPieces(PointIndex piece_i) const;
 
     void AddPiece(PointIndex indx, const AirSet &air_set);
     void LetAdjcntChainsSetAir(PointIndex indx, bool v);
@@ -39,13 +38,13 @@ private:
     static const PointIndex NONE_LIST = -1;
 
     struct Node {
-        PointIndex next_, list_head_;
-    } nodes_[FOO_SQUARE(BOARD_LEN)];
+        PointIndex next_, list_head_ = NONE_LIST;
+    } nodes_[BoardLenSquare<BOARD_LEN>()];
 
     struct List {
         PointIndex tail_, len_;
         AirSet air_set_;
-    } lists_[FOO_SQUARE(BOARD_LEN)];
+    } lists_[BoardLenSquare<BOARD_LEN>()];
 
     DISALLOW_COPY_AND_ASSIGN(ChainSet);
 
@@ -64,7 +63,7 @@ private:
     void RemoveList(PointIndex head);
 
     AirCount GetAirCountOfAChain(PointIndex list_i) const;
-    PntIndxVector GetPiecesOfAChain(PointIndex list_i) const;
+    PntIndxArray GetPiecesOfAChain(PointIndex list_i) const;
 };
 
 

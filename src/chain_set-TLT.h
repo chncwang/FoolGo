@@ -20,19 +20,10 @@ ChainSet<BOARD_LEN>::ChainSet() {}
 
 
 template <BoardLen BOARD_LEN>
-void ChainSet<BOARD_LEN>::Init()
-{
-    for (int i=0; i<FOO_SQUARE(BOARD_LEN); ++i) {
-        nodes_[i].list_head_ = ChainSet<BOARD_LEN>::NONE_LIST;
-    }
-}
-
-
-template <BoardLen BOARD_LEN>
 void ChainSet<BOARD_LEN>::Copy(const ChainSet<BOARD_LEN> &c)
 {
     memcpy(nodes_, c.nodes_, sizeof(nodes_));
-    for (int i=0; i<FOO_SQUARE(BOARD_LEN); ++i) {
+    for (int i=0; i<BoardLenSquare<BOARD_LEN>(); ++i) {
         lists_[i].tail_ = c.lists_[i].tail_;
         lists_[i].len_ = c.lists_[i].len_;
         lists_[i].air_set_ = c.lists_[i].air_set_;
@@ -49,7 +40,8 @@ AirCount ChainSet<BOARD_LEN>::GetAirCountByPiece(PointIndex piece_i) const
 
 
 template <BoardLen BOARD_LEN>
-PntIndxVector ChainSet<BOARD_LEN>::GetPieces(PointIndex piece_i) const
+typename ChainSet<BOARD_LEN>::PntIndxArray
+ChainSet<BOARD_LEN>::GetPieces(PointIndex piece_i) const
 {
     FOO_ASSERT(IS_POINT_NOT_EMPTY(piece_i));
     return this->GetPiecesOfAChain(this->GetListHead(piece_i));
@@ -95,7 +87,7 @@ void ChainSet<BOARD_LEN>::LetAdjcntChainsSetAir(PointIndex indx, bool v)
     AirSet air_set;
     if (!v) air_set.flip();
     air_set[indx] = v;
-    const PosCalculator<BOARD_LEN> &ins = this->GetPosClcltr();
+    auto &ins = this->GetPosClcltr();
     const Position &pos = ins.GetPos(indx);
 
     for (int i=0; i<4; ++i) {
@@ -171,10 +163,11 @@ AirCount ChainSet<BOARD_LEN>::GetAirCountOfAChain(PointIndex list_i) const
 
 
 template <BoardLen BOARD_LEN>
-PntIndxVector ChainSet<BOARD_LEN>::GetPiecesOfAChain(PointIndex list_i) const
+typename ChainSet<BOARD_LEN>::PntIndxArray
+ChainSet<BOARD_LEN>::GetPiecesOfAChain(PointIndex list_i) const
 {
-    const List *pl = lists_ + list_i;
-    PntIndxVector v(pl->len_);
+    auto pl = lists_ + list_i;
+    ChainSet<BOARD_LEN>::PntIndxArray v(pl->len_);
     int vi = 0;
 
     for (int i=list_i; ; i=nodes_[i].next_) {
@@ -182,7 +175,7 @@ PntIndxVector ChainSet<BOARD_LEN>::GetPiecesOfAChain(PointIndex list_i) const
         if (i == pl->tail_) break;
     }
 
-    return v;
+    return move(v);
 }
 
 

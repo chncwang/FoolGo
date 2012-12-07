@@ -13,11 +13,12 @@ class PntIndxSet
 {
 public:
     explicit PntIndxSet();
-    void Init() {indxs_.flip();}
-    void Remove(PointIndex indx) {indxs_.reset(indx);}
+    void Init();
+    void Remove(PointIndex indx);
+    void Add(PointIndex indx);
 
 private:
-    std::bitset<FOO_SQUARE(BOARD_LEN)> indxs_;
+    std::bitset<BoardLenSquare<BOARD_LEN>()> indxs_;
 
     DISALLOW_COPY_AND_ASSIGN(PntIndxSet);
 };

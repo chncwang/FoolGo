@@ -11,7 +11,7 @@ template <BoardLen BOARD_LEN>
 void ChainSet<BOARD_LEN>::PRINT() const
 {
     PosCalculator<BOARD_LEN> &ins = this->GetPosClcltr();
-    bool lists_exist[FOO_SQUARE(BOARD_LEN)];
+    bool lists_exist[BoardLenSquare<BOARD_LEN>()];
     memset(lists_exist, false, sizeof(lists_exist));
 
     for (int y=0; y<BOARD_LEN; ++y) {
@@ -37,7 +37,7 @@ void ChainSet<BOARD_LEN>::PRINT() const
         printf("\n\n");
     }
 
-    for (int i=0; i<FOO_SQUARE(BOARD_LEN); ++i) {
+    for (int i=0; i<BoardLenSquare<BOARD_LEN>(); ++i) {
         if (lists_exist[i]) {
             const Position &pos = ins.GetPos(i);
             const Position &tp = ins.GetPos(lists_[i].tail_);
@@ -90,8 +90,8 @@ void ChainSet<BOARD_LEN>::TEST()
 //    sc.PRINT();
 
 //    FOO_PRINT_LINE("air count = %d.", s.GetAirCountByPiece(1));
-//    PntIndxVector v = s.GetPieces(18);
-//    PntIndxVector::iterator it;
+//    PntIndxArray v = s.GetPieces(18);
+//    PntIndxArray::iterator it;
 //    for (it=v.begin(); it!=v.end(); ++it) {
 //        printf("%d, ", *it);
 //    }
