@@ -4,7 +4,6 @@
 #include <cstring>
 
 #include "chain_set.h"
-#include "airset_util.h"
 
 
 template <BoardLen BOARD_LEN>

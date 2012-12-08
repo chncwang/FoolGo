@@ -2,10 +2,10 @@
 #define BOARD_IN_GM
 
 #include <vector>
+#include <bitset>
 
 #include "board.h"
 #include "chain_set.h"
-#include "pnt_indx_set.h"
 
 typedef char PlayerColor;
 const PlayerColor BLACK_PLAYER = 0;
@@ -25,6 +25,8 @@ template <BoardLen BOARD_LEN>
 class BoardInGm
 {
 public:
+    typedef std::bitset<BoardLenSquare<BOARD_LEN>()> Bitset;
+
     BoardInGm();
     void Init();
     void Copy(const BoardInGm &b);
@@ -39,7 +41,9 @@ public:
 private:
     Board<BOARD_LEN> board_;
     ChainSet<BOARD_LEN> chain_sets_[2];
-    PntIndxSet<BOARD_LEN> playable_indxs_[2];
+    Bitset playable_indxs_[2];
+    Bitset eyes_[2];
+    Bitset real_eyes_[2];
 
     DISALLOW_COPY_AND_ASSIGN(BoardInGm);
 
@@ -50,6 +54,8 @@ private:
     bool IsEmptySingly(PointIndex indx) const;
     bool IsMoveSuiside(const Move &move) const;
 
+    void UpdateEyes(const Move &move);
+    void UpdateRealEyes(const Move &move);
     void RemoveChain(const Move &move);
     void UpdtAdjPlblIndxsOfChn(PointIndex indx);
     void UpdtPlblIndxsArnd(PointIndex indx);
