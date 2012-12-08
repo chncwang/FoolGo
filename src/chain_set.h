@@ -17,13 +17,14 @@ class ChainSet
 {
 public:
     typedef std::bitset<BoardLenSquare<BOARD_LEN>()> AirSet;
-    typedef std::vector<PointIndex> PntIndxArray;
+    typedef std::vector<PointIndex> PntIndxVector;
 
     explicit ChainSet();
     void Copy(const ChainSet &c);
 
+    AirSet GetAirSetByPiece(PointIndex piece_i) const;
     AirCount GetAirCountByPiece(PointIndex piece_i) const;
-    PntIndxArray GetPieces(PointIndex piece_i) const;
+    PntIndxVector GetPieces(PointIndex piece_i) const;
 
     void AddPiece(PointIndex indx, const AirSet &air_set);
     void LetAdjcntChainsSetAir(PointIndex indx, bool v);
@@ -62,8 +63,9 @@ private:
 
     void RemoveList(PointIndex head);
 
-    AirCount GetAirCountOfAChain(PointIndex list_i) const;
-    PntIndxArray GetPiecesOfAChain(PointIndex list_i) const;
+    AirSet GetAirSetOfChain(PointIndex head) const;
+    AirCount GetAirCountOfChain(PointIndex list_i) const;
+    PntIndxVector GetPiecesOfChain(PointIndex list_i) const;
 };
 
 

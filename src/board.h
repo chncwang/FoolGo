@@ -21,11 +21,11 @@ public:
     void Init();
     void Copy(const Board<BOARD_LEN> &b);
 
-    inline Point GetPoint(PointIndex index) const;
-    inline Point GetPoint(const Position &pos) const;
+    Point GetPoint(PointIndex index) const;
+    Point GetPoint(const Position &pos) const;
 
-    inline void SetPoint(PointIndex index, Point point);
-    inline void SetPoint(const Position &pos, Point point);
+    void SetPoint(PointIndex index, Point point);
+    void SetPoint(const Position &pos, Point point);
 
     PosCalculator<BOARD_LEN> &GetPosClcltr() const {
         return PosCalculator<BOARD_LEN>::Ins();

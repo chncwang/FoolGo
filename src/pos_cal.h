@@ -10,7 +10,12 @@ template <BoardLen BOARD_LEN>
 class PosCalculator
 {
 public:
-    inline static PosCalculator &Ins();
+    typedef enum {
+        IN_CENTRAL = 0,
+        IN_EDGE = 1,
+        IN_CORNER = 2,
+    } PosStatus;
+    static PosCalculator &Ins();
 
     const Position &GetPos(PointIndex index) const {
         FOO_ASSERT(this->IsInBoard(index));
@@ -28,6 +33,7 @@ public:
     bool IsInBoard(PointIndex indx) const {
         return indx >= 0 && indx < BoardLenSquare<BOARD_LEN>();
     }
+    PosStatus GetPosStatus(const Position &pos);
 
 #ifdef FOO_TEST
     static void TEST();

@@ -25,7 +25,7 @@ void Board<BOARD_LEN>::Copy(const Board<BOARD_LEN> &b)
 
 
 template <BoardLen BOARD_LEN>
-Point Board<BOARD_LEN>::GetPoint(PointIndex index) const
+inline Point Board<BOARD_LEN>::GetPoint(PointIndex index) const
 {
     FOO_ASSERT(this->GetPosClcltr().IsInBoard(index));
     return points_[(int)index];
@@ -33,7 +33,7 @@ Point Board<BOARD_LEN>::GetPoint(PointIndex index) const
 
 
 template <BoardLen BOARD_LEN>
-Point Board<BOARD_LEN>::GetPoint(const Position &pos) const
+inline Point Board<BOARD_LEN>::GetPoint(const Position &pos) const
 {
     PointIndex index = this->GetPosClcltr().GetIndex(pos);
     return this->GetPoint(index);
@@ -41,7 +41,7 @@ Point Board<BOARD_LEN>::GetPoint(const Position &pos) const
 
 
 template <BoardLen BOARD_LEN>
-void Board<BOARD_LEN>::SetPoint(PointIndex indx, Point point)
+inline void Board<BOARD_LEN>::SetPoint(PointIndex indx, Point point)
 {
     FOO_ASSERT(this->GetPosClcltr().IsInBoard(indx));
     points_[(int)indx] = point;
@@ -49,7 +49,7 @@ void Board<BOARD_LEN>::SetPoint(PointIndex indx, Point point)
 
 
 template <BoardLen BOARD_LEN>
-void Board<BOARD_LEN>::SetPoint(const Position &pos, Point point)
+inline void Board<BOARD_LEN>::SetPoint(const Position &pos, Point point)
 {
     BoardLen index = this->GetPosClcltr().GetIndex(pos);
     this->SetPoint(index, point);

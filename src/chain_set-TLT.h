@@ -32,19 +32,27 @@ void ChainSet<BOARD_LEN>::Copy(const ChainSet<BOARD_LEN> &c)
 
 
 template <BoardLen BOARD_LEN>
-AirCount ChainSet<BOARD_LEN>::GetAirCountByPiece(PointIndex piece_i) const
+typename ChainSet<BOARD_LEN>::AirSet
+ChainSet<BOARD_LEN>::GetAirSetByPiece(PointIndex piece_i) const
 {
-    FOO_ASSERT(IS_POINT_NOT_EMPTY(piece_i));
-    return this->GetAirCountOfAChain(this->GetListHead(piece_i));
+    return GetAirSetOfChain(nodes_[piece_i].list_head_);
 }
 
 
 template <BoardLen BOARD_LEN>
-typename ChainSet<BOARD_LEN>::PntIndxArray
+AirCount ChainSet<BOARD_LEN>::GetAirCountByPiece(PointIndex piece_i) const
+{
+    FOO_ASSERT(IS_POINT_NOT_EMPTY(piece_i));
+    return this->GetAirCountOfChain(this->GetListHead(piece_i));
+}
+
+
+template <BoardLen BOARD_LEN>
+typename ChainSet<BOARD_LEN>::PntIndxVector
 ChainSet<BOARD_LEN>::GetPieces(PointIndex piece_i) const
 {
     FOO_ASSERT(IS_POINT_NOT_EMPTY(piece_i));
-    return this->GetPiecesOfAChain(this->GetListHead(piece_i));
+    return this->GetPiecesOfChain(this->GetListHead(piece_i));
 }
 
 
@@ -52,7 +60,6 @@ template <BoardLen BOARD_LEN>
 void ChainSet<BOARD_LEN>::AddPiece(PointIndex indx,
                                    const ChainSet<BOARD_LEN>::AirSet &air_set)
 {
-//    FOO_PRINT_LINE("\nAddPiece called.");
     this->LetAdjcntChainsSetAir(indx, false);
     const PosCalculator<BOARD_LEN> &ins = this->GetPosClcltr();
     this->CreateList(indx, air_set);
@@ -60,19 +67,11 @@ void ChainSet<BOARD_LEN>::AddPiece(PointIndex indx,
     const Position &pos = ins.GetPos(indx);
 
     for (int i=0; i<4; ++i) {
-//        FOO_PRINT_LINE(" ");
-//        FOO_PRINT_LINE("in for loop, i = %d", i);
         Position adj_pos = pos.AdjcntPos(i);
-//        FOO_PRINT_LINE("adjacent pos = %d, %d", adj_pos.x_, adj_pos.y_);
         if (ins.IsInBoard(adj_pos)) {
-//            FOO_PRINT_LINE("adjacent pos is in board.");
             PointIndex adj_i = ins.GetIndex(adj_pos);
             PointIndex adj_list = this->GetListHead(adj_i);
-//            FOO_PRINT_LINE("adj_list = %d", adj_list);
-            if (adj_list == ChainSet<BOARD_LEN>::NONE_LIST) {
-//                FOO_PRINT_LINE("is empty.");
-                continue;
-            }
+            if (adj_list == ChainSet<BOARD_LEN>::NONE_LIST) continue;
             if (adj_list == list_i) continue;
 
             list_i = this->MergeLists(list_i, adj_list);
@@ -156,18 +155,26 @@ void ChainSet<BOARD_LEN>::RemoveList(PointIndex head)
 
 
 template <BoardLen BOARD_LEN>
-AirCount ChainSet<BOARD_LEN>::GetAirCountOfAChain(PointIndex list_i) const
+typename ChainSet<BOARD_LEN>::AirSet
+ChainSet<BOARD_LEN>::GetAirSetOfChain(PointIndex head) const
+{
+    return lists_[head].air_set_;
+}
+
+
+template <BoardLen BOARD_LEN>
+AirCount ChainSet<BOARD_LEN>::GetAirCountOfChain(PointIndex list_i) const
 {
     return lists_[list_i].air_set_.count();
 }
 
 
 template <BoardLen BOARD_LEN>
-typename ChainSet<BOARD_LEN>::PntIndxArray
-ChainSet<BOARD_LEN>::GetPiecesOfAChain(PointIndex list_i) const
+typename ChainSet<BOARD_LEN>::PntIndxVector
+ChainSet<BOARD_LEN>::GetPiecesOfChain(PointIndex list_i) const
 {
     auto pl = lists_ + list_i;
-    ChainSet<BOARD_LEN>::PntIndxArray v(pl->len_);
+    ChainSet<BOARD_LEN>::PntIndxVector v(pl->len_);
     int vi = 0;
 
     for (int i=list_i; ; i=nodes_[i].next_) {

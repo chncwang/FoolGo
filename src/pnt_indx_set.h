@@ -14,8 +14,11 @@ class PntIndxSet
 public:
     explicit PntIndxSet();
     void Init();
+    void Copy(const PntIndxSet &s);
+
     void Remove(PointIndex indx);
     void Add(PointIndex indx);
+    void Set(PointIndex indx, bool v);
 
 private:
     std::bitset<BoardLenSquare<BOARD_LEN>()> indxs_;

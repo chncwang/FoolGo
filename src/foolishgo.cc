@@ -22,7 +22,7 @@ int main(int argc, const char *argv[])
 //    Board<9>::TEST();
 //    PosCalculator<9>::TEST();
 //    ChainSet<9>::TEST();
-    BoardInGm<3>::TEST();
+    BoardInGm<9>::TEST();
     return 0;
 }
 

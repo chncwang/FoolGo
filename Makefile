@@ -1,6 +1,6 @@
 VPATH = src
 CXX := clang++
-CXXFLAGS := -I /usr/local/boost_1_50_0 -Wall -g -std=c++0x \
+CXXFLAGS := -Wall -g -std=c++0x \
     -stdlib=libc++
 objects = foolishgo.o
 pos_cal_h = pos_cal.h def.h pos_cal-TLT.h pos_cal_TEST.h
