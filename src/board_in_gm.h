@@ -1,8 +1,8 @@
 #ifndef BOARD_IN_GM
 #define BOARD_IN_GM
 
-#include <vector>
 #include <bitset>
+#include <vector>
 
 #include "board.h"
 #include "chain_set.h"
@@ -26,15 +26,18 @@ class BoardInGm
 {
 public:
     typedef std::bitset<BoardLenSquare<BOARD_LEN>()> Bitset;
+    typedef std::vector<PointIndex> PointIndxVector;
 
     BoardInGm();
     void Init();
     void Copy(const BoardInGm &b);
 
+    bool PlayBasicMove(const Move &move);
     bool PlayMove(const Move &move);
 
 #ifdef FOO_TEST
     void PRINT_EYES() const;
+    void PRINT_PLAYABLE() const;
     static void TEST();
 #endif
 
@@ -53,12 +56,14 @@ private:
     bool IsFakeEye(const Move &move) const;
     bool IsEmptySingly(PointIndex indx) const;
     bool IsMoveSuiside(const Move &move) const;
+    bool IsPlayable(const Move &move) const;
 
     void UpdateEyes(const Move &move);
     void UpdateRealEyes(const Move &move);
-    void RemoveChain(const Move &move);
+    PointIndxVector RemoveChain(const Move &move);
     void UpdtAdjPlblIndxsOfChn(PointIndex indx);
     void UpdtPlblIndxsArnd(PointIndex indx);
+    void UpdtAtePcsAdjChns(const PointIndxVector &v, PlayerColor ate_color);
 };
 
 
