@@ -97,7 +97,7 @@ void BoardInGm<BOARD_LEN>::TEST()
         scanf("%d%d", &x, &y);
         PointIndex index = brd.GetPosClcltr().GetIndex(Position(x, y));
         Move move = {color, index};
-        if (brd.IsMoveSuiside(move)) {
+        if (brd.IsSuiside(move)) {
             printf("suiside move.\n");
         } else {
             printf("legal move.\n");
