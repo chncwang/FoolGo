@@ -19,7 +19,7 @@ public:
     typedef std::bitset<BoardLenSquare<BOARD_LEN>()> AirSet;
     typedef std::vector<PointIndex> PntIndxVector;
 
-    explicit ChainSet();
+    ChainSet();
     void Copy(const ChainSet &c);
 
     AirSet GetAirSetByPiece(PointIndex piece_i) const;

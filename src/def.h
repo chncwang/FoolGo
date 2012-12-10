@@ -24,5 +24,5 @@
 #endif
 
 #define DISALLOW_COPY_AND_ASSIGN(ClassName) \
-    ClassName(const ClassName &) {CANNOT_RUN_HERE();}\
-    void operator =(const ClassName &) {CANNOT_RUN_HERE();}
+    ClassName(const ClassName &);\
+    void operator =(const ClassName &);

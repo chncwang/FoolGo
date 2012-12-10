@@ -2,8 +2,15 @@
 
 #include <cstdio>
 #include <functional>
+#include <vector>
 
-using namespace std;
+
+static void PRINT_POS_VECTOR(const std::vector<Position> &v)
+{
+    for (Position e : v) {
+        FOO_PRINT_LINE("%d %d", e.x_, e.y_);
+    }
+}
 
 
 template <BoardLen BOARD_LEN>
@@ -12,7 +19,7 @@ void BoardInGm<BOARD_LEN>::PRINT_EYES() const
     printf("  ");
     for (int i=0; i<BOARD_LEN; ++i) printf("%d  ", i);
     printf("\n");
-    function<void(PointIndex)> Print = [this](PointIndex indx) {
+    std::function<void(PointIndex)> Print = [this](PointIndex indx) {
         if (board_.GetPoint(indx) != EMPTY_POINT) printf("xx ");
         else if (this->IsRealEye(Move(0, indx))) printf("br ");
         else if (this->IsEye(Move(0, indx))) printf("be ");
@@ -37,10 +44,10 @@ void BoardInGm<BOARD_LEN>::PRINT_EYES() const
 template <BoardLen BOARD_LEN>
 void BoardInGm<BOARD_LEN>::PRINT_PLAYABLE() const
 {
-    printf(" ");
+    printf("  ");
     for (int i=0; i<BOARD_LEN; ++i) printf("%d ", i);
     printf("\n");
-    function<void(PointIndex)> Print = [this](PointIndex indx) {
+    std::function<void(PointIndex)> Print = [this](PointIndex indx) {
         Move bm(0, indx), wm(1, indx);
         bool bp = this->IsPlayable(bm);
         bool wp = this->IsPlayable(wm);
@@ -66,6 +73,7 @@ void BoardInGm<BOARD_LEN>::PRINT_PLAYABLE() const
 template <BoardLen BOARD_LEN>
 void BoardInGm<BOARD_LEN>::TEST()
 {
+    std::vector<Position> inputs;
     BoardInGm<9> brd;
 //    auto &ins = brd.GetPosClcltr();
     brd.Init();
@@ -87,7 +95,7 @@ void BoardInGm<BOARD_LEN>::TEST()
 //            }
 //        }
         brd.PRINT_PLAYABLE();
-        brd.PRINT_EYES();
+//        brd.PRINT_EYES();
         if (color == BLACK_PLAYER) {
             printf("black: ");
         } else {
@@ -95,6 +103,11 @@ void BoardInGm<BOARD_LEN>::TEST()
         }
         int x, y;
         scanf("%d%d", &x, &y);
+        if (x == -1) {
+            PRINT_POS_VECTOR(inputs);
+            return;
+        }
+        inputs.push_back(Position(x, y));
         PointIndex index = brd.GetPosClcltr().GetIndex(Position(x, y));
         Move move = {color, index};
         if (brd.IsSuiside(move)) {

@@ -1,7 +1,13 @@
 VPATH = src
 CXX := clang++
-CXXFLAGS := -Wall -g -std=c++0x \
-    -stdlib=libc++
+CXXFLAGS := -Weverything -g -std=c++0x \
+    -stdlib=libc++ \
+    -Wno-c++98-compat-pedantic \
+    -Wno-conversion \
+    -Wno-pedantic \
+    -Wno-exit-time-destructors \
+    -Wno-padded \
+    -Wno-unused-parameter
 objects = foolishgo.o
 pos_cal_h = pos_cal.h def.h pos_cal-TLT.h pos_cal_TEST.h
 board_h = board.h def.h position.h board-TLT.h board_TEST.h $(pos_cal_h)

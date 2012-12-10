@@ -12,8 +12,6 @@
     (this->GetListHead(piece_i) != ChainSet<BOARD_LEN>::NONE_LIST)
 #endif
 
-using namespace std;
-
 
 template <BoardLen BOARD_LEN>
 ChainSet<BOARD_LEN>::ChainSet() {}
@@ -127,9 +125,8 @@ ChainSet<BOARD_LEN>::CreateList(PointIndex node_i,
 template <BoardLen BOARD_LEN>
 PointIndex ChainSet<BOARD_LEN>::MergeLists(PointIndex list_a, PointIndex list_b)
 {
-    FOO_PRINT_LINE("MergeLists called.");
     FOO_ASSERT(list_a != list_b);
-    if (lists_[list_a].len_ > lists_[list_b].len_) swap(list_a, list_b);
+    if (lists_[list_a].len_ > lists_[list_b].len_) std::swap(list_a, list_b);
 
     for (int i=list_a; ; i=nodes_[i].next_) {
         nodes_[i].list_head_ = list_b;

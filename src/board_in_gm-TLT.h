@@ -12,8 +12,6 @@
 
 #include "bitset_util.h"
 
-using namespace std;
-
 
 inline static PlayerColor OppstColor(PlayerColor color)
 {
@@ -47,7 +45,7 @@ void BoardInGm<BOARD_LEN>::Copy(const BoardInGm &b)
 
 
 template <BoardLen BOARD_LEN>
-bool BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
+void BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
 {
     PlayerColor color = move.color_;
     PointIndex indx = move.indx_;
@@ -64,7 +62,7 @@ bool BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
     const Position &pos = ins.GetPos(indx);
     typename BoardInGm<BOARD_LEN>::PointIndxVector ate_points[4];
 
-    bool result = this->PlayBasicMove(move, ate_points);
+    this->PlayBasicMove(move, ate_points);
 
     for (int i=0; i<4; ++i) {
         Position adj_pos = pos.AdjcntPos(i);
@@ -93,7 +91,6 @@ bool BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
 
     this->UpdtPlblIndxsArnd(indx);
     for(int i=0; i<4; ++i) this->UpdtAtePcsAdjChns(ate_points[i], oc);
-    return result;
 }
 
 
@@ -185,13 +182,13 @@ bool BoardInGm<BOARD_LEN>::PlayBasicMove(
     board_.SetPoint(indx, color);
 
     for (int i=0; i<2; ++i) chain_sets_[i].LetAdjcntChainsSetAir(indx, false);
-    bitset<BoardLenSquare<BOARD_LEN>()> air_set;
+    std::bitset<BoardLenSquare<BOARD_LEN>()> air_set;
     PlayerColor oc = OppstColor(color);
     auto &ins = this->GetPosClcltr();
     const Position &pos = ins.GetPos(indx);
 
-    function<void(const typename BoardInGm<BOARD_LEN>::PointIndxVector &, int)>
-        Fun;
+    std::function<void(const typename BoardInGm<BOARD_LEN>::PointIndxVector &,
+            int)> Fun;
     if (v == nullptr) {
         Fun = [](const typename BoardInGm<BOARD_LEN>::PointIndxVector &r, int i) 
         {};
@@ -210,6 +207,7 @@ bool BoardInGm<BOARD_LEN>::PlayBasicMove(
         if (board_.GetPoint(adj_indx) == oc &&
                 chain_sets_[(int)oc].GetAirCountByPiece(adj_indx) == 0) {
             auto r = RemoveChain(Move(oc, adj_indx));
+            Fun(r, i);
         }
         if (board_.GetPoint(adj_pos) == EMPTY_POINT) {
             air_set.set(adj_indx);
@@ -310,6 +308,12 @@ template <BoardLen BOARD_LEN>
 void BoardInGm<BOARD_LEN>::UpdtAdjPlblIndxsOfChn(PointIndex indx)
 {
     FOO_ASSERT(board_.GetPoint(indx) != EMPTY_POINT);
+#ifdef FOO_TEST
+//    auto &ins = this->GetPosClcltr();
+//    const Position &pos = ins.GetPos(indx);
+//    FOO_PRINT_LINE("\nin UpdtAdj call.");
+//    FOO_PRINT_LINE("x=%d, y=%d", pos.x_, pos.y_);
+#endif
     PlayerColor color = board_.GetPoint(indx);
     const auto p_c = chain_sets_ + color;
     AirCount air_c = p_c->GetAirCountByPiece(indx);
@@ -333,7 +337,8 @@ void BoardInGm<BOARD_LEN>::UpdtAdjPlblIndxsOfChn(PointIndex indx)
     } else {
         auto not_real_eyes_ = ~real_eyes_[(int)color];
         *c_playable = (*c_playable | air_set) & not_real_eyes_;
-        *oc_playable &= not_real_eyes_; //bug!!
+        *oc_playable |= air_set & ~eyes_[(int)color];
+        *oc_playable &= ~(air_set & real_eyes_[(int)color]);
 //        auto c_fake_eyes = eyes_[(int)color] & ~real_eyes_[(int)color];
 //        *oc_playable |= air_set & ~c_fake_eyes & ~real_eyes_[(int)color];
     }
@@ -348,20 +353,20 @@ void BoardInGm<BOARD_LEN>::UpdtPlblIndxsArnd(PointIndex indx)
     Position pos = ins.GetPos(indx);
     PlayerColor color = board_.GetPoint(indx);
     PlayerColor oc = OppstColor(color);
-    function<void(PointIndex)> Funs[3];
+    std::function<void(PointIndex)> Funs[3];
 
     Funs[(int)color] = [](PointIndex) {};
 
-    Funs[(int)oc] = [this](PointIndex indx) {
-        this->UpdtAdjPlblIndxsOfChn(indx);
+    Funs[(int)oc] = [this](PointIndex i) {
+        this->UpdtAdjPlblIndxsOfChn(i);
     };
 
-    Funs[(int)EMPTY_POINT] = [this](PointIndex indx) {
-        if (!this->IsEmptySingly(indx)) return;
+    Funs[(int)EMPTY_POINT] = [this](PointIndex index) {
+        if (!this->IsEmptySingly(index)) return;
 
         for (int i=0; i<2; ++i) {
-            if (this->IsSuiside(Move(i, indx))) {
-                playable_indxs_[i].reset(indx);
+            if (this->IsSuiside(Move(i, index))) {
+                playable_indxs_[i].reset(index);
             }
         }
     };
@@ -385,6 +390,7 @@ void BoardInGm<BOARD_LEN>::UpdtAtePcsAdjChns(
     auto &ins = this->GetPosClcltr();
 
     for (PointIndex indx : v) {
+        FOO_PRINT_LINE("in ate for loop.");
         const Position &pos = ins.GetPos(indx);
         for (int i=0; i<4; ++i) {
             Position adj_pos = pos.AdjcntPos(i);

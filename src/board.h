@@ -17,7 +17,7 @@ template <BoardLen BOARD_LEN>
 class Board
 {
 public:
-    explicit Board();
+    Board();
     void Init();
     void Copy(const Board<BOARD_LEN> &b);
 

@@ -29,7 +29,7 @@ public:
     void Init();
     void Copy(const BoardInGm &b);
 
-    bool PlayMove(const Move &move);
+    void PlayMove(const Move &move);
 
 #ifdef FOO_TEST
     void PRINT_EYES() const;
