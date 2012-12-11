@@ -7,10 +7,6 @@
 
 
 template <BoardLen BOARD_LEN>
-Board<BOARD_LEN>::Board() {}
-
-
-template <BoardLen BOARD_LEN>
 void Board<BOARD_LEN>::Init()
 {
     memset(points_, EMPTY_POINT, sizeof(points_));
@@ -28,7 +24,7 @@ template <BoardLen BOARD_LEN>
 inline Point Board<BOARD_LEN>::GetPoint(PointIndex index) const
 {
     FOO_ASSERT(this->GetPosClcltr().IsInBoard(index));
-    return points_[(int)index];
+    return points_[index];
 }
 
 
@@ -44,7 +40,7 @@ template <BoardLen BOARD_LEN>
 inline void Board<BOARD_LEN>::SetPoint(PointIndex indx, Point point)
 {
     FOO_ASSERT(this->GetPosClcltr().IsInBoard(indx));
-    points_[(int)indx] = point;
+    points_[indx] = point;
 }
 
 

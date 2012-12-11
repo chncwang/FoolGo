@@ -10,7 +10,7 @@ template <BoardLen BOARD_LEN>
 void ChainSet<BOARD_LEN>::PRINT() const
 {
     PosCalculator<BOARD_LEN> &ins = this->GetPosClcltr();
-    bool lists_exist[BoardLenSquare<BOARD_LEN>()];
+    bool lists_exist[BLSq<BOARD_LEN>()];
     memset(lists_exist, false, sizeof(lists_exist));
 
     for (int y=0; y<BOARD_LEN; ++y) {
@@ -36,7 +36,7 @@ void ChainSet<BOARD_LEN>::PRINT() const
         printf("\n\n");
     }
 
-    for (int i=0; i<BoardLenSquare<BOARD_LEN>(); ++i) {
+    for (int i=0; i<BLSq<BOARD_LEN>(); ++i) {
         if (lists_exist[i]) {
             const Position &pos = ins.GetPos(i);
             const Position &tp = ins.GetPos(lists_[i].tail_);

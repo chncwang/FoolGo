@@ -40,7 +40,7 @@ const BoardLen Position::OBLIQUE_ORNTTIONS[4][2] = {
 };
 
 template <BoardLen BOARD_LEN>
-constexpr inline PointIndex BoardLenSquare()
+constexpr inline PointIndex BLSq()
 {
     return BOARD_LEN * BOARD_LEN;
 }

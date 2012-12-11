@@ -1,4 +1,4 @@
-#define FOO_TEST
+//#define FOO_TEST
 
 #include <cstdio>
 #include <cassert>
@@ -24,5 +24,6 @@
 #endif
 
 #define DISALLOW_COPY_AND_ASSIGN(ClassName) \
-    ClassName(const ClassName &);\
-    void operator =(const ClassName &);
+    ClassName(const ClassName &) = delete; \
+    ClassName &operator =(const ClassName &) = delete;
+#define TEST_LEN (9)

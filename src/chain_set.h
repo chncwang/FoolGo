@@ -16,10 +16,12 @@ template <BoardLen BOARD_LEN>
 class ChainSet
 {
 public:
-    typedef std::bitset<BoardLenSquare<BOARD_LEN>()> AirSet;
+    typedef std::bitset<BLSq<BOARD_LEN>()> AirSet;
     typedef std::vector<PointIndex> PntIndxVector;
 
-    ChainSet();
+    ChainSet() = default;
+    ~ChainSet() = default;
+    DISALLOW_COPY_AND_ASSIGN(ChainSet);
     void Copy(const ChainSet &c);
 
     AirSet GetAirSetByPiece(PointIndex piece_i) const;
@@ -40,20 +42,18 @@ private:
 
     struct Node {
         PointIndex next_, list_head_ = NONE_LIST;
-    } nodes_[BoardLenSquare<BOARD_LEN>()];
+    } nodes_[BLSq<BOARD_LEN>()];
 
     struct List {
         PointIndex tail_, len_;
         AirSet air_set_;
-    } lists_[BoardLenSquare<BOARD_LEN>()];
+    } lists_[BLSq<BOARD_LEN>()];
 
-    DISALLOW_COPY_AND_ASSIGN(ChainSet);
-
-    PosCalculator<BOARD_LEN> &GetPosClcltr() const {
+    inline PosCalculator<BOARD_LEN> &GetPosClcltr() const {
         return PosCalculator<BOARD_LEN>::Ins();
     }
 
-    PointIndex GetListHead(PointIndex node_i) const {
+    inline PointIndex GetListHead(PointIndex node_i) const {
         return nodes_[node_i].list_head_;
     }
     void CreateList(PointIndex node_i, const AirSet &air_set);

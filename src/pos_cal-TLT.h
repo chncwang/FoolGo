@@ -8,20 +8,8 @@ template <BoardLen BOARD_LEN>
 PosCalculator<BOARD_LEN> &PosCalculator<BOARD_LEN>::Ins()
 {
     static PosCalculator<BOARD_LEN> ins;
+    ins.Init();
     return ins;
-}
-
-
-template <BoardLen BOARD_LEN>
-PosCalculator<BOARD_LEN>::PosCalculator()
-{
-    for (int y=0; y<BOARD_LEN; ++y) {
-        for (int x=0; x<BOARD_LEN; ++x) {
-            PointIndex index = y*BOARD_LEN + x;
-            indexes_[y][x] = index;
-            position_[index].Set(x, y);
-        }
-    }
 }
 
 
@@ -40,6 +28,19 @@ PosCalculator<BOARD_LEN>::GetPosStatus(const Position &pos)
         return IN_CENTRAL;
     } else {
         return IN_EDGE;
+    }
+}
+
+
+template <BoardLen BOARD_LEN>
+void PosCalculator<BOARD_LEN>::Init()
+{
+    for (int y=0; y<BOARD_LEN; ++y) {
+        for (int x=0; x<BOARD_LEN; ++x) {
+            PointIndex index = y*BOARD_LEN + x;
+            indexes_[y][x] = index;
+            position_[index].Set(x, y);
+        }
     }
 }
 

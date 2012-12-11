@@ -17,21 +17,21 @@ public:
     } PosStatus;
     static PosCalculator &Ins();
 
-    const Position &GetPos(PointIndex index) const {
+    inline const Position &GetPos(PointIndex index) const {
         FOO_ASSERT(this->IsInBoard(index));
         return position_[index];
     }
-    PointIndex GetIndex(const Position &pos) const {
+    inline PointIndex GetIndex(const Position &pos) const {
         FOO_ASSERT(this->IsInBoard(pos));
-        return indexes_[(int)pos.y_][(int)pos.x_];
+        return indexes_[pos.y_][pos.x_];
     }
 
-    bool IsInBoard(const Position &pos) const {
+    inline bool IsInBoard(const Position &pos) const {
         return pos.x_ >= 0 && pos.x_ < BOARD_LEN
             && pos.y_ >= 0 && pos.y_ < BOARD_LEN;
     }
-    bool IsInBoard(PointIndex indx) const {
-        return indx >= 0 && indx < BoardLenSquare<BOARD_LEN>();
+    inline bool IsInBoard(PointIndex indx) const {
+        return indx >= 0 && indx < BLSq<BOARD_LEN>();
     }
     PosStatus GetPosStatus(const Position &pos);
 
@@ -40,11 +40,13 @@ public:
 #endif
 
 private:
-    explicit PosCalculator();
-    ~PosCalculator() {}
-
-    Position position_[BoardLenSquare<BOARD_LEN>()];
+    Position position_[BLSq<BOARD_LEN>()];
     PointIndex indexes_[BOARD_LEN][BOARD_LEN];
+
+    PosCalculator() = default;
+    ~PosCalculator() = default;
+    DISALLOW_COPY_AND_ASSIGN(PosCalculator);
+    void Init();
 };
 
 

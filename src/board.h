@@ -17,7 +17,9 @@ template <BoardLen BOARD_LEN>
 class Board
 {
 public:
-    Board();
+    Board() = default;
+    ~Board() = default;
+    DISALLOW_COPY_AND_ASSIGN(Board);
     void Init();
     void Copy(const Board<BOARD_LEN> &b);
 
@@ -27,7 +29,7 @@ public:
     void SetPoint(PointIndex index, Point point);
     void SetPoint(const Position &pos, Point point);
 
-    PosCalculator<BOARD_LEN> &GetPosClcltr() const {
+    inline PosCalculator<BOARD_LEN> &GetPosClcltr() const {
         return PosCalculator<BOARD_LEN>::Ins();
     }
 
@@ -37,9 +39,7 @@ public:
 #endif
 
 private:
-    Point points_[BoardLenSquare<BOARD_LEN>()];
-
-    DISALLOW_COPY_AND_ASSIGN(Board);
+    Point points_[BLSq<BOARD_LEN>()];
 };
 
 
