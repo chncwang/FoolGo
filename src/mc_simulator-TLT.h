@@ -8,7 +8,7 @@
 
 
 template <BoardLen BOARD_LEN>
-MCSimulator<BOARD_LEN> &MCSimulator<BOARD_LEN>::Ins()
+inline MCSimulator<BOARD_LEN> &MCSimulator<BOARD_LEN>::Ins()
 {
     static MCSimulator<BOARD_LEN> ins;
     return ins;
@@ -23,9 +23,12 @@ MCSimulator<BOARD_LEN>::Simulate(const BoardInGm<BOARD_LEN> &input_board) const
     bingm.Copy(input_board);
 
     do {
+//        FOO_PRINT_LINE(" ");
+//        bingm.PRINT_BOARD();
+//        bingm.PRINT_PLAYABLE();
         PlayerColor last_player = bingm.LastPlayer();
         PlayerColor cur_player = OppstColor(last_player);
-        FOO_PRINT_LINE("cur_player = %d", cur_player);
+//        FOO_PRINT_LINE("cur_player = %d", cur_player);
         const auto &playable = bingm.PlayableIndexes(cur_player);
 
         std::bitset<BLSq<BOARD_LEN>()> noko_plbl(playable);
@@ -38,28 +41,29 @@ MCSimulator<BOARD_LEN>::Simulate(const BoardInGm<BOARD_LEN> &input_board) const
         }
 
         PointIndex play_c = noko_plbl.count();
-        FOO_PRINT_LINE("play_c = %d", play_c);
+//        FOO_PRINT_LINE("play_c = %d", play_c);
 #ifdef FOO_TEST
-        if (play_c > 0) {
-            bingm.PRINT_PLAYABLE();
-            FOO_PRINT_LINE("play_c = %d, playable indx = %d",
-                    play_c,
-                    GetLowest1<BLSq<BOARD_LEN>()>(playable));
-        }
+//        if (play_c > 0) {
+//            bingm.PRINT_PLAYABLE();
+//            FOO_PRINT_LINE("play_c = %d, playable indx = %d",
+//                    play_c,
+//                    GetLowest1<BLSq<BOARD_LEN>()>(playable));
+//        }
 #endif
         if (play_c > 0) {
             PointIndex rand = this->Rand(play_c - 1);
-            Point cur_indx =
+            PointIndex cur_indx =
                 GetXst1<BLSq<BOARD_LEN>()>(noko_plbl, rand);
-            FOO_PRINT_LINE("cur_indx = %d", cur_indx);
+//            FOO_PRINT_LINE("cur_indx = %d", cur_indx);
             bingm.PlayMove(Move(cur_player, cur_indx));
         } else {
             bingm.Pass(cur_player);
         }
-        FOO_PRINT_LINE("\n ");
+//        FOO_PRINT_LINE("\n ");
     } while(bingm.PlayableIndexes(BLACK_PLAYER).count() > 0 ||
             bingm.PlayableIndexes(WHITE_PLAYER).count() > 0);
-
+//    FOO_PRINT_LINE("count = %d", count);
+//    bingm.PRINT_BOARD();
     return bingm.BlackRegion();
 }
 

@@ -1,15 +1,5 @@
 #include "def.h"
 
-#ifdef FOO_TEST
-
-int main(int argc, const char *argv[])
-{
-    printf("Hello\n");
-    return 0;
-}
-
-#else
-
 #include "board.h"
 #include "board_in_gm.h"
 #include "pos_cal.h"
@@ -27,5 +17,3 @@ int main(int argc, const char *argv[])
     MCSimulator<TEST_LEN>::TEST();
     return 0;
 }
-
-#endif

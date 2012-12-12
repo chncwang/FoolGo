@@ -95,7 +95,7 @@ private:
     void UpdateRealEye(const Move &move);
 
     void UpdtAdjPlblIndxsOfChn(PointIndex indx);
-    void UpdtPlblIndxsArnd(PointIndex indx);
+    void UpdtPlblIndxsArnd(const Move &move);
     void UpdtAtePcsAdjChns(const PointIndxVector &v, PlayerColor ate_color);
 };
 

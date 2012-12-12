@@ -3,18 +3,27 @@
 
 #include "mc_simulator.h"
 
+#include <ctime>
+#include <cmath>
+
 
 template <BoardLen BOARD_LEN>
 void MCSimulator<BOARD_LEN>::TEST()
 {
-    for (int i=0; i<1; ++i) {
+    int begin = clock();
+    int sum = 0;
+    const int a = 10000;
+    for (int i=0; i<a; ++i) {
         BoardInGm<TEST_LEN> b;
         b.Init();
         auto &mcs = MCSimulator<TEST_LEN>::Ins();
-        mcs.Simulate(b);
+        int r = mcs.Simulate(b);
+        sum += r;
     }
+    int end = clock();
+    printf("time = %f\n", (float)(end - begin) / 1000000);
     printf("simulate complte.\n");
-    FOO_PRINT_LINE("r = %d.", r);
+    printf("average black = %f\n", (float)sum / a);
 }
 
 

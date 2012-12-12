@@ -18,23 +18,21 @@ void ChainSet<BOARD_LEN>::Copy(const ChainSet<BOARD_LEN> &c)
 {
     memcpy(nodes_, c.nodes_, sizeof(nodes_));
     for (int i=0; i<BLSq<BOARD_LEN>(); ++i) {
-        lists_[i].tail_ = c.lists_[i].tail_;
-        lists_[i].len_ = c.lists_[i].len_;
-        lists_[i].air_set_ = c.lists_[i].air_set_;
+        lists_[i] = c.lists_[i];
     }
 }
 
 
 template <BoardLen BOARD_LEN>
 typename ChainSet<BOARD_LEN>::AirSet
-ChainSet<BOARD_LEN>::GetAirSetByPiece(PointIndex piece_i) const
+inline ChainSet<BOARD_LEN>::GetAirSetByPiece(PointIndex piece_i) const
 {
     return GetAirSetOfChain(nodes_[piece_i].list_head_);
 }
 
 
 template <BoardLen BOARD_LEN>
-AirCount ChainSet<BOARD_LEN>::GetAirCountByPiece(PointIndex piece_i) const
+inline AirCount ChainSet<BOARD_LEN>::GetAirCountByPiece(PointIndex piece_i) const
 {
     FOO_ASSERT(IS_POINT_NOT_EMPTY(piece_i));
     return this->GetAirCountOfChain(this->GetListHead(piece_i));
@@ -78,7 +76,7 @@ template <BoardLen BOARD_LEN>
 void ChainSet<BOARD_LEN>::LetAdjcntChainsSetAir(PointIndex indx, bool v)
 {
     AirSet air_set;
-    if (!v) air_set.flip();
+    if (!v) air_set.set();
     air_set[indx] = v;
     auto &ins = this->GetPosClcltr();
     const Position &pos = ins.GetPos(indx);
@@ -93,6 +91,7 @@ void ChainSet<BOARD_LEN>::LetAdjcntChainsSetAir(PointIndex indx, bool v)
         List *pl = lists_ + head;
         const AirSet &r_as = pl->air_set_;
         pl->air_set_ = v ? (r_as | air_set) : (r_as & air_set);
+        pl->air_count_ = pl->air_set_.count();
     }
 }
 
@@ -112,28 +111,32 @@ ChainSet<BOARD_LEN>::CreateList(PointIndex node_i,
                                 const ChainSet<BOARD_LEN>::AirSet &air_set)
 {
     nodes_[node_i].list_head_ = node_i;
-    lists_[node_i].tail_ = node_i;
-    lists_[node_i].len_ = 1;
-    lists_[node_i].air_set_ = air_set;
+    List *list = lists_ + node_i;
+    list->tail_ = node_i;
+    list->len_ = 1;
+    list->air_set_ = air_set;
+    list->air_count_ = air_set.count();
 }
 
 
 template <BoardLen BOARD_LEN>
-PointIndex ChainSet<BOARD_LEN>::MergeLists(PointIndex list_a, PointIndex list_b)
+PointIndex ChainSet<BOARD_LEN>::MergeLists(PointIndex head_a, PointIndex head_b)
 {
-    FOO_ASSERT(list_a != list_b);
-    if (lists_[list_a].len_ > lists_[list_b].len_) std::swap(list_a, list_b);
+    FOO_ASSERT(head_a != head_b);
+    if (lists_[head_a].len_ > lists_[head_b].len_) std::swap(head_a, head_b);
 
-    for (int i=list_a; ; i=nodes_[i].next_) {
-        nodes_[i].list_head_ = list_b;
-        if (i == lists_[list_a].tail_) break;
+    for (int i=head_a; ; i=nodes_[i].next_) {
+        nodes_[i].list_head_ = head_b;
+        if (i == lists_[head_a].tail_) break;
     }
 
-    nodes_[lists_[list_b].tail_].next_ = list_a;
-    lists_[list_b].tail_ = lists_[list_a].tail_;
-    lists_[list_b].len_ += lists_[list_a].len_;
-    lists_[list_b].air_set_ |= lists_[list_a].air_set_;
-    return list_b;
+    List *list_b = lists_ + head_b;
+    nodes_[list_b->tail_].next_ = head_a;
+    list_b->tail_ = lists_[head_a].tail_;
+    list_b->len_ += lists_[head_a].len_;
+    list_b->air_set_ |= lists_[head_a].air_set_;
+    list_b->air_count_ = list_b->air_set_.count();
+    return head_b;
 }
 
 
@@ -149,16 +152,16 @@ void ChainSet<BOARD_LEN>::RemoveList(PointIndex head)
 
 template <BoardLen BOARD_LEN>
 typename ChainSet<BOARD_LEN>::AirSet
-ChainSet<BOARD_LEN>::GetAirSetOfChain(PointIndex head) const
+inline ChainSet<BOARD_LEN>::GetAirSetOfChain(PointIndex head) const
 {
     return lists_[head].air_set_;
 }
 
 
 template <BoardLen BOARD_LEN>
-AirCount ChainSet<BOARD_LEN>::GetAirCountOfChain(PointIndex list_i) const
+inline AirCount ChainSet<BOARD_LEN>::GetAirCountOfChain(PointIndex list_i) const
 {
-    return lists_[list_i].air_set_.count();
+    return lists_[list_i].air_count_;
 }
 
 

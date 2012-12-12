@@ -26,4 +26,4 @@
 #define DISALLOW_COPY_AND_ASSIGN(ClassName) \
     ClassName(const ClassName &) = delete; \
     ClassName &operator =(const ClassName &) = delete;
-#define TEST_LEN (9)
+#define TEST_LEN (19)

@@ -43,10 +43,11 @@ private:
     Position position_[BLSq<BOARD_LEN>()];
     PointIndex indexes_[BOARD_LEN][BOARD_LEN];
 
-    PosCalculator() = default;
+    PosCalculator();
     ~PosCalculator() = default;
     DISALLOW_COPY_AND_ASSIGN(PosCalculator);
     void Init();
+    PosStatus CalPosStatus(BoardLen x, BoardLen y) const;
 };
 
 

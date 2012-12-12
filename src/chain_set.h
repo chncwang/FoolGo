@@ -47,6 +47,7 @@ private:
     struct List {
         PointIndex tail_, len_;
         AirSet air_set_;
+        AirCount air_count_;
     } lists_[BLSq<BOARD_LEN>()];
 
     inline PosCalculator<BOARD_LEN> &GetPosClcltr() const {
@@ -58,7 +59,7 @@ private:
     }
     void CreateList(PointIndex node_i, const AirSet &air_set);
 
-    PointIndex MergeLists(PointIndex list_a, PointIndex list_b);
+    PointIndex MergeLists(PointIndex head_a, PointIndex head_b);
 //return the merged list head.
 
     void RemoveList(PointIndex head);
