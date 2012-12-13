@@ -2,6 +2,7 @@
 #define MC_SIMULATOR_TLT_H
 
 #include "mc_simulator.h"
+#include "rand.h"
 
 #include <bitset>
 #include <random>
@@ -51,7 +52,7 @@ MCSimulator<BOARD_LEN>::Simulate(const BoardInGm<BOARD_LEN> &input_board) const
 //        }
 #endif
         if (play_c > 0) {
-            PointIndex rand = this->Rand(play_c - 1);
+            PointIndex rand = g_Rand(play_c - 1);
             PointIndex cur_indx =
                 GetXst1<BLSq<BOARD_LEN>()>(noko_plbl, rand);
 //            FOO_PRINT_LINE("cur_indx = %d", cur_indx);
@@ -65,17 +66,6 @@ MCSimulator<BOARD_LEN>::Simulate(const BoardInGm<BOARD_LEN> &input_board) const
 //    FOO_PRINT_LINE("count = %d", count);
 //    bingm.PRINT_BOARD();
     return bingm.BlackRegion();
-}
-
-
-template <BoardLen BOARD_LEN>
-PointIndex MCSimulator<BOARD_LEN>::Rand(PointIndex max) const
-{
-    static unsigned ts =
-        std::chrono::system_clock::now().time_since_epoch().count();
-    static std::mt19937 gen(ts);
-    std::uniform_int_distribution<PointIndex> dstrbtion(0, max);
-    return dstrbtion(gen);
 }
 
 

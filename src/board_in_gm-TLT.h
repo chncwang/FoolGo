@@ -11,6 +11,7 @@
 #include <functional>
 
 #include "bitset_util.h"
+#include "zob_hasher.h"
 
 
 template <BoardLen BOARD_LEN>
@@ -18,6 +19,8 @@ void BoardInGm<BOARD_LEN>::Init()
 {
     board_.Init();
     for (int i=0; i<2; ++i) playable_indxs_[i].set();
+    delegate_ = &ZobHasher<BOARD_LEN>::Ins();
+    hash_key_ = delegate_->GetHash(*this);
 }
 
 
@@ -28,6 +31,8 @@ void BoardInGm<BOARD_LEN>::Copy(const BoardInGm &b)
     ko_indx_ = b.ko_indx_;
     last_player_ = b.last_player_;
     b_pcs_c_ = b.b_pcs_c_;
+    hash_key_ = b.hash_key_;
+    delegate_ = b.delegate_;
 
     for (int i=0; i<2; ++i) {
         playable_indxs_[i] = b.playable_indxs_[i];
@@ -40,6 +45,8 @@ void BoardInGm<BOARD_LEN>::Copy(const BoardInGm &b)
 template <BoardLen BOARD_LEN>
 void BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
 {
+    FOO_PRINT_LINE("play.");
+    FOO_PRINT_LINE("delegate = %p", delegate_);
     PlayerColor color = move.color_;
     PointIndex indx = move.indx_;
     FOO_ASSERT(board_.GetPoint(indx) == EMPTY_POINT);
@@ -111,6 +118,7 @@ void BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
     }
 
     last_player_ = color;
+    hash_key_ = delegate_->GetHash(*this);
 }
 
 
@@ -120,6 +128,7 @@ inline void BoardInGm<BOARD_LEN>::Pass(PlayerColor color)
 //    FOO_PRINT_LINE("pass called.");
     last_player_ = color;
     ko_indx_ = BoardInGm<BOARD_LEN>::NONE;
+    hash_key_ = delegate_->GetHash(*this);
 }
 
 

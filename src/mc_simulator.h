@@ -22,8 +22,6 @@ public:
 private:
     MCSimulator() = default;
     DISALLOW_COPY_AND_ASSIGN(MCSimulator);
-
-    PointIndex Rand(PointIndex max) const;
 };
 
 

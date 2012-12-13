@@ -1,6 +1,8 @@
 #ifndef BOARD_IN_GM
 #define BOARD_IN_GM
 
+#include <stdint.h>
+
 #include <bitset>
 #include <vector>
 
@@ -28,6 +30,16 @@ struct Move {
 };
 
 
+template <BoardLen BOARD_LEN> class BoardInGm;
+
+template <BoardLen BOARD_LEN>
+class BrdInGmDlgt {
+public:
+    typedef uint32_t HashKey;
+    virtual HashKey GetHash(const BoardInGm<BOARD_LEN> &b) const = 0;
+};
+
+
 
 template <BoardLen BOARD_LEN>
 class BoardInGm
@@ -43,17 +55,21 @@ public:
     void Init();
     void Copy(const BoardInGm &b);
 
-    PlayerColor LastPlayer() const {return last_player_;}
-    PointIndex KoIndex() const {return ko_indx_;}
+    inline Point GetPoint(PointIndex indx) const {return board_.GetPoint(indx);}
+    inline PlayerColor LastPlayer() const {return last_player_;}
+    inline PointIndex KoIndex() const {return ko_indx_;}
     inline const Bitset &PlayableIndexes(PlayerColor color) const {
         return playable_indxs_[color];
+    }
+    inline PointIndex BlackRegion() const {
+        return b_pcs_c_ + real_eyes_[BLACK_PLAYER].count();
+    }
+    inline typename BrdInGmDlgt<BOARD_LEN>::HashKey HashKey() const {
+        return hash_key_;
     }
 
     void PlayMove(const Move &move);
     void Pass(PlayerColor color);
-    inline PointIndex BlackRegion() const {
-        return b_pcs_c_ + real_eyes_[BLACK_PLAYER].count();
-    }
 
 #ifdef FOO_TEST
     void PRINT_EYES() const;
@@ -73,6 +89,8 @@ private:
     PointIndex ko_indx_ = -1;
     PlayerColor last_player_ = WHITE_PLAYER;
     PointIndex b_pcs_c_ = 0;
+    BrdInGmDlgt<BOARD_LEN> *delegate_;
+    typename BrdInGmDlgt<BOARD_LEN>::HashKey hash_key_;
 
     void BasicCopy(const BoardInGm &b);
 
