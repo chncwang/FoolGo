@@ -13,6 +13,8 @@ typedef char PlayerColor;
 const PlayerColor BLACK_PLAYER = 0;
 const PlayerColor WHITE_PLAYER = 1;
 
+typedef uint32_t HashKey;
+
 
 inline PlayerColor OppstColor(PlayerColor color)
 {
@@ -35,7 +37,6 @@ template <BoardLen BOARD_LEN> class BoardInGm;
 template <BoardLen BOARD_LEN>
 class BrdInGmDlgt {
 public:
-    typedef uint32_t HashKey;
     virtual HashKey GetHash(const BoardInGm<BOARD_LEN> &b) const = 0;
 };
 
@@ -61,22 +62,22 @@ public:
     inline const Bitset &PlayableIndexes(PlayerColor color) const {
         return playable_indxs_[color];
     }
+    Bitset NokoPlayableIndexes(PlayerColor color) const;
     inline PointIndex BlackRegion() const {
         return b_pcs_c_ + real_eyes_[BLACK_PLAYER].count();
     }
-    inline typename BrdInGmDlgt<BOARD_LEN>::HashKey HashKey() const {
-        return hash_key_;
-    }
+    inline HashKey HashKey() const {return hash_key_;}
+    inline bool IsEnd() const;
 
     void PlayMove(const Move &move);
     void Pass(PlayerColor color);
 
-#ifdef FOO_TEST
+//#ifdef FOO_TEST
     void PRINT_EYES() const;
     void PRINT_PLAYABLE() const;
     void PRINT_BOARD() const {board_.PRINT();}
     static void TEST();
-#endif
+//#endif
 
 private:
     typedef std::vector<PointIndex> PointIndxVector;
@@ -90,7 +91,7 @@ private:
     PlayerColor last_player_ = WHITE_PLAYER;
     PointIndex b_pcs_c_ = 0;
     BrdInGmDlgt<BOARD_LEN> *delegate_;
-    typename BrdInGmDlgt<BOARD_LEN>::HashKey hash_key_;
+    uint32_t hash_key_;
 
     void BasicCopy(const BoardInGm &b);
 
@@ -121,8 +122,8 @@ private:
 
 #include "board_in_gm-TLT.h"
 
-#ifdef FOO_TEST
+//#ifdef FOO_TEST
 #include "board_in_gm_TEST.h"
-#endif
+//#endif
 
 #endif

@@ -7,6 +7,7 @@
 #include "board_in_gm.h"
 #include "mc_simulator.h"
 #include "zob_hasher.h"
+#include "engine.h"
 
 
 int main(int argc, const char *argv[])
@@ -15,7 +16,8 @@ int main(int argc, const char *argv[])
 //    PosCalculator<9>::TEST();
 //    ChainSet<9>::TEST();
 //    BoardInGm<9>::TEST();
-    MCSimulator<TEST_LEN>::TEST();
+//    MCSimulator<TEST_LEN>::TEST();
 //    ZobHasher<TEST_LEN>::TEST();
+    Engine<TEST_LEN>::TEST();
     return 0;
 }

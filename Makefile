@@ -24,12 +24,14 @@ mc_simulator_h = mc_simulator.h mc_simulator_TEST.h mc_simulator-TLT.h def.h \
 		 position.h $(board_in_gm_h) rand.h
 zob_hasher_h = zob_hasher.h zob_hasher-TLT.h zob_hasher_TEST.h def.h \
 	       position.h def.h rand.h $(board_in_gm_h)
+engine_h = engine.h engine-TLT.h def.h $(board_in_gm_h) $(mc_simulator_h) \
+	   bitset_util.h engine_TEST.h
 
 edit : $(objects)
 	clang++ -stdlib=libc++ -g -o a.out $(objects)
 
 foolishgo.o : def.h $(board_h) $(pos_cal_h) $(board_in_gm_h) $(chain_set_h) \
-    $(mc_simulator_h) $(zob_hasher_h)
+    $(mc_simulator_h) $(zob_hasher_h) $(engine_h)
 rand.o : rand.h
 
 .PHONY : clean

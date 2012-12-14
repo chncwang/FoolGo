@@ -1,4 +1,4 @@
-//#define FOO_TEST
+#define FOO_TEST
 
 #include <cstdio>
 #include <cassert>

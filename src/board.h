@@ -33,10 +33,10 @@ public:
         return PosCalculator<BOARD_LEN>::Ins();
     }
 
-#ifdef FOO_TEST
+//#ifdef FOO_TEST
     void PRINT() const;
     static void TEST();
-#endif
+//#endif
 
 private:
     Point points_[BLSq<BOARD_LEN>()];
@@ -46,8 +46,8 @@ private:
 
 #include "board-TLT.h"
 
-#ifdef FOO_TEST
+//#ifdef FOO_TEST
 #include "board_TEST.h"
-#endif
+//#endif
 
 #endif

@@ -11,6 +11,7 @@ template <BoardLen BOARD_LEN>
 class MCSimulator
 {
 public:
+    DISALLOW_COPY_AND_ASSIGN(MCSimulator);
     static MCSimulator &Ins();
 
     PointIndex Simulate(const BoardInGm<BOARD_LEN> &input_board) const;
@@ -21,7 +22,6 @@ public:
 
 private:
     MCSimulator() = default;
-    DISALLOW_COPY_AND_ASSIGN(MCSimulator);
 };
 
 

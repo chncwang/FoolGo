@@ -51,4 +51,10 @@ constexpr inline BoardLen BoardLenMinusOne()
     return BOARD_LEN - 1;
 }
 
+template <BoardLen BOARD_LEN>
+inline int16_t MoveLimit()
+{
+    return BLSq<BOARD_LEN>() * 4;
+}
+
 #endif

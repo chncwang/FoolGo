@@ -13,10 +13,10 @@ template <BoardLen BOARD_LEN>
 class ZobHasher : public BrdInGmDlgt<BOARD_LEN>
 {
 public:
+    DISALLOW_COPY_AND_ASSIGN(ZobHasher);
     static ZobHasher &Ins();
-
-    typename BrdInGmDlgt<BOARD_LEN>::HashKey
-        GetHash(const BoardInGm<BOARD_LEN> &b) const;
+    
+    HashKey GetHash(const BoardInGm<BOARD_LEN> &b) const;
 
 #ifdef FOO_TEST
     static void TEST();
@@ -24,10 +24,10 @@ public:
 #endif
 
 private:
-    typename BrdInGmDlgt<BOARD_LEN>::HashKey board_hash_[BLSq<BOARD_LEN>()][3];
-    typename BrdInGmDlgt<BOARD_LEN>::HashKey player_hash_[2];
-    typename BrdInGmDlgt<BOARD_LEN>::HashKey ko_hash_[BLSq<BOARD_LEN>()];
-    typename BrdInGmDlgt<BOARD_LEN>::HashKey noko_hash_;
+    HashKey board_hash_[BLSq<BOARD_LEN>()][3];
+    HashKey player_hash_[2];
+    HashKey ko_hash_[BLSq<BOARD_LEN>()];
+    HashKey noko_hash_;
 
     ZobHasher();
     ~ZobHasher() = default;

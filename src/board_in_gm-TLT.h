@@ -45,10 +45,9 @@ void BoardInGm<BOARD_LEN>::Copy(const BoardInGm &b)
 template <BoardLen BOARD_LEN>
 void BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
 {
-    FOO_PRINT_LINE("play.");
-    FOO_PRINT_LINE("delegate = %p", delegate_);
     PlayerColor color = move.color_;
     PointIndex indx = move.indx_;
+    FOO_ASSERT(this->GetPosClcltr().IsInBoard(indx));
     FOO_ASSERT(board_.GetPoint(indx) == EMPTY_POINT);
     b_pcs_c_ += OppstColor(color);
 
@@ -119,6 +118,29 @@ void BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
 
     last_player_ = color;
     hash_key_ = delegate_->GetHash(*this);
+}
+
+
+template <BoardLen BOARD_LEN>
+typename BoardInGm<BOARD_LEN>::Bitset
+BoardInGm<BOARD_LEN>::NokoPlayableIndexes(PlayerColor color) const
+{
+    if (ko_indx_ == BoardInGm<BOARD_LEN>::NONE) {
+        return playable_indxs_[color];
+    } else {
+        BoardInGm<BOARD_LEN>::Bitset kobits;
+        kobits.set();
+        kobits.reset(ko_indx_);
+        return kobits & playable_indxs_[color];
+    }
+}
+
+
+template <BoardLen BOARD_LEN>
+bool BoardInGm<BOARD_LEN>::IsEnd() const
+{
+    return this->PlayableIndexes(BLACK_PLAYER).count() == 0 &&
+           this->PlayableIndexes(WHITE_PLAYER).count() == 0;
 }
 
 

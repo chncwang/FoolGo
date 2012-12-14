@@ -22,8 +22,10 @@ MCSimulator<BOARD_LEN>::Simulate(const BoardInGm<BOARD_LEN> &input_board) const
 {
     BoardInGm<BOARD_LEN> bingm;
     bingm.Copy(input_board);
+    int count = 0;
 
-    do {
+    while(!bingm.IsEnd()) {
+        if (++count > MoveLimit<BOARD_LEN>()) break;
 //        FOO_PRINT_LINE(" ");
 //        bingm.PRINT_BOARD();
 //        bingm.PRINT_PLAYABLE();
@@ -61,8 +63,7 @@ MCSimulator<BOARD_LEN>::Simulate(const BoardInGm<BOARD_LEN> &input_board) const
             bingm.Pass(cur_player);
         }
 //        FOO_PRINT_LINE("\n ");
-    } while(bingm.PlayableIndexes(BLACK_PLAYER).count() > 0 ||
-            bingm.PlayableIndexes(WHITE_PLAYER).count() > 0);
+    };
 //    FOO_PRINT_LINE("count = %d", count);
 //    bingm.PRINT_BOARD();
     return bingm.BlackRegion();

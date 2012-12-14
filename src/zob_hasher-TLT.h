@@ -17,10 +17,9 @@ ZobHasher<BOARD_LEN> &ZobHasher<BOARD_LEN>::Ins()
 
 
 template <BoardLen BOARD_LEN>
-typename BrdInGmDlgt<BOARD_LEN>::HashKey
-ZobHasher<BOARD_LEN>::GetHash(const BoardInGm<BOARD_LEN> &b) const
+HashKey ZobHasher<BOARD_LEN>::GetHash(const BoardInGm<BOARD_LEN> &b) const
 {
-    typename BrdInGmDlgt<BOARD_LEN>::HashKey result = 0;
+    HashKey result = 0;
 
     for (int i=0; i<BLSq<BOARD_LEN>(); ++i) {
         Point point = b.GetPoint(i);
