@@ -45,7 +45,7 @@ private:
     };
     typedef std::unordered_map<HashKey, TableItem> TrnspsitionTbl;
 
-    static const int32_t SIMULATE_COUNT = 50000;
+    static const int32_t SIMULATE_COUNT = 30000;
 
     BoardInGm<BOARD_LEN> brdingm_;
     PlayerColor next_player_ = BLACK_PLAYER;

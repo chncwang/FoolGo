@@ -82,8 +82,9 @@ PointIndex Engine<BOARD_LEN>::NextMove() const
                 break;
             } else {
                 PointIndex nexti = this->MaxUCBChild(cur_node);
-//                FOO_PRINT_LINE("next i = %d", nexti);
+                if (nexti == -1) return -1;
 //                cur_node.PRINT_BOARD();
+//                FOO_PRINT_LINE("next i = %d", nexti);
                 PlayerColor cur_player = OppstColor(cur_node.LastPlayer());
                 cur_node.PlayMove(Move(cur_player, nexti));
                 path.push_back(cur_node.HashKey());
@@ -161,7 +162,7 @@ Engine<BOARD_LEN>::MaxUCBChild(const BoardInGm<BOARD_LEN> &node) const
         }
     }
 
-    return best;
+    return max_ucb > 0 ? best : -1;
 }
 
 
