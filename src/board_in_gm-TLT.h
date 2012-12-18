@@ -17,7 +17,7 @@
 template <BoardLen BOARD_LEN>
 void BoardInGm<BOARD_LEN>::Init()
 {
-    board_.Init();
+    Board<BOARD_LEN>::Init();
     for (int i=0; i<2; ++i) playable_indxs_[i].set();
     delegate_ = &ZobHasher<BOARD_LEN>::Ins();
     hash_key_ = delegate_->GetHash(*this);
@@ -27,7 +27,8 @@ void BoardInGm<BOARD_LEN>::Init()
 template <BoardLen BOARD_LEN>
 void BoardInGm<BOARD_LEN>::Copy(const BoardInGm &b)
 {
-    this->BasicCopy(b);
+    Board<BOARD_LEN>::Copy(b);
+
     ko_indx_ = b.ko_indx_;
     last_player_ = b.last_player_;
     b_pcs_c_ = b.b_pcs_c_;
@@ -37,6 +38,7 @@ void BoardInGm<BOARD_LEN>::Copy(const BoardInGm &b)
     for (int i=0; i<2; ++i) {
         playable_indxs_[i] = b.playable_indxs_[i];
         eye_sets_[i].Copy(b.eye_sets_[i]);
+        chain_sets_[i].Copy(b.chain_sets_[i]);
     }
 }
 
@@ -47,7 +49,7 @@ void BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
     PlayerColor color = move.color_;
     PointIndex indx = move.indx_;
     FOO_ASSERT(this->GetPosClcltr().IsInBoard(indx));
-    FOO_ASSERT(board_.GetPoint(indx) == EMPTY_POINT);
+    FOO_ASSERT(this->GetPoint(indx) == EMPTY_POINT);
     b_pcs_c_ += OppstColor(color);
 
     for (int i=0; i<2; ++i) {
@@ -66,7 +68,7 @@ void BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
     for (int i=0; i<4; ++i) {
         Position adj_pos = pos.AdjcntPos(i);
         if (!ins.IsInBoard(adj_pos)) continue;
-        if (board_.GetPoint(adj_pos) != EMPTY_POINT) continue;
+        if (this->GetPoint(adj_pos) != EMPTY_POINT) continue;
 
         PointIndex adj_indx = ins.GetIndex(adj_pos);
         this->UpdateEye(Move(color, adj_indx));
@@ -75,12 +77,12 @@ void BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
     for (int i=0; i<4; ++i) {
         Position adj_pos = pos.AdjcntPos(i);
         if (!ins.IsInBoard(adj_pos)) continue;
-        if (board_.GetPoint(adj_pos) != EMPTY_POINT) continue;
+        if (this->GetPoint(adj_pos) != EMPTY_POINT) continue;
 
         PointIndex adj_indx = ins.GetIndex(adj_pos);
         Move adj_move(color, adj_indx);
         this->UpdateRealEye(adj_move);
-        if (this->IsFakeEye(adj_move)) {
+        if (IsFakeEye(eye_sets_[adj_move.color_], adj_move.indx_)) {
             playable_indxs_[oc][adj_indx] =
                 this->IsSuiside(Move(oc, adj_indx));
         }
@@ -89,7 +91,7 @@ void BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
     for (int i=0; i<4; ++i) {
         Position oblq_pos = pos.ObliquePos(i);
         if (!ins.IsInBoard(oblq_pos)) continue;
-        if (board_.GetPoint(oblq_pos) != EMPTY_POINT) continue;
+        if (this->GetPoint(oblq_pos) != EMPTY_POINT) continue;
 
         PointIndex oblq_indx = ins.GetIndex(oblq_pos);
         Move oblq_move(color, oblq_indx);
@@ -131,45 +133,11 @@ inline void BoardInGm<BOARD_LEN>::Pass(PlayerColor color)
 
 
 template <BoardLen BOARD_LEN>
-void BoardInGm<BOARD_LEN>::BasicCopy(const BoardInGm<BOARD_LEN> &b)
-{
-    board_.Copy(b.board_);
-    for (int i=0; i<2; ++i) chain_sets_[i].Copy(b.chain_sets_[i]);
-}
-
-
-template <BoardLen BOARD_LEN>
-inline PosCalculator<BOARD_LEN> &BoardInGm<BOARD_LEN>::GetPosClcltr() const
-{
-    return board_.GetPosClcltr();
-}
-
-
-template <BoardLen BOARD_LEN>
-inline bool BoardInGm<BOARD_LEN>::IsEye(const Move &move) const
-{
-    return eye_sets_[move.color_].IsEye(move.indx_);
-}
-
-
-template <BoardLen BOARD_LEN>
-inline bool BoardInGm<BOARD_LEN>::IsRealEye(const Move &move) const
-{
-    return eye_sets_[move.color_].IsRealEye(move.indx_);
-}
-
-
-template <BoardLen BOARD_LEN>
-inline bool BoardInGm<BOARD_LEN>::IsFakeEye(const Move &move) const
-{
-    return this->IsEye(move) && !this->IsRealEye(move);
-}
-
-
-template <BoardLen BOARD_LEN>
 inline bool BoardInGm<BOARD_LEN>::IsSelfPieceOrEye(const Move &move) const
 {
-    return board_.GetPoint(move.indx_) == move.color_ || this->IsEye(move);
+    PointIndex indx = move.indx_;
+    PlayerColor color = move.color_;
+    return this->GetPoint(indx) == color || eye_sets_[color].IsEye(indx);
 }
 
 
@@ -183,7 +151,7 @@ bool BoardInGm<BOARD_LEN>::IsEmptySingly(PointIndex indx) const
         Position adj_pos = pos.AdjcntPos(i);
         if (!ins.IsInBoard(adj_pos)) continue;
 
-        if (board_.GetPoint(adj_pos) == EMPTY_POINT) return false;
+        if (this->GetPoint(adj_pos) == EMPTY_POINT) return false;
     }
 
     return true;
@@ -193,10 +161,32 @@ bool BoardInGm<BOARD_LEN>::IsEmptySingly(PointIndex indx) const
 template <BoardLen BOARD_LEN>
 bool BoardInGm<BOARD_LEN>::IsSuiside(const Move &move) const
 {
-    FOO_ASSERT(board_.GetPoint(move.indx_) == EMPTY_POINT);
-    BoardInGm<BOARD_LEN> copy;
-    copy.BasicCopy(*this);
-    return !copy.PlayBasicMove(move);
+    FOO_ASSERT(this->GetPoint(move.indx_) == EMPTY_POINT);
+
+    auto &pc = this->GetPosClcltr();
+    PointIndex indx = move.indx_;
+    const Position &pos = pc.GetPos(indx);
+    PlayerColor color = move.color_;
+    PlayerColor oc = OppstColor(color);
+
+    for (int i=0; i<4; ++i) {
+        Position adj_pos = pos.AdjcntPos(i);
+        if (!pc.IsInBoard(adj_pos)) continue;
+
+        Point point = this->GetPoint(adj_pos);
+        PointIndex adj_indx = pc.GetIndex(adj_pos);
+        if (point == EMPTY_POINT) {
+            return false;
+        } else if (point == color) {
+            if (chain_sets_[color].GetAirCountByPiece(adj_indx) > 1) {
+                return false;
+            }
+        } else {
+            if (chain_sets_[oc].GetAirCountByPiece(adj_indx) == 1) return false;
+        }
+    }
+
+    return true;
 }
 
 
@@ -214,8 +204,8 @@ bool BoardInGm<BOARD_LEN>::PlayBasicMove(
 {
     PlayerColor color = move.color_;
     PointIndex indx = move.indx_;
-    FOO_ASSERT(board_.GetPoint(indx) == EMPTY_POINT);
-    board_.SetPoint(indx, color);
+    FOO_ASSERT(this->GetPoint(indx) == EMPTY_POINT);
+    this->SetPoint(indx, color);
 
     for (int i=0; i<2; ++i) chain_sets_[i].LetAdjcntChainsSetAir(indx, false);
     std::bitset<BLSq<BOARD_LEN>()> air_set;
@@ -240,12 +230,12 @@ bool BoardInGm<BOARD_LEN>::PlayBasicMove(
         if (!ins.IsInBoard(adj_pos)) continue;
 
         PointIndex adj_indx = ins.GetIndex(adj_pos);
-        if (board_.GetPoint(adj_indx) == oc &&
+        if (this->GetPoint(adj_indx) == oc &&
                 chain_sets_[oc].GetAirCountByPiece(adj_indx) == 0) {
             auto r = RemoveChain(Move(oc, adj_indx));
             Fun(r, i);
         }
-        if (board_.GetPoint(adj_pos) == EMPTY_POINT) {
+        if (this->GetPoint(adj_pos) == EMPTY_POINT) {
             air_set.set(adj_indx);
         }
     }
@@ -266,7 +256,7 @@ BoardInGm<BOARD_LEN>::RemoveChain(const Move &move)
     PlayerColor oc = OppstColor(move.color_);
 
     for (PointIndex indx : trp) {
-        board_.SetPoint(indx, EMPTY_POINT);
+        this->SetPoint(indx, EMPTY_POINT);
         chain_sets_[oc].LetAdjcntChainsSetAir(indx, true);
         for (int i=0; i<2; ++i) playable_indxs_[i].set(indx);
     }
@@ -279,7 +269,7 @@ BoardInGm<BOARD_LEN>::RemoveChain(const Move &move)
 template <BoardLen BOARD_LEN>
 void BoardInGm<BOARD_LEN>::UpdateEye(const Move &move)
 {
-    FOO_ASSERT(board_.GetPoint(move.indx_) == EMPTY_POINT);
+    FOO_ASSERT(this->GetPoint(move.indx_) == EMPTY_POINT);
     auto &ins = this->GetPosClcltr();
     PointIndex indx = move.indx_;
     const Position &pos = ins.GetPos(indx);
@@ -289,7 +279,7 @@ void BoardInGm<BOARD_LEN>::UpdateEye(const Move &move)
         const Position adj_pos = pos.AdjcntPos(i);
         if (!ins.IsInBoard(adj_pos)) {
             continue;
-        } else if (board_.GetPoint(pos.AdjcntPos(i)) != color) {
+        } else if (this->GetPoint(pos.AdjcntPos(i)) != color) {
             eye_sets_[color].SetEye(indx, false);
             return;
         }
@@ -302,7 +292,7 @@ void BoardInGm<BOARD_LEN>::UpdateEye(const Move &move)
         if (!ins.IsInBoard(oblq_pos)) continue;
 
         PointIndex oblq_indx = ins.GetIndex(oblq_pos);
-        if (board_.GetPoint(oblq_indx) == EMPTY_POINT) {
+        if (this->GetPoint(oblq_indx) == EMPTY_POINT) {
             this->UpdateRealEye(Move(color, oblq_indx));
         }
     }
@@ -312,11 +302,11 @@ void BoardInGm<BOARD_LEN>::UpdateEye(const Move &move)
 template <BoardLen BOARD_LEN>
 void BoardInGm<BOARD_LEN>::UpdateRealEye(const Move &move)
 {
-    FOO_ASSERT(board_.GetPoint(move.indx_) == EMPTY_POINT);
+    FOO_ASSERT(this->GetPoint(move.indx_) == EMPTY_POINT);
     PlayerColor color = move.color_;
     PointIndex indx = move.indx_;
 //    FOO_PRINT_LINE("color = %d, indx = %d", (int)color, indx);
-    if (!this->IsEye(move)) {
+    if (!eye_sets_[color].IsEye(indx)) {
         eye_sets_[color].SetRealEye(indx, false);
         return;
     }
@@ -346,8 +336,8 @@ void BoardInGm<BOARD_LEN>::UpdateRealEye(const Move &move)
 template <BoardLen BOARD_LEN>
 void BoardInGm<BOARD_LEN>::UpdtAdjPlblIndxsOfChn(PointIndex indx)
 {
-    FOO_ASSERT(board_.GetPoint(indx) != EMPTY_POINT);
-    PlayerColor color = board_.GetPoint(indx);
+    FOO_ASSERT(this->GetPoint(indx) != EMPTY_POINT);
+    PlayerColor color = this->GetPoint(indx);
     const auto p_c = chain_sets_ + color;
     AirCount air_c = p_c->GetAirCountByPiece(indx);
     auto air_set = chain_sets_[color].GetAirSetByPiece(indx);
@@ -358,10 +348,10 @@ void BoardInGm<BOARD_LEN>::UpdtAdjPlblIndxsOfChn(PointIndex indx)
         PointIndex air_indx =
             GetLowest1<BLSq<BOARD_LEN>()>(air_set);
         Move move(color, air_indx);
-        if (this->IsRealEye(move)) {
+        if (eye_sets_[color].IsRealEye(air_indx)) {
             c_playable->reset(air_indx);
             oc_playable->set(air_indx);
-        } else if (this->IsFakeEye(move)) {
+        } else if (IsFakeEye(eye_sets_[color], air_indx)) {
             c_playable->set(air_indx);
             oc_playable->set(air_indx);
         } else /* not eye */ {
@@ -383,7 +373,7 @@ template <BoardLen BOARD_LEN>
 void BoardInGm<BOARD_LEN>::UpdtPlblIndxsArnd(const Move &move)
 {
     PointIndex indx = move.indx_;
-    if (board_.GetPoint(indx) != EMPTY_POINT) this->UpdtAdjPlblIndxsOfChn(indx);
+    if (this->GetPoint(indx) != EMPTY_POINT) this->UpdtAdjPlblIndxsOfChn(indx);
 
     auto &ins = this->GetPosClcltr();
     Position pos = ins.GetPos(indx);
@@ -406,7 +396,7 @@ void BoardInGm<BOARD_LEN>::UpdtPlblIndxsArnd(const Move &move)
         Position adj_pos = pos.AdjcntPos(i);
         if (!ins.IsInBoard(adj_pos)) continue;
 
-        Point point = board_.GetPoint(adj_pos);
+        Point point = this->GetPoint(adj_pos);
         PointIndex adj_indx = ins.GetIndex(adj_pos);
 //        FOO_PRINT_LINE("point = %d", point);
 //        FOO_PRINT_LINE("i = %d", i);
@@ -429,7 +419,7 @@ void BoardInGm<BOARD_LEN>::UpdtAtePcsAdjChns(
             Position adj_pos = pos.AdjcntPos(i);
             if (!ins.IsInBoard(adj_pos)) continue;
 
-            if (board_.GetPoint(adj_pos) == OppstColor(ate_color)) {
+            if (this->GetPoint(adj_pos) == OppstColor(ate_color)) {
                 PointIndex adj_indx = ins.GetIndex(adj_pos);
                 this->UpdtAdjPlblIndxsOfChn(adj_indx);
             }

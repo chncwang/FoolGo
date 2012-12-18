@@ -34,6 +34,13 @@ private:
 
 
 
+template <BoardLen BOARD_LEN>
+bool IsFakeEye(const EyeSet<BOARD_LEN> &eyeset, PointIndex indx)
+{
+    return eyeset.IsEye(indx) && !eyeset.IsRealEye(indx);
+}
+
+
 #include "eye_set-TLT.h"
 
 #endif

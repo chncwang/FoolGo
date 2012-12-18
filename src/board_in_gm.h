@@ -44,7 +44,7 @@ public:
 
 
 template <BoardLen BOARD_LEN>
-class BoardInGm
+class BoardInGm : public Board<BOARD_LEN>
 {
 public:
     typedef std::bitset<BLSq<BOARD_LEN>()> Bitset;
@@ -57,7 +57,6 @@ public:
     void Init();
     void Copy(const BoardInGm &b);
 
-    Point GetPoint(PointIndex indx) const {return board_.GetPoint(indx);}
     PlayerColor LastPlayer() const {return last_player_;}
     PointIndex KoIndex() const {return ko_indx_;}
     const Bitset &PlayableIndexes(PlayerColor color) const {
@@ -74,14 +73,13 @@ public:
 //#ifdef FOO_TEST
     void PRINT_EYES() const;
     void PRINT_PLAYABLE() const;
-    void PRINT_BOARD() const {board_.PRINT();}
+    void PRINT_BOARD() const {Board<BOARD_LEN>::PRINT();}
     static void TEST();
 //#endif
 
 private:
     typedef std::vector<PointIndex> PointIndxVector;
 
-    Board<BOARD_LEN> board_;
     ChainSet<BOARD_LEN> chain_sets_[2];
     Bitset playable_indxs_[2];
     EyeSet<BOARD_LEN> eye_sets_[2];
@@ -91,14 +89,6 @@ private:
     BrdInGmDlgt<BOARD_LEN> *delegate_;
     uint32_t hash_key_;
 
-    void BasicCopy(const BoardInGm &b);
-
-    PosCalculator<BOARD_LEN> &GetPosClcltr() const;
-
-    bool IsEye(const Move &move) const;
-    bool IsEyeByCal(const Move &move) const;
-    bool IsRealEye(const Move &move) const;
-    bool IsFakeEye(const Move &move) const;
     bool IsSelfPieceOrEye(const Move &move) const;
 
     bool IsEmptySingly(PointIndex indx) const;

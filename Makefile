@@ -12,7 +12,8 @@ CXXFLAGS := -Weverything -std=c++0x -O3 -g \
     -Wno-unneeded-internal-declaration \
     -Wno-format \
     -Wno-sign-compare \
-    -Wno-non-virtual-dtor
+    -Wno-non-virtual-dtor \
+    -Wno-overloaded-virtual
 objects = foolishgo.o rand.o
 pos_cal_h = pos_cal.h def.h pos_cal-TLT.h pos_cal_TEST.h
 board_h = board.h def.h position.h board-TLT.h board_TEST.h $(pos_cal_h)

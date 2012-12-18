@@ -20,7 +20,7 @@ void BoardInGm<BOARD_LEN>::PRINT_EYES() const
     for (int i=0; i<BOARD_LEN; ++i) printf("%d  ", i);
     printf("\n");
     std::function<void(PointIndex)> Print = [this](PointIndex indx) {
-        if (board_.GetPoint(indx) != EMPTY_POINT) printf("xx ");
+        if (this->GetPoint(indx) != EMPTY_POINT) printf("xx ");
         else if (this->IsRealEye(Move(0, indx))) printf("br ");
         else if (this->IsEye(Move(0, indx))) printf("be ");
         else if (this->IsRealEye(Move(1, indx))) printf("wr ");
@@ -80,7 +80,7 @@ void BoardInGm<BOARD_LEN>::TEST()
     FOO_PRINT_LINE("%d", (int)sizeof(brd));
     PlayerColor color = BLACK_PLAYER;
     while (true) {
-        brd.board_.PRINT();
+        brd.PRINT();
 //        FOO_PRINT_LINE(" ");
 //        FOO_PRINT_LINE("black chain:\n");
 //        brd.chain_sets_[0].PRINT();

@@ -18,10 +18,10 @@ class Board
 {
 public:
     Board() = default;
-    ~Board() = default;
+    virtual ~Board() = default;
     DISALLOW_COPY_AND_ASSIGN(Board);
-    void Init();
-    void Copy(const Board<BOARD_LEN> &b);
+    virtual void Init();
+    virtual void Copy(const Board<BOARD_LEN> &b);
 
     Point GetPoint(PointIndex index) const;
     Point GetPoint(const Position &pos) const;
@@ -34,7 +34,7 @@ public:
     }
 
 //#ifdef FOO_TEST
-    void PRINT() const;
+    virtual void PRINT() const;
     static void TEST();
 //#endif
 
