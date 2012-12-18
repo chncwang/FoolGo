@@ -7,9 +7,9 @@
 
 static void PRINT_POS_VECTOR(const std::vector<Position> &v)
 {
-    for (Position e : v) {
-        FOO_PRINT_LINE("%d %d", e.x_, e.y_);
-    }
+//    for (Position e : v) {
+//        FOO_PRINT_LINE("%d %d", e.x_, e.y_);
+//    }
 }
 
 

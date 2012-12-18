@@ -24,7 +24,7 @@ MCSimulator<BOARD_LEN>::Simulate(const BoardInGm<BOARD_LEN> &input_board) const
     bingm.Copy(input_board);
     int count = 0;
 
-    while(!bingm.IsEnd()) {
+    while(!IsEnd(bingm)) {
         if (++count > MoveLimit<BOARD_LEN>()) break;
 //        FOO_PRINT_LINE(" ");
 //        bingm.PRINT_BOARD();

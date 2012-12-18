@@ -48,7 +48,7 @@ PointIndex Engine<BOARD_LEN>::NextMove() const
         while (true) {
 //            FOO_PRINT_LINE("\n\nbegin while loop");
             PointIndex chld_i(0);
-            if (cur_node.IsEnd()) {
+            if (IsEnd(cur_node)) {
                 return this->BestChild(root);
             } else if (this->HasNewChild(cur_node, &chld_i)) {
 //                FOO_PRINT_LINE("child i = %d", chld_i);
@@ -121,7 +121,7 @@ bool Engine<BOARD_LEN>::HasNewChild(const BoardInGm<BOARD_LEN> &node,
                                     PointIndex *p_indx) const
 {
     PlayerColor color = OppstColor(node.LastPlayer());
-    auto playable = node.NokoPlayableIndexes(color);
+    auto playable = NokoPlayableIndexes(node, color);
     auto children = Get1s<BLSq<BOARD_LEN>()>(playable);
 
     for (PointIndex nexti : children) {
@@ -141,7 +141,7 @@ PointIndex
 Engine<BOARD_LEN>::MaxUCBChild(const BoardInGm<BOARD_LEN> &node) const
 {
     PlayerColor nextc = OppstColor(node.LastPlayer());
-    auto playable = node.NokoPlayableIndexes(nextc);
+    auto playable = NokoPlayableIndexes(node, nextc);
     auto playable_v = Get1s<BLSq<BOARD_LEN>()>(playable);
     int32_t sum = 0;
 
@@ -170,7 +170,7 @@ template <BoardLen BOARD_LEN>
 PointIndex Engine<BOARD_LEN>::BestChild(const BoardInGm<BOARD_LEN> &node) const
 {
     PlayerColor nextc = OppstColor(node.LastPlayer());
-    auto playable = node.NokoPlayableIndexes(nextc);
+    auto playable = NokoPlayableIndexes(node, nextc);
     auto playable_v = Get1s<BLSq<BOARD_LEN>()>(playable);
     float max_profit = 0;
     PointIndex result(-1);

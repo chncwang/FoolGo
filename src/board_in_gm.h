@@ -8,6 +8,7 @@
 
 #include "board.h"
 #include "chain_set.h"
+#include "eye_set.h"
 
 typedef char PlayerColor;
 const PlayerColor BLACK_PLAYER = 0;
@@ -56,18 +57,16 @@ public:
     void Init();
     void Copy(const BoardInGm &b);
 
-    inline Point GetPoint(PointIndex indx) const {return board_.GetPoint(indx);}
-    inline PlayerColor LastPlayer() const {return last_player_;}
-    inline PointIndex KoIndex() const {return ko_indx_;}
-    inline const Bitset &PlayableIndexes(PlayerColor color) const {
+    Point GetPoint(PointIndex indx) const {return board_.GetPoint(indx);}
+    PlayerColor LastPlayer() const {return last_player_;}
+    PointIndex KoIndex() const {return ko_indx_;}
+    const Bitset &PlayableIndexes(PlayerColor color) const {
         return playable_indxs_[color];
     }
-    Bitset NokoPlayableIndexes(PlayerColor color) const;
-    inline PointIndex BlackRegion() const {
-        return b_pcs_c_ + real_eyes_[BLACK_PLAYER].count();
+    PointIndex BlackRegion() const {
+        return b_pcs_c_ + eye_sets_[BLACK_PLAYER].RealCount();
     }
-    inline HashKey HashKey() const {return hash_key_;}
-    inline bool IsEnd() const;
+    HashKey HashKey() const {return hash_key_;}
 
     void PlayMove(const Move &move);
     void Pass(PlayerColor color);
@@ -85,8 +84,7 @@ private:
     Board<BOARD_LEN> board_;
     ChainSet<BOARD_LEN> chain_sets_[2];
     Bitset playable_indxs_[2];
-    Bitset eyes_[2];
-    Bitset real_eyes_[2];
+    EyeSet<BOARD_LEN> eye_sets_[2];
     PointIndex ko_indx_ = -1;
     PlayerColor last_player_ = WHITE_PLAYER;
     PointIndex b_pcs_c_ = 0;
@@ -118,6 +116,29 @@ private:
     void UpdtAtePcsAdjChns(const PointIndxVector &v, PlayerColor ate_color);
 };
 
+
+
+template<BoardLen BOARD_LEN>
+typename BoardInGm<BOARD_LEN>::Bitset
+NokoPlayableIndexes(const BoardInGm<BOARD_LEN> &b, PlayerColor color)
+{
+    if (b.KoIndex() == BoardInGm<BOARD_LEN>::NONE) {
+        return b.PlayableIndexes(color);
+    } else {
+        typename BoardInGm<BOARD_LEN>::Bitset kobits;
+        kobits.set();
+        kobits.reset(b.KoIndex());
+        return kobits & b.PlayableIndexes(color);
+    }
+}
+
+
+template <BoardLen BOARD_LEN>
+bool IsEnd(const BoardInGm<BOARD_LEN> &b)
+{
+    return b.PlayableIndexes(BLACK_PLAYER).count() == 0 &&
+           b.PlayableIndexes(WHITE_PLAYER).count() == 0;
+}
 
 
 #include "board_in_gm-TLT.h"
