@@ -18,11 +18,11 @@ public:
     static PosCalculator &Ins();
 
     inline const Position &GetPos(PointIndex index) const {
-        FOO_ASSERT(this->IsInBoard(index));
+        ASSERT(this->IsInBoard(index));
         return position_[index];
     }
     inline PointIndex GetIndex(const Position &pos) const {
-        FOO_ASSERT(this->IsInBoard(pos));
+        ASSERT(this->IsInBoard(pos));
         return indexes_[pos.y_][pos.x_];
     }
 
