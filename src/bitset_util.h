@@ -10,7 +10,7 @@
 template <int LEN>
 int GetLowest1(const std::bitset<LEN> &b)
 {
-    FOO_ASSERT(b.count() > 0);
+    ASSERT(b.count() > 0);
 
     for (int i=0; ; ++i) {
         if (b[i]) return i;
@@ -23,7 +23,7 @@ int GetLowest1(const std::bitset<LEN> &b)
 template <int LEN>
 int GetXst1(const std::bitset<LEN> &b, int x)
 {
-    FOO_ASSERT((int)b.count() > x);
+    ASSERT((int)b.count() > x);
 
     for (int i=0; ; ++i) {
         if (b[i] && --x < 0) return i;

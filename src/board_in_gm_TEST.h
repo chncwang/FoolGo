@@ -8,7 +8,7 @@
 static void PRINT_POS_VECTOR(const std::vector<Position> &v)
 {
 //    for (Position e : v) {
-//        FOO_PRINT_LINE("%d %d", e.x_, e.y_);
+//        PRINT_LINE("%d %d", e.x_, e.y_);
 //    }
 }
 
@@ -77,14 +77,14 @@ void BoardInGm<BOARD_LEN>::TEST()
     BoardInGm<9> brd;
 //    auto &ins = brd.GetPosClcltr();
     brd.Init();
-    FOO_PRINT_LINE("%d", (int)sizeof(brd));
+    PRINT_LINE("%d", (int)sizeof(brd));
     PlayerColor color = BLACK_PLAYER;
     while (true) {
         brd.PRINT();
-//        FOO_PRINT_LINE(" ");
-//        FOO_PRINT_LINE("black chain:\n");
+//        PRINT_LINE(" ");
+//        PRINT_LINE("black chain:\n");
 //        brd.chain_sets_[0].PRINT();
-//        FOO_PRINT_LINE("white chain:\n");
+//        PRINT_LINE("white chain:\n");
 //        brd.chain_sets_[1].PRINT();
 //        brd.PRINT_EYES();
 //        for (int y=0; y<BOARD_LEN; ++y) {

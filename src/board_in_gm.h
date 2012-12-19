@@ -47,7 +47,7 @@ template <BoardLen BOARD_LEN>
 class BoardInGm : public Board<BOARD_LEN>
 {
 public:
-    typedef std::bitset<BLSq<BOARD_LEN>()> Bitset;
+    typedef std::bitset<BLSq<BOARD_LEN>()> BitSet;
 
     static const PointIndex NONE = -1;
 
@@ -59,7 +59,7 @@ public:
 
     PlayerColor LastPlayer() const {return last_player_;}
     PointIndex KoIndex() const {return ko_indx_;}
-    const Bitset &PlayableIndexes(PlayerColor color) const {
+    const BitSet &PlayableIndexes(PlayerColor color) const {
         return playable_indxs_[color];
     }
     PointIndex BlackRegion() const {
@@ -81,7 +81,7 @@ private:
     typedef std::vector<PointIndex> PointIndxVector;
 
     ChainSet<BOARD_LEN> chain_sets_[2];
-    Bitset playable_indxs_[2];
+    BitSet playable_indxs_[2];
     EyeSet<BOARD_LEN> eye_sets_[2];
     PointIndex ko_indx_ = -1;
     PlayerColor last_player_ = WHITE_PLAYER;
@@ -109,13 +109,13 @@ private:
 
 
 template<BoardLen BOARD_LEN>
-typename BoardInGm<BOARD_LEN>::Bitset
+typename BoardInGm<BOARD_LEN>::BitSet
 NokoPlayableIndexes(const BoardInGm<BOARD_LEN> &b, PlayerColor color)
 {
     if (b.KoIndex() == BoardInGm<BOARD_LEN>::NONE) {
         return b.PlayableIndexes(color);
     } else {
-        typename BoardInGm<BOARD_LEN>::Bitset kobits;
+        typename BoardInGm<BOARD_LEN>::BitSet kobits;
         kobits.set();
         kobits.reset(b.KoIndex());
         return kobits & b.PlayableIndexes(color);
@@ -128,6 +128,13 @@ bool IsEnd(const BoardInGm<BOARD_LEN> &b)
 {
     return b.PlayableIndexes(BLACK_PLAYER).count() == 0 &&
            b.PlayableIndexes(WHITE_PLAYER).count() == 0;
+}
+
+
+template <BoardLen BOARD_LEN>
+PlayerColor NextPlayer(const BoardInGm<BOARD_LEN> &b)
+{
+    return OppstColor(b.LastPlayer());
 }
 
 

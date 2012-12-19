@@ -88,13 +88,13 @@ void ChainSet<BOARD_LEN>::TEST()
 //    ChainSet<9> sc = s;
 //    sc.PRINT();
 
-//    FOO_PRINT_LINE("air count = %d.", s.GetAirCountByPiece(1));
+//    PRINT_LINE("air count = %d.", s.GetAirCountByPiece(1));
 //    PntIndxArray v = s.GetPieces(18);
 //    PntIndxArray::iterator it;
 //    for (it=v.begin(); it!=v.end(); ++it) {
 //        printf("%d, ", *it);
 //    }
-//    FOO_PRINT_LINE(" ");
+//    PRINT_LINE(" ");
 }
 
 

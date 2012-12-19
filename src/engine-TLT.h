@@ -43,49 +43,46 @@ PointIndex Engine<BOARD_LEN>::NextMove() const
         BoardInGm<BOARD_LEN> cur_node;
         cur_node.Copy(root);
         std::vector<HashKey> path;
-//        FOO_PRINT_LINE("do loop");
+//        PRINT_LINE("do loop");
 
         while (true) {
-//            FOO_PRINT_LINE("\n\nbegin while loop");
+//            PRINT_LINE("\n\nbegin while loop");
             PointIndex chld_i(0);
             if (IsEnd(cur_node)) {
                 return this->BestChild(root);
             } else if (this->HasNewChild(cur_node, &chld_i)) {
-//                FOO_PRINT_LINE("child i = %d", chld_i);
-                PlayerColor color = OppstColor(cur_node.LastPlayer());
+//                PRINT_LINE("child i = %d", chld_i);
+                PlayerColor color = NextPlayer(cur_node);
                 BoardInGm<BOARD_LEN> child;
                 child.Copy(cur_node);
                 child.PlayMove(Move(color, chld_i));
                 PointIndex black = this->Simulator().Simulate(child);
-//                FOO_PRINT_LINE("black = %d", black);
+//                PRINT_LINE("black = %d", black);
                 ++mc_count;
                 PointIndex result = child.LastPlayer() == BLACK_PLAYER ?
                                 black : BLSq<BOARD_LEN>() - black;
-//                FOO_PRINT_LINE("result = %d", result);
+//                PRINT_LINE("result = %d", result);
                 float profit = (float)result / BLSq<BOARD_LEN>();
                 Engine<BOARD_LEN>::TableItem item(1, profit);
                 table_[child.HashKey()] = item;
 
                 if (path.size() > 0) {
                     for (auto it=path.end()-1; it>=path.begin(); --it) {
-//                        FOO_PRINT_LINE("in for loop");
+//                        PRINT_LINE("in for loop");
                         profit = 1 - profit;
                         auto pathitem = table_[*it];
-                        auto t = pathitem.tried_times_;
+                        auto t = pathitem.visited_times_;
                         auto p = pathitem.avg_prft_;
-                        ++pathitem.tried_times_;
+                        ++pathitem.visited_times_;
                         pathitem.avg_prft_ = (p*t + profit) / (t + 1);
                         table_[*it] = pathitem;
                     }
                 }
-
                 break;
             } else {
                 PointIndex nexti = this->MaxUCBChild(cur_node);
                 if (nexti == -1) return -1;
-//                cur_node.PRINT_BOARD();
-//                FOO_PRINT_LINE("next i = %d", nexti);
-                PlayerColor cur_player = OppstColor(cur_node.LastPlayer());
+                PlayerColor cur_player = NextPlayer(cur_node);
                 cur_node.PlayMove(Move(cur_player, nexti));
                 path.push_back(cur_node.HashKey());
             }
@@ -105,7 +102,7 @@ HashKey Engine<BOARD_LEN>::ChildKey(const BoardInGm<BOARD_LEN> &parent,
     if (chldrn_key == NONE) {
         BoardInGm<BOARD_LEN> b;
         b.Copy(parent);
-        PlayerColor color = OppstColor(b.LastPlayer());
+        PlayerColor color = NextPlayer(b);
         b.PlayMove(Move(color, indx));
         HashKey key = b.HashKey();
         table_[prnt_key].children_key_[indx] = key;
@@ -120,7 +117,7 @@ template <BoardLen BOARD_LEN>
 bool Engine<BOARD_LEN>::HasNewChild(const BoardInGm<BOARD_LEN> &node,
                                     PointIndex *p_indx) const
 {
-    PlayerColor color = OppstColor(node.LastPlayer());
+    PlayerColor color = NextPlayer(node);
     auto playable = NokoPlayableIndexes(node, color);
     auto children = Get1s<BLSq<BOARD_LEN>()>(playable);
 
@@ -140,13 +137,13 @@ template <BoardLen BOARD_LEN>
 PointIndex
 Engine<BOARD_LEN>::MaxUCBChild(const BoardInGm<BOARD_LEN> &node) const
 {
-    PlayerColor nextc = OppstColor(node.LastPlayer());
+    PlayerColor nextc = NextPlayer(node);
     auto playable = NokoPlayableIndexes(node, nextc);
     auto playable_v = Get1s<BLSq<BOARD_LEN>()>(playable);
     int32_t sum = 0;
 
     for (PointIndex indx : playable_v) {
-        sum += table_[this->ChildKey(node, indx)].tried_times_;
+        sum += table_[this->ChildKey(node, indx)].visited_times_;
     }
 
     float max_ucb(0);
@@ -155,7 +152,7 @@ Engine<BOARD_LEN>::MaxUCBChild(const BoardInGm<BOARD_LEN> &node) const
     for (PointIndex indx : playable_v) {
         auto item = table_[this->ChildKey(node, indx)];
 
-        float ucb = item.avg_prft_ + sqrt(2 * log(sum) / item.tried_times_);
+        float ucb = item.avg_prft_ + sqrt(2 * log(sum) / item.visited_times_);
         if (ucb > max_ucb) {
             max_ucb = ucb;
             best = indx;
@@ -169,19 +166,16 @@ Engine<BOARD_LEN>::MaxUCBChild(const BoardInGm<BOARD_LEN> &node) const
 template <BoardLen BOARD_LEN>
 PointIndex Engine<BOARD_LEN>::BestChild(const BoardInGm<BOARD_LEN> &node) const
 {
-    PlayerColor nextc = OppstColor(node.LastPlayer());
+    PlayerColor nextc = NextPlayer(node);
     auto playable = NokoPlayableIndexes(node, nextc);
     auto playable_v = Get1s<BLSq<BOARD_LEN>()>(playable);
-    float max_profit = 0;
+    int most_visited = 0;
     PointIndex result(-1);
 
     for (PointIndex indx : playable_v) {
-        BoardInGm<BOARD_LEN> b;
-        b.Copy(node);
-        b.PlayMove(Move(nextc, indx));
-        auto item = table_[b.HashKey()];
-        if (item.avg_prft_ > max_profit) {
-            max_profit = item.avg_prft_;
+        auto item = table_[this->ChildKey(node, indx)];
+        if (item.visited_times_ > most_visited) {
+            most_visited = item.visited_times_;
             result = indx;
         }
     }

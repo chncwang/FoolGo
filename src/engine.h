@@ -32,11 +32,11 @@ public:
 
 private:
     struct TableItem {
-        int32_t tried_times_;
+        int32_t visited_times_;
         float avg_prft_;
         HashKey children_key_[BLSq<BOARD_LEN>()];
 
-        TableItem(int32_t t, float a) : tried_times_(t), avg_prft_(a) {Init();}
+        TableItem(int32_t t, float a) : visited_times_(t), avg_prft_(a) {Init();}
         TableItem() {Init();}
 
         void Init() {

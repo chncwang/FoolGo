@@ -34,7 +34,7 @@ inline ChainSet<BOARD_LEN>::GetAirSetByPiece(PointIndex piece_i) const
 template <BoardLen BOARD_LEN>
 inline AirCount ChainSet<BOARD_LEN>::GetAirCountByPiece(PointIndex piece_i) const
 {
-    FOO_ASSERT(IS_POINT_NOT_EMPTY(piece_i));
+    ASSERT(IS_POINT_NOT_EMPTY(piece_i));
     return this->GetAirCountOfChain(this->GetListHead(piece_i));
 }
 
@@ -43,7 +43,7 @@ template <BoardLen BOARD_LEN>
 typename ChainSet<BOARD_LEN>::PntIndxVector
 ChainSet<BOARD_LEN>::GetPieces(PointIndex piece_i) const
 {
-    FOO_ASSERT(IS_POINT_NOT_EMPTY(piece_i));
+    ASSERT(IS_POINT_NOT_EMPTY(piece_i));
     return this->GetPiecesOfChain(this->GetListHead(piece_i));
 }
 
@@ -99,7 +99,7 @@ void ChainSet<BOARD_LEN>::LetAdjcntChainsSetAir(PointIndex indx, bool v)
 template <BoardLen BOARD_LEN>
 void ChainSet<BOARD_LEN>::RemoveListByPiece(PointIndex piece_i)
 {
-    FOO_ASSERT(IS_POINT_NOT_EMPTY(piece_i));
+    ASSERT(IS_POINT_NOT_EMPTY(piece_i));
     PointIndex list_i = this->GetListHead(piece_i);
     this->RemoveList(list_i);
 }
@@ -122,7 +122,7 @@ ChainSet<BOARD_LEN>::CreateList(PointIndex node_i,
 template <BoardLen BOARD_LEN>
 PointIndex ChainSet<BOARD_LEN>::MergeLists(PointIndex head_a, PointIndex head_b)
 {
-    FOO_ASSERT(head_a != head_b);
+    ASSERT(head_a != head_b);
     if (lists_[head_a].len_ > lists_[head_b].len_) std::swap(head_a, head_b);
 
     for (int i=head_a; ; i=nodes_[i].next_) {
