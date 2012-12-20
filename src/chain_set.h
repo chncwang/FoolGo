@@ -32,7 +32,7 @@ public:
     void LetAdjcntChainsSetAir(PointIndex indx, bool v);
     void RemoveListByPiece(PointIndex piece_i);
 
-#ifdef FOO_TEST
+#ifdef DTEST
     void PRINT() const;
     static void TEST();
 #endif
@@ -73,7 +73,7 @@ private:
 
 #include "chain_set-TLT.h"
 
-#ifdef FOO_TEST
+#ifdef DTEST
 #include "chain_set_TEST.h"
 #endif
 

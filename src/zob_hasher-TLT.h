@@ -40,15 +40,15 @@ template <BoardLen BOARD_LEN>
 ZobHasher<BOARD_LEN>::ZobHasher()
 {
     uint32_t max = ~0;
-    auto Rand = std::bind(g_Rand, max);
+    auto LRand = std::bind(Rand, max);
 
     for (int i=0; i<BLSq<BOARD_LEN>(); ++i) {
-        for (int j=0; j<3; ++j) board_hash_[i][j] = Rand();
+        for (int j=0; j<3; ++j) board_hash_[i][j] = LRand();
     }
 
-    for (int i=0; i<2; ++i) player_hash_[i] = Rand();
-    for (int i=0; i<BLSq<BOARD_LEN>(); ++i) ko_hash_[i] = Rand();
-    noko_hash_ = Rand();
+    for (int i=0; i<2; ++i) player_hash_[i] = LRand();
+    for (int i=0; i<BLSq<BOARD_LEN>(); ++i) ko_hash_[i] = LRand();
+    noko_hash_ = LRand();
 }
 
 

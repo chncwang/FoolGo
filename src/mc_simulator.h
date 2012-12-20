@@ -16,7 +16,7 @@ public:
 
     PointIndex Simulate(const BoardInGm<BOARD_LEN> &input_board) const;
     // return black region;
-//#ifdef FOO_TEST
+//#ifdef DTEST
     static void TEST();
 //#endif
 
@@ -27,7 +27,7 @@ private:
 
 
 #include "mc_simulator-TLT.h"
-//#ifdef FOO_TEST
+//#ifdef DTEST
 #include "mc_simulator_TEST.h"
 //#endif
 

@@ -17,7 +17,7 @@ void Engine<BOARD_LEN>::TEST()
         PointIndex nexti = engine.NextMove();
         unsigned end = clock();
         printf("time: %f\n\n", (float)(end - begin) / 1000000);
-        engine.PRINT_PROFITS(engine.brdingm_);
+//        engine.PRINT_PROFITS(engine.brdingm_);
         engine.Play(nexti);
         engine.brdingm_.PRINT_BOARD();
         int x, y;

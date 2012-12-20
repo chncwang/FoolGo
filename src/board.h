@@ -33,7 +33,7 @@ public:
         return PosCalculator<BOARD_LEN>::Ins();
     }
 
-//#ifdef FOO_TEST
+//#ifdef DTEST
     virtual void PRINT() const;
     static void TEST();
 //#endif
@@ -46,7 +46,7 @@ private:
 
 #include "board-TLT.h"
 
-//#ifdef FOO_TEST
+//#ifdef DTEST
 #include "board_TEST.h"
 //#endif
 

@@ -1,9 +1,12 @@
-//#define FOO_TEST
+#ifndef DEF_H
+#define DEF_H
+
+#define DTEST
 
 #include <cstdio>
 #include <cassert>
 
-#ifdef FOO_TEST
+#ifdef DTEST
 
 #define ASSERT(a) assert(a)
 #define PRINT_LINE(...) {\
@@ -27,3 +30,5 @@
     ClassName(const ClassName &) = delete; \
     ClassName &operator =(const ClassName &) = delete;
 #define TEST_LEN (9)
+
+#endif

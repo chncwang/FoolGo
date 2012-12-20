@@ -3,7 +3,7 @@
 #include <random>
 
 
-uint32_t g_Rand(uint32_t max)
+uint32_t Rand(uint32_t max)
 {
     static unsigned ts =
         std::chrono::system_clock::now().time_since_epoch().count();

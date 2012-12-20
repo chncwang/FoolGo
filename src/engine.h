@@ -25,7 +25,7 @@ public:
     void Play(PointIndex nexti);
     void Pass();
     PointIndex NextMove() const;
-//#ifdef FOO_TEST
+//#ifdef DTEST
     static void TEST();
     void PRINT_PROFITS(const BoardInGm<BOARD_LEN> &b) const;
 //#endif
@@ -45,7 +45,7 @@ private:
     };
     typedef std::unordered_map<HashKey, TableItem> TrnspsitionTbl;
 
-    static const int32_t SIMULATE_COUNT = 30000;
+    static const int32_t SIMULATE_COUNT = 100000;
 
     BoardInGm<BOARD_LEN> brdingm_;
     PlayerColor next_player_ = BLACK_PLAYER;

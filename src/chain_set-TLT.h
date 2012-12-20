@@ -7,7 +7,7 @@
 
 #include <algorithm>
 
-#ifdef FOO_TEST
+#ifdef DTEST
 #define IS_POINT_NOT_EMPTY(piece_i) \
     (this->GetListHead(piece_i) != ChainSet<BOARD_LEN>::NONE_LIST)
 #endif

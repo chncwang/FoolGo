@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "bitset_util.h"
+#include "vector_util.h"
 
 
 template <BoardLen BOARD_LEN>
@@ -62,14 +63,14 @@ PointIndex Engine<BOARD_LEN>::NextMove() const
                 PointIndex result = child.LastPlayer() == BLACK_PLAYER ?
                                 black : BLSq<BOARD_LEN>() - black;
 //                PRINT_LINE("result = %d", result);
-                float profit = (float)result / BLSq<BOARD_LEN>();
+                float profit = result > (BLSq<BOARD_LEN>() / 2.0) ? 1 : -1;
                 Engine<BOARD_LEN>::TableItem item(1, profit);
                 table_[child.HashKey()] = item;
 
                 if (path.size() > 0) {
                     for (auto it=path.end()-1; it>=path.begin(); --it) {
 //                        PRINT_LINE("in for loop");
-                        profit = 1 - profit;
+                        profit = -profit;
                         auto pathitem = table_[*it];
                         auto t = pathitem.visited_times_;
                         auto p = pathitem.avg_prft_;
@@ -120,6 +121,7 @@ bool Engine<BOARD_LEN>::HasNewChild(const BoardInGm<BOARD_LEN> &node,
     PlayerColor color = NextPlayer(node);
     auto playable = NokoPlayableIndexes(node, color);
     auto children = Get1s<BLSq<BOARD_LEN>()>(playable);
+    RandomizeVector(&children);
 
     for (PointIndex nexti : children) {
         HashKey ck = this->ChildKey(node, nexti);
@@ -146,7 +148,8 @@ Engine<BOARD_LEN>::MaxUCBChild(const BoardInGm<BOARD_LEN> &node) const
         sum += table_[this->ChildKey(node, indx)].visited_times_;
     }
 
-    float max_ucb(0);
+    static const float INITIAL = -10000;
+    float max_ucb(INITIAL);
     PointIndex best(0);
 
     for (PointIndex indx : playable_v) {
@@ -159,7 +162,7 @@ Engine<BOARD_LEN>::MaxUCBChild(const BoardInGm<BOARD_LEN> &node) const
         }
     }
 
-    return max_ucb > 0 ? best : -1;
+    return max_ucb > INITIAL ? best : -1;
 }
 
 

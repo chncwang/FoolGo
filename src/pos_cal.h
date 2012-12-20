@@ -35,7 +35,7 @@ public:
     }
     PosStatus GetPosStatus(const Position &pos);
 
-#ifdef FOO_TEST
+#ifdef DTEST
     static void TEST();
 #endif
 
@@ -54,7 +54,7 @@ private:
 
 #include "pos_cal-TLT.h"
 
-#ifdef FOO_TEST
+#ifdef DTEST
 #include "pos_cal_TEST.h"
 #endif
 

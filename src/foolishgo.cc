@@ -8,6 +8,7 @@
 #include "mc_simulator.h"
 #include "zob_hasher.h"
 #include "engine.h"
+#include "vector_util.h"
 
 
 int main(int argc, const char *argv[])
@@ -19,5 +20,6 @@ int main(int argc, const char *argv[])
 //    MCSimulator<TEST_LEN>::TEST();
 //    ZobHasher<TEST_LEN>::TEST();
     Engine<TEST_LEN>::TEST();
+//    VectorUtil_TEST();
     return 0;
 }

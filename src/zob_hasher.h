@@ -18,7 +18,7 @@ public:
     
     HashKey GetHash(const BoardInGm<BOARD_LEN> &b) const;
 
-#ifdef FOO_TEST
+#ifdef DTEST
     static void TEST();
     void PRINT();
 #endif
@@ -36,7 +36,7 @@ private:
 
 
 #include "zob_hasher-TLT.h"
-#ifdef FOO_TEST
+#ifdef DTEST
 #include "zob_hasher_TEST.h"
 #endif
 

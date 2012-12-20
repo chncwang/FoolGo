@@ -70,7 +70,7 @@ public:
     void PlayMove(const Move &move);
     void Pass(PlayerColor color);
 
-//#ifdef FOO_TEST
+//#ifdef DTEST
     void PRINT_EYES() const;
     void PRINT_PLAYABLE() const;
     void PRINT_BOARD() const {Board<BOARD_LEN>::PRINT();}
@@ -140,7 +140,7 @@ PlayerColor NextPlayer(const BoardInGm<BOARD_LEN> &b)
 
 #include "board_in_gm-TLT.h"
 
-//#ifdef FOO_TEST
+//#ifdef DTEST
 #include "board_in_gm_TEST.h"
 //#endif
 

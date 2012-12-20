@@ -36,7 +36,7 @@ MCSimulator<BOARD_LEN>::Simulate(const BoardInGm<BOARD_LEN> &input_board) const
 
         PointIndex play_c = noko_plbl.count();
         if (play_c > 0) {
-            PointIndex rand = g_Rand(play_c - 1);
+            PointIndex rand = Rand(play_c - 1);
             PointIndex cur_indx =
                 GetXst1<BLSq<BOARD_LEN>()>(noko_plbl, rand);
 //            PRINT_LINE("cur_indx = %d", cur_indx);
