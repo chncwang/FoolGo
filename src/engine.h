@@ -45,7 +45,7 @@ private:
     };
     typedef std::unordered_map<HashKey, TableItem> TrnspsitionTbl;
 
-    static const int32_t SIMULATE_COUNT = 100000;
+    static const int32_t SIMULATE_COUNT = 1000000;
 
     BoardInGm<BOARD_LEN> brdingm_;
     PlayerColor next_player_ = BLACK_PLAYER;
@@ -56,10 +56,10 @@ private:
     PointIndex MaxUCBChild(const BoardInGm<BOARD_LEN> &node) const;
     PointIndex BestChild(const BoardInGm<BOARD_LEN> &node) const;
 
-    inline MCSimulator<BOARD_LEN> &Simulator() const {
+    INLINE MCSimulator<BOARD_LEN> &Simulator() const {
         return MCSimulator<BOARD_LEN>::Ins();
     }
-    inline PosCalculator<BOARD_LEN> &GetPosClcltr() const {
+    INLINE PosCalculator<BOARD_LEN> &GetPosClcltr() const {
         return PosCalculator<BOARD_LEN>::Ins();
     }
 };

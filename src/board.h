@@ -29,7 +29,7 @@ public:
     void SetPoint(PointIndex index, Point point);
     void SetPoint(const Position &pos, Point point);
 
-    inline PosCalculator<BOARD_LEN> &GetPosClcltr() const {
+    INLINE PosCalculator<BOARD_LEN> &GetPosClcltr() const {
         return PosCalculator<BOARD_LEN>::Ins();
     }
 

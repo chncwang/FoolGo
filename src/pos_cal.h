@@ -17,20 +17,20 @@ public:
     } PosStatus;
     static PosCalculator &Ins();
 
-    inline const Position &GetPos(PointIndex index) const {
+    INLINE const Position &GetPos(PointIndex index) const {
         ASSERT(this->IsInBoard(index));
         return position_[index];
     }
-    inline PointIndex GetIndex(const Position &pos) const {
+    INLINE PointIndex GetIndex(const Position &pos) const {
         ASSERT(this->IsInBoard(pos));
         return indexes_[pos.y_][pos.x_];
     }
 
-    inline bool IsInBoard(const Position &pos) const {
+    INLINE bool IsInBoard(const Position &pos) const {
         return pos.x_ >= 0 && pos.x_ < BOARD_LEN
             && pos.y_ >= 0 && pos.y_ < BOARD_LEN;
     }
-    inline bool IsInBoard(PointIndex indx) const {
+    INLINE bool IsInBoard(PointIndex indx) const {
         return indx >= 0 && indx < BLSq<BOARD_LEN>();
     }
     PosStatus GetPosStatus(const Position &pos);

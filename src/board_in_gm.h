@@ -16,13 +16,7 @@ const PlayerColor WHITE_PLAYER = 1;
 
 typedef uint32_t HashKey;
 
-
-inline PlayerColor OppstColor(PlayerColor color)
-{
-    static const PlayerColor T[2] = {1, 0};
-    return T[color];
-}
-
+PlayerColor OppstColor(PlayerColor color);
 
 struct Move {
     PlayerColor color_;

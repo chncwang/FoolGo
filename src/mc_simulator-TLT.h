@@ -9,7 +9,7 @@
 
 
 template <BoardLen BOARD_LEN>
-inline MCSimulator<BOARD_LEN> &MCSimulator<BOARD_LEN>::Ins()
+INLINE MCSimulator<BOARD_LEN> &MCSimulator<BOARD_LEN>::Ins()
 {
     static MCSimulator<BOARD_LEN> ins;
     return ins;

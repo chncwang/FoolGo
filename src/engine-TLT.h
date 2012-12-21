@@ -26,7 +26,7 @@ void Engine<BOARD_LEN>::Play(PointIndex nexti)
 
 
 template <BoardLen BOARD_LEN>
-inline void Engine<BOARD_LEN>::Pass()
+INLINE void Engine<BOARD_LEN>::Pass()
 {
     brdingm_.Pass(next_player_);
     next_player_ = OppstColor(next_player_);

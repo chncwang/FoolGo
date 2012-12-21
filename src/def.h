@@ -17,12 +17,14 @@
             PRINT_LINE("error: cannot run here!");\
             ASSERT(false);\
         }
+#define INLINE
 
 #else
 
 #define ASSERT(a)
 #define PRINT_LINE(...)
 #define CANNOT_RUN_HERE() 
+#define INLINE inline
 
 #endif
 
