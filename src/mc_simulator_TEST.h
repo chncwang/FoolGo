@@ -15,7 +15,7 @@ void MCSimulator<BOARD_LEN>::TEST()
     for (int i=0; i<a; ++i) {
         BoardInGm<TEST_LEN> b;
         b.Init();
-        PRINT_LINE("i = %d", i);
+//        PRINT_LINE("i = %d", i);
         auto &mcs = MCSimulator<TEST_LEN>::Ins();
         mcs.Simulate(b);
     }

@@ -1,6 +1,6 @@
 VPATH = src
 CXX := clang++
-CXXFLAGS := -Weverything -std=c++0x -O1 -g \
+CXXFLAGS := -Weverything -std=c++0x -O3 -march=core2 -g \
     -stdlib=libc++ \
     -Wno-c++98-compat-pedantic \
     -Wno-conversion \

@@ -63,14 +63,14 @@ PointIndex Engine<BOARD_LEN>::NextMove() const
                 PointIndex result = child.LastPlayer() == BLACK_PLAYER ?
                                 black : BLSq<BOARD_LEN>() - black;
 //                PRINT_LINE("result = %d", result);
-                float profit = result > (BLSq<BOARD_LEN>() / 2.0) ? 1 : -1;
+                float profit = result > (BLSq<BOARD_LEN>() / 2.0) ? 1 : 0;
                 Engine<BOARD_LEN>::TableItem item(1, profit);
                 table_[child.HashKey()] = item;
 
                 if (path.size() > 0) {
                     for (auto it=path.end()-1; it>=path.begin(); --it) {
 //                        PRINT_LINE("in for loop");
-                        profit = -profit;
+                        profit = 1 - profit;
                         auto pathitem = table_[*it];
                         auto t = pathitem.visited_times_;
                         auto p = pathitem.avg_prft_;

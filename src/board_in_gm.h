@@ -83,6 +83,8 @@ private:
     BrdInGmDlgt<BOARD_LEN> *delegate_;
     uint32_t hash_key_;
 
+    void LetAdjChnsSetAir(PointIndex indx, bool v);
+
     bool IsSelfPieceOrEye(const Move &move) const;
 
     bool IsEmptySingly(PointIndex indx) const;

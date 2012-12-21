@@ -28,8 +28,8 @@ public:
     AirCount GetAirCountByPiece(PointIndex piece_i) const;
     PntIndxVector GetPieces(PointIndex piece_i) const;
 
+    void SetAir(PointIndex indx, PointIndex air_i, bool v);
     void AddPiece(PointIndex indx, const AirSet &air_set);
-    void LetAdjcntChainsSetAir(PointIndex indx, bool v);
     void RemoveListByPiece(PointIndex piece_i);
 
 #ifdef DTEST

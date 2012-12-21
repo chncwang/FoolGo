@@ -140,6 +140,25 @@ INLINE void BoardInGm<BOARD_LEN>::Pass(PlayerColor color)
 
 
 template <BoardLen BOARD_LEN>
+void BoardInGm<BOARD_LEN>::LetAdjChnsSetAir(PointIndex indx, bool v)
+{
+    auto &ins = this->GetPosClcltr();
+    const Position &pos = ins.GetPos(indx);
+
+    for (int i=0; i<4; ++i) {
+        Position adj_pos = pos.AdjcntPos(i);
+        if (!ins.IsInBoard(adj_pos)) continue;
+
+        PointIndex adj_i = ins.GetIndex(adj_pos);
+        Point pnt = this->GetPoint(adj_i);
+        if (pnt == EMPTY_POINT) continue;
+
+        chain_sets_[pnt].SetAir(adj_i, indx, v);
+    }
+}
+
+
+template <BoardLen BOARD_LEN>
 INLINE bool BoardInGm<BOARD_LEN>::IsSelfPieceOrEye(const Move &move) const
 {
     PointIndex indx = move.indx_;
@@ -209,28 +228,15 @@ bool BoardInGm<BOARD_LEN>::PlayBasicMove(
         const Move &move,
         typename BoardInGm<BOARD_LEN>::PointIndxVector *v)
 {
+    ASSERT(v != nullptr);
     PlayerColor color = move.color_;
     PointIndex indx = move.indx_;
     ASSERT(this->GetPoint(indx) == EMPTY_POINT);
-    this->SetPoint(indx, color);
 
-    for (int i=0; i<2; ++i) chain_sets_[i].LetAdjcntChainsSetAir(indx, false);
     std::bitset<BLSq<BOARD_LEN>()> air_set;
     PlayerColor oc = OppstColor(color);
     auto &ins = this->GetPosClcltr();
     const Position &pos = ins.GetPos(indx);
-
-    std::function<void(const typename BoardInGm<BOARD_LEN>::PointIndxVector &,
-            int)> Fun;
-    if (v == nullptr) {
-        Fun = [](const typename BoardInGm<BOARD_LEN>::PointIndxVector &r, int i)
-        {};
-    } else {
-        Fun =
-        [v](const typename BoardInGm<BOARD_LEN>::PointIndxVector &r, int i) {
-            v[i] = r;
-        };
-    }
 
     for (int i=0; i<4; ++i) {
         Position adj_pos = pos.AdjcntPos(i);
@@ -238,15 +244,17 @@ bool BoardInGm<BOARD_LEN>::PlayBasicMove(
 
         PointIndex adj_indx = ins.GetIndex(adj_pos);
         if (this->GetPoint(adj_indx) == oc &&
-                chain_sets_[oc].GetAirCountByPiece(adj_indx) == 0) {
+                chain_sets_[oc].GetAirCountByPiece(adj_indx) == 1) {
             auto r = RemoveChain(Move(oc, adj_indx));
-            Fun(r, i);
+            v[i] = r;
         }
         if (this->GetPoint(adj_pos) == EMPTY_POINT) {
             air_set.set(adj_indx);
         }
     }
 
+    this->SetPoint(indx, color);
+    this->LetAdjChnsSetAir(indx, false);
     chain_sets_[color].AddPiece(indx, air_set);
     return chain_sets_[color].GetAirCountByPiece(indx) == 0 ?
         false : true;
@@ -260,13 +268,13 @@ BoardInGm<BOARD_LEN>::RemoveChain(const Move &move)
     auto p_chnset = chain_sets_ + move.color_;
     auto trp = p_chnset->GetPieces(move.indx_);
     chain_sets_[move.color_].RemoveListByPiece(move.indx_);
-    PlayerColor oc = OppstColor(move.color_);
 
     for (PointIndex indx : trp) {
         this->SetPoint(indx, EMPTY_POINT);
-        chain_sets_[oc].LetAdjcntChainsSetAir(indx, true);
         for (int i=0; i<2; ++i) playable_indxs_[i].set(indx);
     }
+
+    for (PointIndex indx : trp) this->LetAdjChnsSetAir(indx, true);
 
     b_pcs_c_ -= trp.size() * OppstColor(move.color_);
     return trp;

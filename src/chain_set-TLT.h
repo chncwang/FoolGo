@@ -49,10 +49,24 @@ ChainSet<BOARD_LEN>::GetPieces(PointIndex piece_i) const
 
 
 template <BoardLen BOARD_LEN>
+void ChainSet<BOARD_LEN>::SetAir(PointIndex indx, PointIndex air_i, bool v)
+{
+    AirSet air_set;
+    if (!v) air_set.set();
+    air_set[air_i] = v;
+    PointIndex head = this->GetListHead(indx);
+    ASSERT(head != ChainSet<BOARD_LEN>::NONE_LIST);
+    List *pl = lists_ + head;
+    const AirSet &r_as = pl->air_set_;
+    pl->air_set_ = v ? (r_as | air_set) : (r_as & air_set);
+    pl->air_count_ = pl->air_set_.count();
+}
+
+
+template <BoardLen BOARD_LEN>
 void ChainSet<BOARD_LEN>::AddPiece(PointIndex indx,
                                    const ChainSet<BOARD_LEN>::AirSet &air_set)
 {
-    this->LetAdjcntChainsSetAir(indx, false);
     const PosCalculator<BOARD_LEN> &ins = this->GetPosClcltr();
     this->CreateList(indx, air_set);
     PointIndex list_i = indx;
@@ -72,28 +86,28 @@ void ChainSet<BOARD_LEN>::AddPiece(PointIndex indx,
 }
 
 
-template <BoardLen BOARD_LEN>
-void ChainSet<BOARD_LEN>::LetAdjcntChainsSetAir(PointIndex indx, bool v)
-{
-    AirSet air_set;
-    if (!v) air_set.set();
-    air_set[indx] = v;
-    auto &ins = this->GetPosClcltr();
-    const Position &pos = ins.GetPos(indx);
+//template <BoardLen BOARD_LEN>
+//void ChainSet<BOARD_LEN>::LetAdjcntChainsSetAir(PointIndex indx, bool v)
+//{
+//    AirSet air_set;
+//    if (!v) air_set.set();
+//    air_set[indx] = v;
+//    auto &ins = this->GetPosClcltr();
+//    const Position &pos = ins.GetPos(indx);
 
-    for (int i=0; i<4; ++i) {
-        Position adj_pos = pos.AdjcntPos(i);
-        if (!ins.IsInBoard(adj_pos)) continue;
-        PointIndex adj_i = ins.GetIndex(adj_pos);
-        PointIndex head = this->GetListHead(adj_i);
-        if (head == ChainSet<BOARD_LEN>::NONE_LIST) continue;
+//    for (int i=0; i<4; ++i) {
+//        Position adj_pos = pos.AdjcntPos(i);
+//        if (!ins.IsInBoard(adj_pos)) continue;
+//        PointIndex adj_i = ins.GetIndex(adj_pos);
+//        PointIndex head = this->GetListHead(adj_i);
+//        if (head == ChainSet<BOARD_LEN>::NONE_LIST) continue;
 
-        List *pl = lists_ + head;
-        const AirSet &r_as = pl->air_set_;
-        pl->air_set_ = v ? (r_as | air_set) : (r_as & air_set);
-        pl->air_count_ = pl->air_set_.count();
-    }
-}
+//        List *pl = lists_ + head;
+//        const AirSet &r_as = pl->air_set_;
+//        pl->air_set_ = v ? (r_as | air_set) : (r_as & air_set);
+//        pl->air_count_ = pl->air_set_.count();
+//    }
+//}
 
 
 template <BoardLen BOARD_LEN>
@@ -128,6 +142,7 @@ PointIndex ChainSet<BOARD_LEN>::MergeLists(PointIndex head_a, PointIndex head_b)
     for (int i=head_a; ; i=nodes_[i].next_) {
         nodes_[i].list_head_ = head_b;
         if (i == lists_[head_a].tail_) break;
+        ASSERT(i != nodes_[i].next_);
     }
 
     List *list_b = lists_ + head_b;
