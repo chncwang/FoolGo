@@ -19,7 +19,7 @@ void BoardInGm<BOARD_LEN>::PRINT_EYES() const
     printf("  ");
     for (int i=0; i<BOARD_LEN; ++i) printf("%d  ", i);
     printf("\n");
-    std::function<void(PointIndex)> Print = [this](PointIndex indx) {
+    auto Print = [this](PointIndex indx) {
         if (this->GetPoint(indx) != EMPTY_POINT) printf("xx ");
         else if (this->IsRealEye(Move(0, indx))) printf("br ");
         else if (this->IsEye(Move(0, indx))) printf("be ");
@@ -47,7 +47,7 @@ void BoardInGm<BOARD_LEN>::PRINT_PLAYABLE() const
     printf("  ");
     for (int i=0; i<BOARD_LEN; ++i) printf("%d ", i);
     printf("\n");
-    std::function<void(PointIndex)> Print = [this](PointIndex indx) {
+    auto Print = [this](PointIndex indx) {
         Move bm(0, indx), wm(1, indx);
         bool bp = this->IsPlayable(bm);
         bool wp = this->IsPlayable(wm);

@@ -26,13 +26,53 @@ struct Move {
     Move(PlayerColor color, PointIndex indx) : color_(color), indx_(indx) {}
 };
 
-
 template <BoardLen BOARD_LEN> class BoardInGm;
+
+
+
+class BrdChange
+{
+public:
+    template <typename T>
+    struct Change {
+        T origin_, now_;
+    };
+
+    struct Pair {
+        PointIndex indx_;
+        Change<Point> pnt_;
+
+        INLINE void Set(PointIndex indx, Point orgn, Point nw) {
+            indx_ = indx;
+            pnt_.origin_ = orgn;
+            pnt_.now_ = nw;
+        }
+    };
+
+    BrdChange() = default;
+    ~BrdChange() = default;
+    DISALLOW_COPY_AND_ASSIGN(BrdChange);
+    void Init(PlayerColor color, PointIndex ko);
+    void SetNow(PointIndex ko, PointIndex move_i, bool now_empty,
+                const std::vector<PointIndex> &removed);
+
+    const Change<PointIndex> &KoChng() const {return ko_indx_;}
+    const Change<PlayerColor> &LastPlayerChng() const {return last_player_;}
+    const std::vector<Pair> &PointsChng() const {return indxs_;}
+
+private:
+    Change<PointIndex> ko_indx_;
+    Change<PlayerColor> last_player_;
+    std::vector<Pair> indxs_;
+};
+
+
 
 template <BoardLen BOARD_LEN>
 class BrdInGmDlgt {
 public:
     virtual HashKey GetHash(const BoardInGm<BOARD_LEN> &b) const = 0;
+    virtual HashKey GetHash(HashKey hash, const BrdChange &change) const = 0;
 };
 
 
@@ -91,7 +131,8 @@ private:
     bool IsSuiside(const Move &move) const;
     bool IsPlayable(const Move &move) const;
 
-    bool PlayBasicMove(const Move &move, PointIndxVector *v = nullptr);
+    void PlayBasicMove(const Move &move, PointIndxVector *v,
+                       PointIndxVector *sssdv);
     PointIndxVector RemoveChain(const Move &move);
 
     void UpdateEye(const Move &move);

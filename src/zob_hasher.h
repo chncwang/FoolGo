@@ -15,8 +15,9 @@ class ZobHasher : public BrdInGmDlgt<BOARD_LEN>
 public:
     DISALLOW_COPY_AND_ASSIGN(ZobHasher);
     static ZobHasher &Ins();
-    
+
     HashKey GetHash(const BoardInGm<BOARD_LEN> &b) const;
+    HashKey GetHash(HashKey hash, const BrdChange &chng) const;
 
 #ifdef DTEST
     static void TEST();

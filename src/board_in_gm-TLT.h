@@ -11,10 +11,11 @@
 #include <functional>
 
 #include "bitset_util.h"
+#include "vector_util.h"
 #include "zob_hasher.h"
 
 
-INLINE PlayerColor OppstColor(PlayerColor color)
+inline PlayerColor OppstColor(PlayerColor color)
 {
     static const PlayerColor T[2] = {1, 0};
     return T[color];
@@ -57,6 +58,8 @@ void BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
     PointIndex indx = move.indx_;
     ASSERT(this->GetPosClcltr().IsInBoard(indx));
     ASSERT(this->GetPoint(indx) == EMPTY_POINT);
+    BrdChange change;
+    change.Init(this->LastPlayer(), this->KoIndex());
     b_pcs_c_ += OppstColor(color);
 
     for (int i=0; i<2; ++i) {
@@ -68,9 +71,9 @@ void BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
     PlayerColor oc = OppstColor(color);
     auto &ins = this->GetPosClcltr();
     const Position &pos = ins.GetPos(indx);
-    typename BoardInGm<BOARD_LEN>::PointIndxVector ate_points[4];
+    typename BoardInGm<BOARD_LEN>::PointIndxVector ate_points[4], sssdv;
 
-    if (!this->PlayBasicMove(move, ate_points)) this->RemoveChain(move);
+    this->PlayBasicMove(move, ate_points, &sssdv);
 
     for (int i=0; i<4; ++i) {
         Position adj_pos = pos.AdjcntPos(i);
@@ -125,7 +128,17 @@ void BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
     }
 
     last_player_ = color;
-    hash_key_ = delegate_->GetHash(*this);
+
+    if (this->GetPoint(indx) == EMPTY_POINT) {
+        change.SetNow(ko_indx_, indx, true, sssdv);
+    } else {
+        auto ates = ConcatVectors(ate_points);
+        change.SetNow(ko_indx_, indx, false, ates);
+    }
+
+    hash_key_ = delegate_->GetHash(hash_key_, change);
+//    hash_key_ = delegate_->GetHash(*this);
+    ASSERT(key == hash_key_);
 }
 
 
@@ -224,9 +237,10 @@ bool BoardInGm<BOARD_LEN>::IsPlayable(const Move &move) const
 
 
 template <BoardLen BOARD_LEN>
-bool BoardInGm<BOARD_LEN>::PlayBasicMove(
+void BoardInGm<BOARD_LEN>::PlayBasicMove(
         const Move &move,
-        typename BoardInGm<BOARD_LEN>::PointIndxVector *v)
+        typename BoardInGm<BOARD_LEN>::PointIndxVector *v,
+        typename BoardInGm<BOARD_LEN>::PointIndxVector *sssdv)
 {
     ASSERT(v != nullptr);
     PlayerColor color = move.color_;
@@ -245,8 +259,7 @@ bool BoardInGm<BOARD_LEN>::PlayBasicMove(
         PointIndex adj_indx = ins.GetIndex(adj_pos);
         if (this->GetPoint(adj_indx) == oc &&
                 chain_sets_[oc].GetAirCountByPiece(adj_indx) == 1) {
-            auto r = RemoveChain(Move(oc, adj_indx));
-            v[i] = r;
+            v[i] = RemoveChain(Move(oc, adj_indx));
         }
         if (this->GetPoint(adj_pos) == EMPTY_POINT) {
             air_set.set(adj_indx);
@@ -256,8 +269,9 @@ bool BoardInGm<BOARD_LEN>::PlayBasicMove(
     this->SetPoint(indx, color);
     this->LetAdjChnsSetAir(indx, false);
     chain_sets_[color].AddPiece(indx, air_set);
-    return chain_sets_[color].GetAirCountByPiece(indx) == 0 ?
-        false : true;
+    if (chain_sets_[color].GetAirCountByPiece(indx) == 0) {
+        *sssdv = this->RemoveChain(move);
+    }
 }
 
 

@@ -8,6 +8,14 @@
 #include "rand.h"
 
 
+template <typename T, typename GetHash>
+inline static HashKey
+HashChange(const BrdChange::Change<T> &chng, const GetHash &get)
+{
+    return get(chng.origin_) ^ get(chng.now_);
+}
+
+
 template <BoardLen BOARD_LEN>
 ZobHasher<BOARD_LEN> &ZobHasher<BOARD_LEN>::Ins()
 {
@@ -33,6 +41,32 @@ HashKey ZobHasher<BOARD_LEN>::GetHash(const BoardInGm<BOARD_LEN> &b) const
         noko_hash_ : ko_hash_[ko_indx];
 
     return result;
+}
+
+
+template <BoardLen BOARD_LEN>
+HashKey
+ZobHasher<BOARD_LEN>::GetHash(HashKey hash, const BrdChange &chng) const
+{
+    auto getko = [this](PointIndex ko_indx) {
+        return (ko_indx == BoardInGm<BOARD_LEN>::NONE) ?
+            noko_hash_ : ko_hash_[ko_indx];
+    };
+    auto getplayer = [this](PlayerColor color) {
+        return player_hash_[color];
+    };
+    HashKey r = hash ^ HashChange(chng.KoChng(), getko) ^
+                HashChange(chng.LastPlayerChng(), getplayer);
+
+    for (auto pair : chng.PointsChng()) {
+        PointIndex pair_indx = pair.indx_;
+        auto getpnt = [this, pair_indx](Point pnt) {
+            return board_hash_[pair_indx][pnt];
+        };
+        r ^= HashChange(pair.pnt_, getpnt);
+    }
+
+    return r;
 }
 
 
