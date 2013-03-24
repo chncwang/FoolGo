@@ -1,0 +1,10 @@
+a
+*.o
+*.swp
+*\tags
+a.out
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile

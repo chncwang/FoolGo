@@ -1,4 +1,5 @@
 #ifndef BOARD_IN_GM
+
 #define BOARD_IN_GM
 
 #include <stdint.h>
@@ -78,7 +79,7 @@ public:
 
 
 template <BoardLen BOARD_LEN>
-class BoardInGm : public Board<BOARD_LEN>
+class BoardInGm : private Board<BOARD_LEN>
 {
 public:
     typedef std::bitset<BLSq<BOARD_LEN>()> BitSet;
@@ -91,6 +92,12 @@ public:
     void Init();
     void Copy(const BoardInGm &b);
 
+    Point GetPoint(PointIndex indx) const {
+        return Board<BOARD_LEN>::GetPoint(indx);
+    }
+    Point GetPoint(const Position &pos) const {
+        return Board<BOARD_LEN>::GetPoint(pos);
+    }
     PlayerColor LastPlayer() const {return last_player_;}
     PointIndex KoIndex() const {return ko_indx_;}
     const BitSet &PlayableIndexes(PlayerColor color) const {
