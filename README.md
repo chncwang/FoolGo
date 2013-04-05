@@ -7,9 +7,10 @@ Its Intelligent algorithm is based on Monte Carlo state evaluation, and UCG sear
 With incremental updating of a data structure called "chian" in the game process, it's able to simulate Monte Carlo game efficiently.
 
 ## Make
-
-* the default compiler set in the Makefile is clang++
-* C++ 11 compiler is required.
+* cmake is required.
+* g++ 4.6.3 is required.
+* cd the project's root directory.
+* cmake .
 * make
 
 ## Question ?

@@ -41,7 +41,8 @@ private:
     static const PointIndex NONE_LIST = -1;
 
     struct Node {
-        PointIndex next_, list_head_ = NONE_LIST;
+        PointIndex next_, list_head_;
+        Node() : list_head_(NONE_LIST) {}
     } nodes_[BLSq<BOARD_LEN>()];
 
     struct List {

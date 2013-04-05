@@ -86,7 +86,7 @@ public:
 
     static const PointIndex NONE = -1;
 
-    BoardInGm() = default;
+    BoardInGm() : ko_indx_(-1), last_player_(WHITE_PLAYER), b_pcs_c_(0) {}
     ~BoardInGm() = default;
     DISALLOW_COPY_AND_ASSIGN(BoardInGm);
     void Init();
@@ -106,7 +106,7 @@ public:
     PointIndex BlackRegion() const {
         return b_pcs_c_ + eye_sets_[BLACK_PLAYER].RealCount();
     }
-    HashKey HashKey() const {return hash_key_;}
+    uint32_t HashKey() const {return hash_key_;}
 
     void PlayMove(const Move &move);
     void Pass(PlayerColor color);
@@ -124,9 +124,9 @@ private:
     ChainSet<BOARD_LEN> chain_sets_[2];
     BitSet playable_indxs_[2];
     EyeSet<BOARD_LEN> eye_sets_[2];
-    PointIndex ko_indx_ = -1;
-    PlayerColor last_player_ = WHITE_PLAYER;
-    PointIndex b_pcs_c_ = 0;
+    PointIndex ko_indx_;
+    PlayerColor last_player_;
+    PointIndex b_pcs_c_;
     BrdInGmDlgt<BOARD_LEN> *delegate_;
     uint32_t hash_key_;
 

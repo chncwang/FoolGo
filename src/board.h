@@ -18,7 +18,7 @@ class Board
 {
 public:
     Board() = default;
-    virtual ~Board() = default;
+    virtual ~Board() {}
     DISALLOW_COPY_AND_ASSIGN(Board);
     virtual void Init();
     virtual void Copy(const Board<BOARD_LEN> &b);

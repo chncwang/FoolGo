@@ -17,7 +17,7 @@ template <BoardLen BOARD_LEN>
 class Engine
 {
 public:
-    Engine() = default;
+    Engine() : next_player_(BLACK_PLAYER) {}
     ~Engine() = default;
     DISALLOW_COPY_AND_ASSIGN(Engine);
     void Init();
@@ -48,7 +48,7 @@ private:
     static const int32_t SIMULATE_COUNT = 30000;
 
     BoardInGm<BOARD_LEN> brdingm_;
-    PlayerColor next_player_ = BLACK_PLAYER;
+    PlayerColor next_player_;
     mutable TrnspsitionTbl table_;
 
     HashKey ChildKey(const BoardInGm<BOARD_LEN> &parent, PointIndex indx) const;

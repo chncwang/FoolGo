@@ -1,6 +1,7 @@
 #include "rand.h"
 
 #include <random>
+#include <chrono>
 
 
 uint32_t Rand(uint32_t max)
