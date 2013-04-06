@@ -10,7 +10,7 @@
 
 
 template <BoardLen BOARD_LEN>
-void Engine<BOARD_LEN>::Init()
+inline void Engine<BOARD_LEN>::Init()
 {
     brdingm_.Init();
 }
@@ -26,7 +26,7 @@ void Engine<BOARD_LEN>::Play(PointIndex nexti)
 
 
 template <BoardLen BOARD_LEN>
-INLINE void Engine<BOARD_LEN>::Pass()
+void Engine<BOARD_LEN>::Pass()
 {
     brdingm_.Pass(next_player_);
     next_player_ = OppstColor(next_player_);
@@ -43,7 +43,7 @@ PointIndex Engine<BOARD_LEN>::NextMove() const
     do {
         BoardInGm<BOARD_LEN> cur_node;
         cur_node.Copy(root);
-        std::vector<HashKey> path;
+        std::vector<HashKeyType> path;
 //        PRINT_LINE("do loop");
 
         while (true) {
@@ -95,17 +95,17 @@ PointIndex Engine<BOARD_LEN>::NextMove() const
 
 
 template <BoardLen BOARD_LEN>
-HashKey Engine<BOARD_LEN>::ChildKey(const BoardInGm<BOARD_LEN> &parent,
+HashKeyType Engine<BOARD_LEN>::ChildKey(const BoardInGm<BOARD_LEN> &parent,
                                     PointIndex indx) const
 {
-    HashKey prnt_key = parent.HashKey();
-    HashKey chldrn_key = table_[prnt_key].children_key_[indx];
+    HashKeyType prnt_key = parent.HashKey();
+    HashKeyType chldrn_key = table_[prnt_key].children_key_[indx];
     if (chldrn_key == NONE) {
         BoardInGm<BOARD_LEN> b;
         b.Copy(parent);
         PlayerColor color = NextPlayer(b);
         b.PlayMove(Move(color, indx));
-        HashKey key = b.HashKey();
+        HashKeyType key = b.HashKey();
         table_[prnt_key].children_key_[indx] = key;
         return key;
     } else {
@@ -124,7 +124,7 @@ bool Engine<BOARD_LEN>::HasNewChild(const BoardInGm<BOARD_LEN> &node,
     RandomizeVector(&children);
 
     for (PointIndex nexti : children) {
-        HashKey ck = this->ChildKey(node, nexti);
+        HashKeyType ck = this->ChildKey(node, nexti);
         if (table_.find(ck) == table_.end()) {
             *p_indx = nexti;
             return true;

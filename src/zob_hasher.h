@@ -16,8 +16,8 @@ public:
     DISALLOW_COPY_AND_ASSIGN(ZobHasher);
     static ZobHasher &Ins();
 
-    HashKey GetHash(const BoardInGm<BOARD_LEN> &b) const;
-    HashKey GetHash(HashKey hash, const BrdChange &chng) const;
+    HashKeyType GetHash(const BoardInGm<BOARD_LEN> &b) const;
+    HashKeyType GetHash(HashKeyType hash, const BrdChange &chng) const;
 
 #ifdef DTEST
     static void TEST();
@@ -25,10 +25,10 @@ public:
 #endif
 
 private:
-    HashKey board_hash_[BLSq<BOARD_LEN>()][3];
-    HashKey player_hash_[2];
-    HashKey ko_hash_[BLSq<BOARD_LEN>()];
-    HashKey noko_hash_;
+    HashKeyType board_hash_[BLSq<BOARD_LEN>()][3];
+    HashKeyType player_hash_[2];
+    HashKeyType ko_hash_[BLSq<BOARD_LEN>()];
+    HashKeyType noko_hash_;
 
     ZobHasher();
     ~ZobHasher() = default;

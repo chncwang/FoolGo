@@ -51,11 +51,11 @@ private:
         AirCount air_count_;
     } lists_[BLSq<BOARD_LEN>()];
 
-    INLINE PosCalculator<BOARD_LEN> &GetPosClcltr() const {
+    inline PosCalculator<BOARD_LEN> &GetPosClcltr() const {
         return PosCalculator<BOARD_LEN>::Ins();
     }
 
-    INLINE PointIndex GetListHead(PointIndex node_i) const {
+    inline PointIndex GetListHead(PointIndex node_i) const {
         return nodes_[node_i].list_head_;
     }
     void CreateList(PointIndex node_i, const AirSet &air_set);

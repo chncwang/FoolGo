@@ -34,7 +34,7 @@ private:
     struct TableItem {
         int32_t visited_times_;
         float avg_prft_;
-        HashKey children_key_[BLSq<BOARD_LEN>()];
+        HashKeyType children_key_[BLSq<BOARD_LEN>()];
 
         TableItem(int32_t t, float a) : visited_times_(t), avg_prft_(a) {Init();}
         TableItem() {Init();}
@@ -43,7 +43,7 @@ private:
             std::fill(children_key_, children_key_ + BLSq<BOARD_LEN>(), NONE);
         }
     };
-    typedef std::unordered_map<HashKey, TableItem> TrnspsitionTbl;
+    typedef std::unordered_map<HashKeyType, TableItem> TrnspsitionTbl;
 
     static const int32_t SIMULATE_COUNT = 30000;
 
@@ -51,15 +51,15 @@ private:
     PlayerColor next_player_;
     mutable TrnspsitionTbl table_;
 
-    HashKey ChildKey(const BoardInGm<BOARD_LEN> &parent, PointIndex indx) const;
+    HashKeyType ChildKey(const BoardInGm<BOARD_LEN> &parent, PointIndex indx) const;
     bool HasNewChild(const BoardInGm<BOARD_LEN> &node, PointIndex *nexti) const;
     PointIndex MaxUCBChild(const BoardInGm<BOARD_LEN> &node) const;
     PointIndex BestChild(const BoardInGm<BOARD_LEN> &node) const;
 
-    INLINE MCSimulator<BOARD_LEN> &Simulator() const {
+    inline MCSimulator<BOARD_LEN> &Simulator() const {
         return MCSimulator<BOARD_LEN>::Ins();
     }
-    INLINE PosCalculator<BOARD_LEN> &GetPosClcltr() const {
+    inline PosCalculator<BOARD_LEN> &GetPosClcltr() const {
         return PosCalculator<BOARD_LEN>::Ins();
     }
 };

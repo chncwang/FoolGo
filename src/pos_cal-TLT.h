@@ -5,7 +5,7 @@
 
 
 template <BoardLen BOARD_LEN>
-INLINE PosCalculator<BOARD_LEN> &PosCalculator<BOARD_LEN>::Ins()
+inline PosCalculator<BOARD_LEN> &PosCalculator<BOARD_LEN>::Ins()
 {
     static PosCalculator<BOARD_LEN> ins;
     return ins;

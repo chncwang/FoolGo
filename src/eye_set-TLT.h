@@ -5,7 +5,7 @@
 
 
 template <BoardLen BOARD_LEN>
-void EyeSet<BOARD_LEN>::Copy(const EyeSet &es)
+inline void EyeSet<BOARD_LEN>::Copy(const EyeSet &es)
 {
     eyes_ = es.eyes_;
     real_eyes_ = es.real_eyes_;

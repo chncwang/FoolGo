@@ -1,23 +1,15 @@
 #ifndef BOARD_IN_GM
-
 #define BOARD_IN_GM
-
-#include <stdint.h>
 
 #include <bitset>
 #include <vector>
 
+#include "types_and_constants.h"
 #include "board.h"
 #include "chain_set.h"
 #include "eye_set.h"
+#include "brd_change.h"
 
-typedef char PlayerColor;
-const PlayerColor BLACK_PLAYER = 0;
-const PlayerColor WHITE_PLAYER = 1;
-
-typedef uint32_t HashKey;
-
-PlayerColor OppstColor(PlayerColor color);
 
 struct Move {
     PlayerColor color_;
@@ -27,53 +19,14 @@ struct Move {
     Move(PlayerColor color, PointIndex indx) : color_(color), indx_(indx) {}
 };
 
+
 template <BoardLen BOARD_LEN> class BoardInGm;
-
-
-
-class BrdChange
-{
-public:
-    template <typename T>
-    struct Change {
-        T origin_, now_;
-    };
-
-    struct Pair {
-        PointIndex indx_;
-        Change<Point> pnt_;
-
-        INLINE void Set(PointIndex indx, Point orgn, Point nw) {
-            indx_ = indx;
-            pnt_.origin_ = orgn;
-            pnt_.now_ = nw;
-        }
-    };
-
-    BrdChange() = default;
-    ~BrdChange() = default;
-    DISALLOW_COPY_AND_ASSIGN(BrdChange);
-    void Init(PlayerColor color, PointIndex ko);
-    void SetNow(PointIndex ko, PointIndex move_i, bool now_empty,
-                const std::vector<PointIndex> &removed);
-
-    const Change<PointIndex> &KoChng() const {return ko_indx_;}
-    const Change<PlayerColor> &LastPlayerChng() const {return last_player_;}
-    const std::vector<Pair> &PointsChng() const {return indxs_;}
-
-private:
-    Change<PointIndex> ko_indx_;
-    Change<PlayerColor> last_player_;
-    std::vector<Pair> indxs_;
-};
-
-
 
 template <BoardLen BOARD_LEN>
 class BrdInGmDlgt {
 public:
-    virtual HashKey GetHash(const BoardInGm<BOARD_LEN> &b) const = 0;
-    virtual HashKey GetHash(HashKey hash, const BrdChange &change) const = 0;
+    virtual HashKeyType GetHash(const BoardInGm<BOARD_LEN> &b) const = 0;
+    virtual HashKeyType GetHash(HashKeyType hash, const BrdChange &change) const = 0;
 };
 
 
@@ -106,7 +59,7 @@ public:
     PointIndex BlackRegion() const {
         return b_pcs_c_ + eye_sets_[BLACK_PLAYER].RealCount();
     }
-    uint32_t HashKey() const {return hash_key_;}
+    HashKeyType HashKey() const {return hash_key_;}
 
     void PlayMove(const Move &move);
     void Pass(PlayerColor color);
@@ -128,7 +81,7 @@ private:
     PlayerColor last_player_;
     PointIndex b_pcs_c_;
     BrdInGmDlgt<BOARD_LEN> *delegate_;
-    uint32_t hash_key_;
+    HashKeyType hash_key_;
 
     void LetAdjChnsSetAir(PointIndex indx, bool v);
 
@@ -168,7 +121,7 @@ NokoPlayableIndexes(const BoardInGm<BOARD_LEN> &b, PlayerColor color)
 
 
 template <BoardLen BOARD_LEN>
-bool IsEnd(const BoardInGm<BOARD_LEN> &b)
+inline bool IsEnd(const BoardInGm<BOARD_LEN> &b)
 {
     return b.PlayableIndexes(BLACK_PLAYER).count() == 0 &&
            b.PlayableIndexes(WHITE_PLAYER).count() == 0;
@@ -176,13 +129,14 @@ bool IsEnd(const BoardInGm<BOARD_LEN> &b)
 
 
 template <BoardLen BOARD_LEN>
-PlayerColor NextPlayer(const BoardInGm<BOARD_LEN> &b)
+inline PlayerColor NextPlayer(const BoardInGm<BOARD_LEN> &b)
 {
     return OppstColor(b.LastPlayer());
 }
 
 
 #include "board_in_gm-TLT.h"
+#include "brd_change-TLT.h"
 
 //#ifdef DTEST
 #include "board_in_gm_TEST.h"

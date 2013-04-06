@@ -15,13 +15,6 @@
 #include "zob_hasher.h"
 
 
-inline PlayerColor OppstColor(PlayerColor color)
-{
-    static const PlayerColor T[2] = {1, 0};
-    return T[color];
-}
-
-
 template <BoardLen BOARD_LEN>
 void BoardInGm<BOARD_LEN>::Init()
 {
@@ -143,7 +136,7 @@ void BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
 
 
 template <BoardLen BOARD_LEN>
-INLINE void BoardInGm<BOARD_LEN>::Pass(PlayerColor color)
+void BoardInGm<BOARD_LEN>::Pass(PlayerColor color)
 {
 //    PRINT_LINE("pass called.");
     last_player_ = color;
@@ -172,7 +165,7 @@ void BoardInGm<BOARD_LEN>::LetAdjChnsSetAir(PointIndex indx, bool v)
 
 
 template <BoardLen BOARD_LEN>
-INLINE bool BoardInGm<BOARD_LEN>::IsSelfPieceOrEye(const Move &move) const
+bool BoardInGm<BOARD_LEN>::IsSelfPieceOrEye(const Move &move) const
 {
     PointIndex indx = move.indx_;
     PlayerColor color = move.color_;

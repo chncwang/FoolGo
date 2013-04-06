@@ -30,7 +30,7 @@ void Engine<BOARD_LEN>::TEST()
 template <BoardLen BOARD_LEN>
 void Engine<BOARD_LEN>::PRINT_PROFITS(const BoardInGm<BOARD_LEN> &b) const
 {
-    HashKey bh = b.HashKey();
+    HashKeyType bh = b.HashKey();
     auto item = table_[bh];
     for (int y=0; y<BOARD_LEN; ++y) {
         for (int x=0; x<BOARD_LEN; ++x) {
