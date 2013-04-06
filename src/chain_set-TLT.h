@@ -25,14 +25,14 @@ void ChainSet<BOARD_LEN>::Copy(const ChainSet<BOARD_LEN> &c)
 
 template <BoardLen BOARD_LEN>
 typename ChainSet<BOARD_LEN>::AirSet
-INLINE ChainSet<BOARD_LEN>::GetAirSetByPiece(PointIndex piece_i) const
+inline ChainSet<BOARD_LEN>::GetAirSetByPiece(PointIndex piece_i) const
 {
     return GetAirSetOfChain(nodes_[piece_i].list_head_);
 }
 
 
 template <BoardLen BOARD_LEN>
-INLINE AirCount ChainSet<BOARD_LEN>::GetAirCountByPiece(PointIndex piece_i) const
+inline AirCount ChainSet<BOARD_LEN>::GetAirCountByPiece(PointIndex piece_i) const
 {
     ASSERT(IS_POINT_NOT_EMPTY(piece_i));
     return this->GetAirCountOfChain(this->GetListHead(piece_i));
@@ -41,7 +41,7 @@ INLINE AirCount ChainSet<BOARD_LEN>::GetAirCountByPiece(PointIndex piece_i) cons
 
 template <BoardLen BOARD_LEN>
 typename ChainSet<BOARD_LEN>::PntIndxVector
-ChainSet<BOARD_LEN>::GetPieces(PointIndex piece_i) const
+inline ChainSet<BOARD_LEN>::GetPieces(PointIndex piece_i) const
 {
     ASSERT(IS_POINT_NOT_EMPTY(piece_i));
     return this->GetPiecesOfChain(this->GetListHead(piece_i));
@@ -49,7 +49,8 @@ ChainSet<BOARD_LEN>::GetPieces(PointIndex piece_i) const
 
 
 template <BoardLen BOARD_LEN>
-void ChainSet<BOARD_LEN>::SetAir(PointIndex indx, PointIndex air_i, bool v)
+void ChainSet<BOARD_LEN>::SetAir(PointIndex indx, PointIndex air_i,
+        bool v)
 {
     AirSet air_set;
     if (!v) air_set.set();
@@ -167,14 +168,14 @@ void ChainSet<BOARD_LEN>::RemoveList(PointIndex head)
 
 template <BoardLen BOARD_LEN>
 typename ChainSet<BOARD_LEN>::AirSet
-INLINE ChainSet<BOARD_LEN>::GetAirSetOfChain(PointIndex head) const
+inline ChainSet<BOARD_LEN>::GetAirSetOfChain(PointIndex head) const
 {
     return lists_[head].air_set_;
 }
 
 
 template <BoardLen BOARD_LEN>
-INLINE AirCount ChainSet<BOARD_LEN>::GetAirCountOfChain(PointIndex list_i) const
+inline AirCount ChainSet<BOARD_LEN>::GetAirCountOfChain(PointIndex list_i) const
 {
     return lists_[list_i].air_count_;
 }

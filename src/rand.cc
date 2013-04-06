@@ -4,7 +4,7 @@
 #include <chrono>
 
 
-uint32_t Rand(uint32_t max)
+HashKeyType Rand(HashKeyType max)
 {
     static unsigned ts =
         std::chrono::system_clock::now().time_since_epoch().count();

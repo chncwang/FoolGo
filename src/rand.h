@@ -2,7 +2,8 @@
 #define RAND_H
 
 #include "stdint.h"
+#include "types_and_constants.h"
 
-uint32_t Rand(uint32_t max);
+HashKeyType Rand(HashKeyType max);
 
 #endif

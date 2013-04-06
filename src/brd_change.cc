@@ -1,11 +1,4 @@
-#include "board_in_gm.h"
-
-
-void BrdChange::Init(PlayerColor color, PointIndex ko)
-{
-    ko_indx_.origin_ = ko;
-    last_player_.origin_ = color;
-}
+#include "brd_change.h"
 
 
 void BrdChange::SetNow(PointIndex ko, PointIndex move_i, bool now_empty,

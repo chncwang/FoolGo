@@ -4,12 +4,13 @@
 #include "def.h"
 #include "position.h"
 #include "pos_cal.h"
+#include "types_and_constants.h"
 
-typedef char Point;
-
-const Point BLACK_POINT = 0;
-const Point WHITE_POINT = 1;
-const Point EMPTY_POINT = 2;
+inline PlayerColor OppstColor(PlayerColor color)
+{
+    static const PlayerColor T[2] = {1, 0};
+    return T[color];
+}
 
 
 
@@ -29,7 +30,7 @@ public:
     void SetPoint(PointIndex index, Point point);
     void SetPoint(const Position &pos, Point point);
 
-    INLINE PosCalculator<BOARD_LEN> &GetPosClcltr() const {
+    inline PosCalculator<BOARD_LEN> &GetPosClcltr() const {
         return PosCalculator<BOARD_LEN>::Ins();
     }
 

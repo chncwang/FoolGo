@@ -9,7 +9,7 @@
 
 
 template <typename T, typename GetHash>
-inline static HashKey
+inline static HashKeyType
 HashChange(const BrdChange::Change<T> &chng, const GetHash &get)
 {
     return get(chng.origin_) ^ get(chng.now_);
@@ -25,9 +25,9 @@ ZobHasher<BOARD_LEN> &ZobHasher<BOARD_LEN>::Ins()
 
 
 template <BoardLen BOARD_LEN>
-HashKey ZobHasher<BOARD_LEN>::GetHash(const BoardInGm<BOARD_LEN> &b) const
+HashKeyType ZobHasher<BOARD_LEN>::GetHash(const BoardInGm<BOARD_LEN> &b) const
 {
-    HashKey result = 0;
+    HashKeyType result = 0;
 
     for (int i=0; i<BLSq<BOARD_LEN>(); ++i) {
         Point point = b.GetPoint(i);
@@ -45,8 +45,8 @@ HashKey ZobHasher<BOARD_LEN>::GetHash(const BoardInGm<BOARD_LEN> &b) const
 
 
 template <BoardLen BOARD_LEN>
-HashKey
-ZobHasher<BOARD_LEN>::GetHash(HashKey hash, const BrdChange &chng) const
+HashKeyType
+ZobHasher<BOARD_LEN>::GetHash(HashKeyType hash, const BrdChange &chng) const
 {
     auto getko = [this](PointIndex ko_indx) {
         return (ko_indx == BoardInGm<BOARD_LEN>::NONE) ?
@@ -55,7 +55,7 @@ ZobHasher<BOARD_LEN>::GetHash(HashKey hash, const BrdChange &chng) const
     auto getplayer = [this](PlayerColor color) {
         return player_hash_[color];
     };
-    HashKey r = hash ^ HashChange(chng.KoChng(), getko) ^
+    HashKeyType r = hash ^ HashChange(chng.KoChng(), getko) ^
                 HashChange(chng.LastPlayerChng(), getplayer);
 
     for (auto pair : chng.PointsChng()) {

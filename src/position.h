@@ -15,7 +15,7 @@ struct Position {
     Position() : x_(0), y_(0) {}
     Position(BoardLen x, BoardLen y) : x_(x), y_(y) {}
 
-    INLINE void Set(BoardLen x, BoardLen y) {x_ = x; y_ = y;}
+    inline void Set(BoardLen x, BoardLen y) {x_ = x; y_ = y;}
     Position AdjcntPos(int i) const {
         return Position(x_ + STRAIGHT_ORNTTIONS[i][0],
                         y_ + STRAIGHT_ORNTTIONS[i][1]);
@@ -27,19 +27,19 @@ struct Position {
 };
 
 template <BoardLen BOARD_LEN>
-constexpr INLINE PointIndex BLSq()
+constexpr inline PointIndex BLSq()
 {
     return BOARD_LEN * BOARD_LEN;
 }
 
 template <BoardLen BOARD_LEN>
-constexpr INLINE BoardLen BoardLenMinusOne()
+constexpr inline BoardLen BoardLenMinusOne()
 {
     return BOARD_LEN - 1;
 }
 
 template <BoardLen BOARD_LEN>
-INLINE int16_t MoveLimit()
+inline int16_t MoveLimit()
 {
     return BLSq<BOARD_LEN>() * 4;
 }
