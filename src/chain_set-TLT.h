@@ -32,7 +32,8 @@ inline ChainSet<BOARD_LEN>::GetAirSetByPiece(PointIndex piece_i) const
 
 
 template <BoardLen BOARD_LEN>
-inline AirCount ChainSet<BOARD_LEN>::GetAirCountByPiece(PointIndex piece_i) const
+inline AirCount
+ChainSet<BOARD_LEN>::GetAirCountByPiece(PointIndex piece_i) const
 {
     ASSERT(IS_POINT_NOT_EMPTY(piece_i));
     return this->GetAirCountOfChain(this->GetListHead(piece_i));
@@ -175,7 +176,8 @@ inline ChainSet<BOARD_LEN>::GetAirSetOfChain(PointIndex head) const
 
 
 template <BoardLen BOARD_LEN>
-inline AirCount ChainSet<BOARD_LEN>::GetAirCountOfChain(PointIndex list_i) const
+inline AirCount
+ChainSet<BOARD_LEN>::GetAirCountOfChain(PointIndex list_i) const
 {
     return lists_[list_i].air_count_;
 }
