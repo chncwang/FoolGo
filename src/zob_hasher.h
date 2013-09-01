@@ -25,9 +25,9 @@ public:
 #endif
 
 private:
-    HashKeyType board_hash_[BLSq<BOARD_LEN>()][3];
+    HashKeyType board_hash_[BoardLenSquare<BOARD_LEN>()][3];
     HashKeyType player_hash_[2];
-    HashKeyType ko_hash_[BLSq<BOARD_LEN>()];
+    HashKeyType ko_hash_[BoardLenSquare<BOARD_LEN>()];
     HashKeyType noko_hash_;
 
     ZobHasher();

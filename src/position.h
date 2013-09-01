@@ -27,7 +27,7 @@ struct Position {
 };
 
 template <BoardLen BOARD_LEN>
-constexpr inline PointIndex BLSq()
+constexpr inline PointIndex BoardLenSquare()
 {
     return BOARD_LEN * BOARD_LEN;
 }
@@ -41,7 +41,7 @@ constexpr inline BoardLen BoardLenMinusOne()
 template <BoardLen BOARD_LEN>
 inline int16_t MoveLimit()
 {
-    return BLSq<BOARD_LEN>() * 4;
+    return BoardLenSquare<BOARD_LEN>() * 4;
 }
 
 #endif

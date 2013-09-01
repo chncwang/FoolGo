@@ -87,7 +87,7 @@ void BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
         this->UpdateRealEye(adj_move);
         if (IsFakeEye(eye_sets_[adj_move.color_], adj_move.indx_)) {
             playable_indxs_[oc][adj_indx] =
-                this->IsSuiside(Move(oc, adj_indx));
+                    this->IsSuiside(Move(oc, adj_indx));
         }
     }
 
@@ -130,15 +130,12 @@ void BoardInGm<BOARD_LEN>::PlayMove(const Move &move)
     }
 
     hash_key_ = delegate_->GetHash(hash_key_, change);
-//    hash_key_ = delegate_->GetHash(*this);
-    ASSERT(key == hash_key_);
 }
 
 
 template <BoardLen BOARD_LEN>
 void BoardInGm<BOARD_LEN>::Pass(PlayerColor color)
 {
-//    PRINT_LINE("pass called.");
     last_player_ = color;
     ko_indx_ = BoardInGm<BOARD_LEN>::NONE;
     hash_key_ = delegate_->GetHash(*this);
@@ -240,7 +237,7 @@ void BoardInGm<BOARD_LEN>::PlayBasicMove(
     PointIndex indx = move.indx_;
     ASSERT(this->GetPoint(indx) == EMPTY_POINT);
 
-    std::bitset<BLSq<BOARD_LEN>()> air_set;
+    std::bitset<BoardLenSquare<BOARD_LEN>()> air_set;
     PlayerColor oc = OppstColor(color);
     auto &ins = this->GetPosClcltr();
     const Position &pos = ins.GetPos(indx);
@@ -368,7 +365,7 @@ void BoardInGm<BOARD_LEN>::UpdtAdjPlblIndxsOfChn(PointIndex indx)
     if (air_c == 1) {
 //        PRINT_LINE("air_c == 1.");
         PointIndex air_indx =
-            GetLowest1<BLSq<BOARD_LEN>()>(air_set);
+            GetLowest1<BoardLenSquare<BOARD_LEN>()>(air_set);
         Move move(color, air_indx);
         if (eye_sets_[color].IsRealEye(air_indx)) {
             c_playable->reset(air_indx);

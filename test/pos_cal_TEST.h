@@ -15,7 +15,7 @@ void PosCalculator<BOARD_LEN>::TEST()
     }
     printf("\n");
 
-    for (int i=0; i<BLSq<BOARD_LEN>(); ++i) {
+    for (int i=0; i<BoardLenSquare<BOARD_LEN>(); ++i) {
         printf("%d: (%d, %d), ", i, c.GetPos(i).x_, c.GetPos(i).y_);
     }
     printf("\n");

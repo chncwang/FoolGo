@@ -16,7 +16,7 @@ template <BoardLen BOARD_LEN>
 class ChainSet
 {
 public:
-    typedef std::bitset<BLSq<BOARD_LEN>()> AirSet;
+    typedef std::bitset<BoardLenSquare<BOARD_LEN>()> AirSet;
     typedef std::vector<PointIndex> PntIndxVector;
 
     ChainSet() = default;
@@ -43,13 +43,13 @@ private:
     struct Node {
         PointIndex next_, list_head_;
         Node() : list_head_(NONE_LIST) {}
-    } nodes_[BLSq<BOARD_LEN>()];
+    } nodes_[BoardLenSquare<BOARD_LEN>()];
 
     struct List {
         PointIndex tail_, len_;
         AirSet air_set_;
         AirCount air_count_;
-    } lists_[BLSq<BOARD_LEN>()];
+    } lists_[BoardLenSquare<BOARD_LEN>()];
 
     inline PosCalculator<BOARD_LEN> &GetPosClcltr() const {
         return PosCalculator<BOARD_LEN>::Ins();

@@ -3,6 +3,7 @@
 
 #include <bitset>
 #include <vector>
+#include <ostream>
 
 #include "types_and_constants.h"
 #include "board.h"
@@ -26,7 +27,8 @@ template <BoardLen BOARD_LEN>
 class BrdInGmDlgt {
 public:
     virtual HashKeyType GetHash(const BoardInGm<BOARD_LEN> &b) const = 0;
-    virtual HashKeyType GetHash(HashKeyType hash, const BrdChange &change) const = 0;
+    virtual HashKeyType
+    GetHash(HashKeyType hash, const BrdChange &change) const = 0;
 };
 
 
@@ -35,11 +37,13 @@ template <BoardLen BOARD_LEN>
 class BoardInGm : private Board<BOARD_LEN>
 {
 public:
-    typedef std::bitset<BLSq<BOARD_LEN>()> BitSet;
+    typedef std::bitset<BoardLenSquare<BOARD_LEN>()> BitSet;
 
     static const PointIndex NONE = -1;
 
-    BoardInGm() : ko_indx_(-1), last_player_(WHITE_PLAYER), b_pcs_c_(0) {}
+    BoardInGm() : ko_indx_(-1), last_player_(WHITE_PLAYER), b_pcs_c_(0),
+                  delegate_(nullptr),
+                  hash_key_(0) {}
     ~BoardInGm() = default;
     DISALLOW_COPY_AND_ASSIGN(BoardInGm);
     void Init();
@@ -64,12 +68,11 @@ public:
     void PlayMove(const Move &move);
     void Pass(PlayerColor color);
 
-//#ifdef DTEST
-    void PRINT_EYES() const;
-    void PRINT_PLAYABLE() const;
-    void PRINT_BOARD() const {Board<BOARD_LEN>::PRINT();}
-    static void TEST();
-//#endif
+    // For test.
+    friend std::ostream &operator <<(std::ostream &os,
+                                     const BoardInGm<BOARD_LEN> &board) {
+        return os << static_cast<const Board<BOARD_LEN> &>(board);
+    }
 
 private:
     typedef std::vector<PointIndex> PointIndxVector;
@@ -137,9 +140,5 @@ inline PlayerColor NextPlayer(const BoardInGm<BOARD_LEN> &b)
 
 #include "board_in_gm-TLT.h"
 #include "brd_change-TLT.h"
-
-//#ifdef DTEST
-#include "board_in_gm_TEST.h"
-//#endif
 
 #endif

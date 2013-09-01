@@ -2,7 +2,9 @@
 #define ENGINE_TEST_H
 
 #include "engine.h"
+
 #include <ctime>
+#include <iostream>
 
 
 template <BoardLen BOARD_LEN>
@@ -12,14 +14,14 @@ void Engine<BOARD_LEN>::TEST()
     engine.Init();
 
     while (true) {
-        engine.brdingm_.PRINT_BOARD();
+        std::cout << engine.brdingm_;
         unsigned begin = clock();
         PointIndex nexti = engine.NextMove();
         unsigned end = clock();
         printf("time: %f\n\n", (float)(end - begin) / 1000000);
 //        engine.PRINT_PROFITS(engine.brdingm_);
         engine.Play(nexti);
-        engine.brdingm_.PRINT_BOARD();
+        std::cout << engine.brdingm_;
         int x, y;
         scanf("%d%d", &x, &y);
         engine.Play(engine.GetPosClcltr().GetIndex(Position(x, y)));

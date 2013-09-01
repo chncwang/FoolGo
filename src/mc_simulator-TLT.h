@@ -38,7 +38,7 @@ MCSimulator<BOARD_LEN>::Simulate(const BoardInGm<BOARD_LEN> &input_board) const
         if (play_c > 0) {
             PointIndex rand = Rand(play_c - 1);
             PointIndex cur_indx =
-                GetXst1<BLSq<BOARD_LEN>()>(noko_plbl, rand);
+                GetXst1<BoardLenSquare<BOARD_LEN>()>(noko_plbl, rand);
 //            PRINT_LINE("cur_indx = %d", cur_indx);
             bingm.PlayMove(Move(cur_player, cur_indx));
         } else {

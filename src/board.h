@@ -1,6 +1,8 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include <ostream>
+
 #include "def.h"
 #include "position.h"
 #include "pos_cal.h"
@@ -34,21 +36,15 @@ public:
         return PosCalculator<BOARD_LEN>::Ins();
     }
 
-//#ifdef DTEST
-    virtual void PRINT() const;
-    static void TEST();
-//#endif
-
 private:
-    Point points_[BLSq<BOARD_LEN>()];
+    Point points_[BoardLenSquare<BOARD_LEN>()];
 };
 
 
 
-#include "board-TLT.h"
+template <BoardLen BOARD_LEN>
+std::ostream &operator <<(std::ostream &os, const Board<BOARD_LEN> &board);
 
-//#ifdef DTEST
-#include "board_TEST.h"
-//#endif
+#include "board-TLT.h"
 
 #endif

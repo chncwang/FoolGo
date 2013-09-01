@@ -12,7 +12,7 @@ template <BoardLen BOARD_LEN>
 class EyeSet
 {
 public:
-    typedef std::bitset<BLSq<BOARD_LEN>()> BitSet;
+    typedef std::bitset<BoardLenSquare<BOARD_LEN>()> BitSet;
 
     EyeSet() = default;
     ~EyeSet() = default;

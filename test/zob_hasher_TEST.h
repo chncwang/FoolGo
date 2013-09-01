@@ -15,7 +15,7 @@ void ZobHasher<BOARD_LEN>::TEST()
 template <BoardLen BOARD_LEN>
 void ZobHasher<BOARD_LEN>::PRINT()
 {
-    for (int i=0; i<BLSq<BOARD_LEN>(); ++i) {
+    for (int i=0; i<BoardLenSquare<BOARD_LEN>(); ++i) {
         for (int j=0; j<3; ++j) {
             PRINT_LINE("i=%d, j=%d, hash= %u", i, j, board_hash_[i][j]);
         }
@@ -23,7 +23,7 @@ void ZobHasher<BOARD_LEN>::PRINT()
 
     for (int i=0; i<2; ++i) PRINT_LINE("player hash = %u", player_hash_[i]);
 
-    for (int i=0; i<BLSq<BOARD_LEN>(); ++i) {
+    for (int i=0; i<BoardLenSquare<BOARD_LEN>(); ++i) {
         PRINT_LINE("i=%d, ko=%u", i, ko_hash_[i]);
     }
 

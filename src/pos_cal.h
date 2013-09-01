@@ -31,7 +31,7 @@ public:
             && pos.y_ >= 0 && pos.y_ < BOARD_LEN;
     }
     inline bool IsInBoard(PointIndex indx) const {
-        return indx >= 0 && indx < BLSq<BOARD_LEN>();
+        return indx >= 0 && indx < BoardLenSquare<BOARD_LEN>();
     }
     PosStatus GetPosStatus(const Position &pos);
 
@@ -40,7 +40,7 @@ public:
 #endif
 
 private:
-    Position position_[BLSq<BOARD_LEN>()];
+    Position position_[BoardLenSquare<BOARD_LEN>()];
     PointIndex indexes_[BOARD_LEN][BOARD_LEN];
 
     PosCalculator();

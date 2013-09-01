@@ -5,6 +5,13 @@
 
 #include <cstring>
 
+namespace {
+    const char BLANK = ' ';
+    const char BLACK = 'x';
+    const char WHITE = 'o';
+    const char EMPTY = '.';
+}
+
 
 template <BoardLen BOARD_LEN>
 inline void Board<BOARD_LEN>::Init()
@@ -49,6 +56,36 @@ inline void Board<BOARD_LEN>::SetPoint(const Position &pos, Point point)
 {
     BoardLen index = this->GetPosClcltr().GetIndex(pos);
     this->SetPoint(index, point);
+}
+
+
+template<BoardLen BOARD_LEN>
+std::ostream &operator <<(std::ostream &os, const Board<BOARD_LEN> &board)
+{
+    os << std::string(2, BLANK);
+    for (int i=0; i<BOARD_LEN; ++i) os << i << BLANK;
+    os << std::endl;
+
+    for (int y=0; y<BOARD_LEN; ++y) {
+        os << y << BLANK;
+        for (int x=0; x<BOARD_LEN; ++x) {
+            Point point = board.GetPoint(Position(x, y));
+            if (point == EMPTY_POINT) {
+                os << EMPTY << BLANK;
+            } else if (point == BLACK_POINT) {
+                os << BLACK << BLANK;
+            } else if (point == WHITE_POINT) {
+                os << WHITE << BLANK;
+            } else {
+                os << "point: " << point << std::endl;
+                CANNOT_RUN_HERE();
+            }
+        }
+
+        os << std::endl;
+    }
+
+    return os;
 }
 
 

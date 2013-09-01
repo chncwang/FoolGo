@@ -10,7 +10,6 @@
 #include "board_in_gm.h"
 #include "mc_simulator.h"
 
-const uint32_t NONE = 0;
 
 
 template <BoardLen BOARD_LEN>
@@ -34,18 +33,19 @@ private:
     struct TableItem {
         int32_t visited_times_;
         float avg_prft_;
-        HashKeyType children_key_[BLSq<BOARD_LEN>()];
+        HashKeyType children_key_[BoardLenSquare<BOARD_LEN>()];
 
         TableItem(int32_t t, float a) : visited_times_(t), avg_prft_(a) {Init();}
         TableItem() {Init();}
 
         void Init() {
-            std::fill(children_key_, children_key_ + BLSq<BOARD_LEN>(), NONE);
+            std::fill(children_key_, children_key_ + BoardLenSquare<BOARD_LEN>(), NONE);
         }
     };
     typedef std::unordered_map<HashKeyType, TableItem> TrnspsitionTbl;
 
     static const int32_t SIMULATE_COUNT = 30000;
+    static const uint32_t NONE = 0;
 
     BoardInGm<BOARD_LEN> brdingm_;
     PlayerColor next_player_;

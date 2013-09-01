@@ -17,7 +17,7 @@ template <BoardLen BOARD_LEN>
 void ChainSet<BOARD_LEN>::Copy(const ChainSet<BOARD_LEN> &c)
 {
     memcpy(nodes_, c.nodes_, sizeof(nodes_));
-    for (int i=0; i<BLSq<BOARD_LEN>(); ++i) {
+    for (int i=0; i<BoardLenSquare<BOARD_LEN>(); ++i) {
         lists_[i] = c.lists_[i];
     }
 }

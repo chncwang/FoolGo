@@ -61,9 +61,9 @@ PointIndex Engine<BOARD_LEN>::NextMove() const
 //                PRINT_LINE("black = %d", black);
                 ++mc_count;
                 PointIndex result = child.LastPlayer() == BLACK_PLAYER ?
-                                black : BLSq<BOARD_LEN>() - black;
+                                black : BoardLenSquare<BOARD_LEN>() - black;
 //                PRINT_LINE("result = %d", result);
-                float profit = result > (BLSq<BOARD_LEN>() / 2.0) ? 1 : 0;
+                float profit = result > (BoardLenSquare<BOARD_LEN>() / 2.0) ? 1 : 0;
                 Engine<BOARD_LEN>::TableItem item(1, profit);
                 table_[child.HashKey()] = item;
 
@@ -100,7 +100,7 @@ HashKeyType Engine<BOARD_LEN>::ChildKey(const BoardInGm<BOARD_LEN> &parent,
 {
     HashKeyType prnt_key = parent.HashKey();
     HashKeyType chldrn_key = table_[prnt_key].children_key_[indx];
-    if (chldrn_key == NONE) {
+    if (chldrn_key == Engine<BOARD_LEN>::NONE) {
         BoardInGm<BOARD_LEN> b;
         b.Copy(parent);
         PlayerColor color = NextPlayer(b);
@@ -120,7 +120,7 @@ bool Engine<BOARD_LEN>::HasNewChild(const BoardInGm<BOARD_LEN> &node,
 {
     PlayerColor color = NextPlayer(node);
     auto playable = NokoPlayableIndexes(node, color);
-    auto children = Get1s<BLSq<BOARD_LEN>()>(playable);
+    auto children = Get1s<BoardLenSquare<BOARD_LEN>()>(playable);
     RandomizeVector(&children);
 
     for (PointIndex nexti : children) {
@@ -141,7 +141,7 @@ Engine<BOARD_LEN>::MaxUCBChild(const BoardInGm<BOARD_LEN> &node) const
 {
     PlayerColor nextc = NextPlayer(node);
     auto playable = NokoPlayableIndexes(node, nextc);
-    auto playable_v = Get1s<BLSq<BOARD_LEN>()>(playable);
+    auto playable_v = Get1s<BoardLenSquare<BOARD_LEN>()>(playable);
     int32_t sum = 0;
 
     for (PointIndex indx : playable_v) {
@@ -171,7 +171,7 @@ PointIndex Engine<BOARD_LEN>::BestChild(const BoardInGm<BOARD_LEN> &node) const
 {
     PlayerColor nextc = NextPlayer(node);
     auto playable = NokoPlayableIndexes(node, nextc);
-    auto playable_v = Get1s<BLSq<BOARD_LEN>()>(playable);
+    auto playable_v = Get1s<BoardLenSquare<BOARD_LEN>()>(playable);
     int most_visited = 0;
     PointIndex result(-1);
 
