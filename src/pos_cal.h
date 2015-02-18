@@ -54,8 +54,4 @@ private:
 
 #include "pos_cal-TLT.h"
 
-#ifdef DTEST
-#include "pos_cal_TEST.h"
-#endif
-
 #endif

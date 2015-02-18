@@ -1,4 +1,3 @@
-a.out
 build/
 cmake_install.cmake
 CMakeFiles/
@@ -11,3 +10,7 @@ Testing/
 *.cmake
 .cproject
 .project
+.settings/
+*Test
+foolgo
+tests
