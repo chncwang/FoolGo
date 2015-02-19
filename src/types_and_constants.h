@@ -7,7 +7,6 @@ typedef char PlayerColor;
 const PlayerColor BLACK_PLAYER = 0;
 const PlayerColor WHITE_PLAYER = 1;
 
-//typedef uint32_t HashKeyType;
 #define HashKeyType uint32_t
 
 typedef char Point;

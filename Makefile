@@ -43,18 +43,18 @@ RM = /usr/local/Cellar/cmake/3.0.2/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/chncwang/Projects/FoolGo
+CMAKE_SOURCE_DIR = /Users/chncwang/Documents/Projects/FoolGo
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/chncwang/Projects/FoolGo
+CMAKE_BINARY_DIR = /Users/chncwang/Documents/Projects/FoolGo
 
 #=============================================================================
 # Targets provided globally by CMake.
 
 # Special rule for the target edit_cache
 edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/usr/local/Cellar/cmake/3.0.2/bin/ccmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/local/Cellar/cmake/3.0.2/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -71,11 +71,21 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/usr/local/Cellar/cmake/3.0.2/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
+
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/chncwang/Projects/FoolGo/CMakeFiles /Users/chncwang/Projects/FoolGo/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/chncwang/Documents/Projects/FoolGo/CMakeFiles /Users/chncwang/Documents/Projects/FoolGo/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/chncwang/Projects/FoolGo/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/chncwang/Documents/Projects/FoolGo/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -115,12 +125,26 @@ foolgo/fast:
 	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/build
 .PHONY : foolgo/fast
 
+#=============================================================================
+# Target rules for targets named tests
+
+# Build rule for target.
+tests: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 tests
+.PHONY : tests
+
+# fast build rule for target.
+tests/fast:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/build
+.PHONY : tests/fast
+
 src/brd_change.o: src/brd_change.cc.o
 .PHONY : src/brd_change.o
 
 # target to build an object file
 src/brd_change.cc.o:
 	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/brd_change.cc.o
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/brd_change.cc.o
 .PHONY : src/brd_change.cc.o
 
 src/brd_change.i: src/brd_change.cc.i
@@ -129,6 +153,7 @@ src/brd_change.i: src/brd_change.cc.i
 # target to preprocess a source file
 src/brd_change.cc.i:
 	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/brd_change.cc.i
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/brd_change.cc.i
 .PHONY : src/brd_change.cc.i
 
 src/brd_change.s: src/brd_change.cc.s
@@ -137,6 +162,7 @@ src/brd_change.s: src/brd_change.cc.s
 # target to generate assembly for a file
 src/brd_change.cc.s:
 	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/brd_change.cc.s
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/brd_change.cc.s
 .PHONY : src/brd_change.cc.s
 
 src/foolishgo.o: src/foolishgo.cc.o
@@ -169,6 +195,7 @@ src/position.o: src/position.cc.o
 # target to build an object file
 src/position.cc.o:
 	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/position.cc.o
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/position.cc.o
 .PHONY : src/position.cc.o
 
 src/position.i: src/position.cc.i
@@ -177,6 +204,7 @@ src/position.i: src/position.cc.i
 # target to preprocess a source file
 src/position.cc.i:
 	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/position.cc.i
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/position.cc.i
 .PHONY : src/position.cc.i
 
 src/position.s: src/position.cc.s
@@ -185,6 +213,7 @@ src/position.s: src/position.cc.s
 # target to generate assembly for a file
 src/position.cc.s:
 	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/position.cc.s
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/position.cc.s
 .PHONY : src/position.cc.s
 
 src/rand.o: src/rand.cc.o
@@ -193,6 +222,7 @@ src/rand.o: src/rand.cc.o
 # target to build an object file
 src/rand.cc.o:
 	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/rand.cc.o
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/rand.cc.o
 .PHONY : src/rand.cc.o
 
 src/rand.i: src/rand.cc.i
@@ -201,6 +231,7 @@ src/rand.i: src/rand.cc.i
 # target to preprocess a source file
 src/rand.cc.i:
 	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/rand.cc.i
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/rand.cc.i
 .PHONY : src/rand.cc.i
 
 src/rand.s: src/rand.cc.s
@@ -209,6 +240,7 @@ src/rand.s: src/rand.cc.s
 # target to generate assembly for a file
 src/rand.cc.s:
 	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/rand.cc.s
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/rand.cc.s
 .PHONY : src/rand.cc.s
 
 src/vector_util.o: src/vector_util.cc.o
@@ -217,6 +249,7 @@ src/vector_util.o: src/vector_util.cc.o
 # target to build an object file
 src/vector_util.cc.o:
 	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/vector_util.cc.o
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/vector_util.cc.o
 .PHONY : src/vector_util.cc.o
 
 src/vector_util.i: src/vector_util.cc.i
@@ -225,6 +258,7 @@ src/vector_util.i: src/vector_util.cc.i
 # target to preprocess a source file
 src/vector_util.cc.i:
 	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/vector_util.cc.i
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/vector_util.cc.i
 .PHONY : src/vector_util.cc.i
 
 src/vector_util.s: src/vector_util.cc.s
@@ -233,7 +267,80 @@ src/vector_util.s: src/vector_util.cc.s
 # target to generate assembly for a file
 src/vector_util.cc.s:
 	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/vector_util.cc.s
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/vector_util.cc.s
 .PHONY : src/vector_util.cc.s
+
+test/board_TEST.o: test/board_TEST.cc.o
+.PHONY : test/board_TEST.o
+
+# target to build an object file
+test/board_TEST.cc.o:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/board_TEST.cc.o
+.PHONY : test/board_TEST.cc.o
+
+test/board_TEST.i: test/board_TEST.cc.i
+.PHONY : test/board_TEST.i
+
+# target to preprocess a source file
+test/board_TEST.cc.i:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/board_TEST.cc.i
+.PHONY : test/board_TEST.cc.i
+
+test/board_TEST.s: test/board_TEST.cc.s
+.PHONY : test/board_TEST.s
+
+# target to generate assembly for a file
+test/board_TEST.cc.s:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/board_TEST.cc.s
+.PHONY : test/board_TEST.cc.s
+
+test/board_in_gm_TEST.o: test/board_in_gm_TEST.cc.o
+.PHONY : test/board_in_gm_TEST.o
+
+# target to build an object file
+test/board_in_gm_TEST.cc.o:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/board_in_gm_TEST.cc.o
+.PHONY : test/board_in_gm_TEST.cc.o
+
+test/board_in_gm_TEST.i: test/board_in_gm_TEST.cc.i
+.PHONY : test/board_in_gm_TEST.i
+
+# target to preprocess a source file
+test/board_in_gm_TEST.cc.i:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/board_in_gm_TEST.cc.i
+.PHONY : test/board_in_gm_TEST.cc.i
+
+test/board_in_gm_TEST.s: test/board_in_gm_TEST.cc.s
+.PHONY : test/board_in_gm_TEST.s
+
+# target to generate assembly for a file
+test/board_in_gm_TEST.cc.s:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/board_in_gm_TEST.cc.s
+.PHONY : test/board_in_gm_TEST.cc.s
+
+usr/share/gtest-1.7.0/src/gtest_main.o: usr/share/gtest-1.7.0/src/gtest_main.cc.o
+.PHONY : usr/share/gtest-1.7.0/src/gtest_main.o
+
+# target to build an object file
+usr/share/gtest-1.7.0/src/gtest_main.cc.o:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/usr/share/gtest-1.7.0/src/gtest_main.cc.o
+.PHONY : usr/share/gtest-1.7.0/src/gtest_main.cc.o
+
+usr/share/gtest-1.7.0/src/gtest_main.i: usr/share/gtest-1.7.0/src/gtest_main.cc.i
+.PHONY : usr/share/gtest-1.7.0/src/gtest_main.i
+
+# target to preprocess a source file
+usr/share/gtest-1.7.0/src/gtest_main.cc.i:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/usr/share/gtest-1.7.0/src/gtest_main.cc.i
+.PHONY : usr/share/gtest-1.7.0/src/gtest_main.cc.i
+
+usr/share/gtest-1.7.0/src/gtest_main.s: usr/share/gtest-1.7.0/src/gtest_main.cc.s
+.PHONY : usr/share/gtest-1.7.0/src/gtest_main.s
+
+# target to generate assembly for a file
+usr/share/gtest-1.7.0/src/gtest_main.cc.s:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/usr/share/gtest-1.7.0/src/gtest_main.cc.s
+.PHONY : usr/share/gtest-1.7.0/src/gtest_main.cc.s
 
 # Help Target
 help:
@@ -244,6 +351,8 @@ help:
 	@echo "... edit_cache"
 	@echo "... foolgo"
 	@echo "... rebuild_cache"
+	@echo "... test"
+	@echo "... tests"
 	@echo "... src/brd_change.o"
 	@echo "... src/brd_change.i"
 	@echo "... src/brd_change.s"
@@ -259,6 +368,15 @@ help:
 	@echo "... src/vector_util.o"
 	@echo "... src/vector_util.i"
 	@echo "... src/vector_util.s"
+	@echo "... test/board_TEST.o"
+	@echo "... test/board_TEST.i"
+	@echo "... test/board_TEST.s"
+	@echo "... test/board_in_gm_TEST.o"
+	@echo "... test/board_in_gm_TEST.i"
+	@echo "... test/board_in_gm_TEST.s"
+	@echo "... usr/share/gtest-1.7.0/src/gtest_main.o"
+	@echo "... usr/share/gtest-1.7.0/src/gtest_main.i"
+	@echo "... usr/share/gtest-1.7.0/src/gtest_main.s"
 .PHONY : help
 
 

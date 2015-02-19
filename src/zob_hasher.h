@@ -1,44 +1,30 @@
 #ifndef ZOB_HASHER_H
 #define ZOB_HASHER_H
 
-#include <stdint.h>
+#include <board_in_gm.h>
+#include <board-TLT.h>
+#include <def.h>
+#include <position.h>
+#include <types_and_constants.h>
 
-#include "def.h"
-#include "position.h"
-#include "board_in_gm.h"
+template<BoardLen BOARD_LEN>
+class ZobHasher : public BrdInGmDlgt<BOARD_LEN> {
+ public:
+  DISALLOW_COPY_AND_ASSIGN(ZobHasher)
+  ;
+  static ZobHasher &Ins();
 
+  HashKeyType GetHash(const BoardInGm<BOARD_LEN> &b) const;HashKeyType GetHash(
+      HashKeyType hash, const BrdChange &chng) const;
 
+ private:
+  HashKeyType board_hash_[BoardLenSquare<BOARD_LEN>()][3];
+  HashKeyType player_hash_[2];
+  HashKeyType ko_hash_[BoardLenSquare<BOARD_LEN>()];
+  HashKeyType noko_hash_;
 
-template <BoardLen BOARD_LEN>
-class ZobHasher : public BrdInGmDlgt<BOARD_LEN>
-{
-public:
-    DISALLOW_COPY_AND_ASSIGN(ZobHasher);
-    static ZobHasher &Ins();
-
-    HashKeyType GetHash(const BoardInGm<BOARD_LEN> &b) const;
-    HashKeyType GetHash(HashKeyType hash, const BrdChange &chng) const;
-
-#ifdef DTEST
-    static void TEST();
-    void PRINT();
-#endif
-
-private:
-    HashKeyType board_hash_[BoardLenSquare<BOARD_LEN>()][3];
-    HashKeyType player_hash_[2];
-    HashKeyType ko_hash_[BoardLenSquare<BOARD_LEN>()];
-    HashKeyType noko_hash_;
-
-    ZobHasher();
-    ~ZobHasher() = default;
+  ZobHasher();
+  ~ZobHasher() = default;
 };
-
-
-
-#include "zob_hasher-TLT.h"
-#ifdef DTEST
-#include "zob_hasher_TEST.h"
-#endif
 
 #endif
