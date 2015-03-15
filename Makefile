@@ -138,32 +138,113 @@ tests/fast:
 	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/build
 .PHONY : tests/fast
 
-src/brd_change.o: src/brd_change.cc.o
-.PHONY : src/brd_change.o
+src/board/board_difference.o: src/board/board_difference.cc.o
+.PHONY : src/board/board_difference.o
 
 # target to build an object file
-src/brd_change.cc.o:
-	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/brd_change.cc.o
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/brd_change.cc.o
-.PHONY : src/brd_change.cc.o
+src/board/board_difference.cc.o:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/board/board_difference.cc.o
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/board/board_difference.cc.o
+.PHONY : src/board/board_difference.cc.o
 
-src/brd_change.i: src/brd_change.cc.i
-.PHONY : src/brd_change.i
+src/board/board_difference.i: src/board/board_difference.cc.i
+.PHONY : src/board/board_difference.i
 
 # target to preprocess a source file
-src/brd_change.cc.i:
-	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/brd_change.cc.i
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/brd_change.cc.i
-.PHONY : src/brd_change.cc.i
+src/board/board_difference.cc.i:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/board/board_difference.cc.i
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/board/board_difference.cc.i
+.PHONY : src/board/board_difference.cc.i
 
-src/brd_change.s: src/brd_change.cc.s
-.PHONY : src/brd_change.s
+src/board/board_difference.s: src/board/board_difference.cc.s
+.PHONY : src/board/board_difference.s
 
 # target to generate assembly for a file
-src/brd_change.cc.s:
-	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/brd_change.cc.s
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/brd_change.cc.s
-.PHONY : src/brd_change.cc.s
+src/board/board_difference.cc.s:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/board/board_difference.cc.s
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/board/board_difference.cc.s
+.PHONY : src/board/board_difference.cc.s
+
+src/board/board_output.o: src/board/board_output.cc.o
+.PHONY : src/board/board_output.o
+
+# target to build an object file
+src/board/board_output.cc.o:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/board/board_output.cc.o
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/board/board_output.cc.o
+.PHONY : src/board/board_output.cc.o
+
+src/board/board_output.i: src/board/board_output.cc.i
+.PHONY : src/board/board_output.i
+
+# target to preprocess a source file
+src/board/board_output.cc.i:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/board/board_output.cc.i
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/board/board_output.cc.i
+.PHONY : src/board/board_output.cc.i
+
+src/board/board_output.s: src/board/board_output.cc.s
+.PHONY : src/board/board_output.s
+
+# target to generate assembly for a file
+src/board/board_output.cc.s:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/board/board_output.cc.s
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/board/board_output.cc.s
+.PHONY : src/board/board_output.cc.s
+
+src/board/force.o: src/board/force.cc.o
+.PHONY : src/board/force.o
+
+# target to build an object file
+src/board/force.cc.o:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/board/force.cc.o
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/board/force.cc.o
+.PHONY : src/board/force.cc.o
+
+src/board/force.i: src/board/force.cc.i
+.PHONY : src/board/force.i
+
+# target to preprocess a source file
+src/board/force.cc.i:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/board/force.cc.i
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/board/force.cc.i
+.PHONY : src/board/force.cc.i
+
+src/board/force.s: src/board/force.cc.s
+.PHONY : src/board/force.s
+
+# target to generate assembly for a file
+src/board/force.cc.s:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/board/force.cc.s
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/board/force.cc.s
+.PHONY : src/board/force.cc.s
+
+src/board/position.o: src/board/position.cc.o
+.PHONY : src/board/position.o
+
+# target to build an object file
+src/board/position.cc.o:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/board/position.cc.o
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/board/position.cc.o
+.PHONY : src/board/position.cc.o
+
+src/board/position.i: src/board/position.cc.i
+.PHONY : src/board/position.i
+
+# target to preprocess a source file
+src/board/position.cc.i:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/board/position.cc.i
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/board/position.cc.i
+.PHONY : src/board/position.cc.i
+
+src/board/position.s: src/board/position.cc.s
+.PHONY : src/board/position.s
+
+# target to generate assembly for a file
+src/board/position.cc.s:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/board/position.cc.s
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/board/position.cc.s
+.PHONY : src/board/position.cc.s
 
 src/foolishgo.o: src/foolishgo.cc.o
 .PHONY : src/foolishgo.o
@@ -189,134 +270,158 @@ src/foolishgo.cc.s:
 	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/foolishgo.cc.s
 .PHONY : src/foolishgo.cc.s
 
-src/position.o: src/position.cc.o
-.PHONY : src/position.o
+src/math/rand.o: src/math/rand.cc.o
+.PHONY : src/math/rand.o
 
 # target to build an object file
-src/position.cc.o:
-	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/position.cc.o
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/position.cc.o
-.PHONY : src/position.cc.o
+src/math/rand.cc.o:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/math/rand.cc.o
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/math/rand.cc.o
+.PHONY : src/math/rand.cc.o
 
-src/position.i: src/position.cc.i
-.PHONY : src/position.i
+src/math/rand.i: src/math/rand.cc.i
+.PHONY : src/math/rand.i
 
 # target to preprocess a source file
-src/position.cc.i:
-	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/position.cc.i
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/position.cc.i
-.PHONY : src/position.cc.i
+src/math/rand.cc.i:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/math/rand.cc.i
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/math/rand.cc.i
+.PHONY : src/math/rand.cc.i
 
-src/position.s: src/position.cc.s
-.PHONY : src/position.s
+src/math/rand.s: src/math/rand.cc.s
+.PHONY : src/math/rand.s
 
 # target to generate assembly for a file
-src/position.cc.s:
-	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/position.cc.s
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/position.cc.s
-.PHONY : src/position.cc.s
+src/math/rand.cc.s:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/math/rand.cc.s
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/math/rand.cc.s
+.PHONY : src/math/rand.cc.s
 
-src/rand.o: src/rand.cc.o
-.PHONY : src/rand.o
+src/math/vector_util.o: src/math/vector_util.cc.o
+.PHONY : src/math/vector_util.o
 
 # target to build an object file
-src/rand.cc.o:
-	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/rand.cc.o
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/rand.cc.o
-.PHONY : src/rand.cc.o
+src/math/vector_util.cc.o:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/math/vector_util.cc.o
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/math/vector_util.cc.o
+.PHONY : src/math/vector_util.cc.o
 
-src/rand.i: src/rand.cc.i
-.PHONY : src/rand.i
+src/math/vector_util.i: src/math/vector_util.cc.i
+.PHONY : src/math/vector_util.i
 
 # target to preprocess a source file
-src/rand.cc.i:
-	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/rand.cc.i
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/rand.cc.i
-.PHONY : src/rand.cc.i
+src/math/vector_util.cc.i:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/math/vector_util.cc.i
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/math/vector_util.cc.i
+.PHONY : src/math/vector_util.cc.i
 
-src/rand.s: src/rand.cc.s
-.PHONY : src/rand.s
+src/math/vector_util.s: src/math/vector_util.cc.s
+.PHONY : src/math/vector_util.s
 
 # target to generate assembly for a file
-src/rand.cc.s:
-	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/rand.cc.s
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/rand.cc.s
-.PHONY : src/rand.cc.s
+src/math/vector_util.cc.s:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/math/vector_util.cc.s
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/math/vector_util.cc.s
+.PHONY : src/math/vector_util.cc.s
 
-src/vector_util.o: src/vector_util.cc.o
-.PHONY : src/vector_util.o
+src/util/log_util.o: src/util/log_util.cc.o
+.PHONY : src/util/log_util.o
 
 # target to build an object file
-src/vector_util.cc.o:
-	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/vector_util.cc.o
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/vector_util.cc.o
-.PHONY : src/vector_util.cc.o
+src/util/log_util.cc.o:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/util/log_util.cc.o
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/util/log_util.cc.o
+.PHONY : src/util/log_util.cc.o
 
-src/vector_util.i: src/vector_util.cc.i
-.PHONY : src/vector_util.i
+src/util/log_util.i: src/util/log_util.cc.i
+.PHONY : src/util/log_util.i
 
 # target to preprocess a source file
-src/vector_util.cc.i:
-	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/vector_util.cc.i
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/vector_util.cc.i
-.PHONY : src/vector_util.cc.i
+src/util/log_util.cc.i:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/util/log_util.cc.i
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/util/log_util.cc.i
+.PHONY : src/util/log_util.cc.i
 
-src/vector_util.s: src/vector_util.cc.s
-.PHONY : src/vector_util.s
+src/util/log_util.s: src/util/log_util.cc.s
+.PHONY : src/util/log_util.s
 
 # target to generate assembly for a file
-src/vector_util.cc.s:
-	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/vector_util.cc.s
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/vector_util.cc.s
-.PHONY : src/vector_util.cc.s
+src/util/log_util.cc.s:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/util/log_util.cc.s
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/util/log_util.cc.s
+.PHONY : src/util/log_util.cc.s
 
-test/board_TEST.o: test/board_TEST.cc.o
-.PHONY : test/board_TEST.o
+test/board/board_TEST.o: test/board/board_TEST.cc.o
+.PHONY : test/board/board_TEST.o
 
 # target to build an object file
-test/board_TEST.cc.o:
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/board_TEST.cc.o
-.PHONY : test/board_TEST.cc.o
+test/board/board_TEST.cc.o:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/board/board_TEST.cc.o
+.PHONY : test/board/board_TEST.cc.o
 
-test/board_TEST.i: test/board_TEST.cc.i
-.PHONY : test/board_TEST.i
+test/board/board_TEST.i: test/board/board_TEST.cc.i
+.PHONY : test/board/board_TEST.i
 
 # target to preprocess a source file
-test/board_TEST.cc.i:
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/board_TEST.cc.i
-.PHONY : test/board_TEST.cc.i
+test/board/board_TEST.cc.i:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/board/board_TEST.cc.i
+.PHONY : test/board/board_TEST.cc.i
 
-test/board_TEST.s: test/board_TEST.cc.s
-.PHONY : test/board_TEST.s
+test/board/board_TEST.s: test/board/board_TEST.cc.s
+.PHONY : test/board/board_TEST.s
 
 # target to generate assembly for a file
-test/board_TEST.cc.s:
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/board_TEST.cc.s
-.PHONY : test/board_TEST.cc.s
+test/board/board_TEST.cc.s:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/board/board_TEST.cc.s
+.PHONY : test/board/board_TEST.cc.s
 
-test/board_in_gm_TEST.o: test/board_in_gm_TEST.cc.o
-.PHONY : test/board_in_gm_TEST.o
+test/board/full_board_TEST.o: test/board/full_board_TEST.cc.o
+.PHONY : test/board/full_board_TEST.o
 
 # target to build an object file
-test/board_in_gm_TEST.cc.o:
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/board_in_gm_TEST.cc.o
-.PHONY : test/board_in_gm_TEST.cc.o
+test/board/full_board_TEST.cc.o:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/board/full_board_TEST.cc.o
+.PHONY : test/board/full_board_TEST.cc.o
 
-test/board_in_gm_TEST.i: test/board_in_gm_TEST.cc.i
-.PHONY : test/board_in_gm_TEST.i
+test/board/full_board_TEST.i: test/board/full_board_TEST.cc.i
+.PHONY : test/board/full_board_TEST.i
 
 # target to preprocess a source file
-test/board_in_gm_TEST.cc.i:
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/board_in_gm_TEST.cc.i
-.PHONY : test/board_in_gm_TEST.cc.i
+test/board/full_board_TEST.cc.i:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/board/full_board_TEST.cc.i
+.PHONY : test/board/full_board_TEST.cc.i
 
-test/board_in_gm_TEST.s: test/board_in_gm_TEST.cc.s
-.PHONY : test/board_in_gm_TEST.s
+test/board/full_board_TEST.s: test/board/full_board_TEST.cc.s
+.PHONY : test/board/full_board_TEST.s
 
 # target to generate assembly for a file
-test/board_in_gm_TEST.cc.s:
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/board_in_gm_TEST.cc.s
-.PHONY : test/board_in_gm_TEST.cc.s
+test/board/full_board_TEST.cc.s:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/board/full_board_TEST.cc.s
+.PHONY : test/board/full_board_TEST.cc.s
+
+test/game/monte_carlo_game_TEST.o: test/game/monte_carlo_game_TEST.cc.o
+.PHONY : test/game/monte_carlo_game_TEST.o
+
+# target to build an object file
+test/game/monte_carlo_game_TEST.cc.o:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/game/monte_carlo_game_TEST.cc.o
+.PHONY : test/game/monte_carlo_game_TEST.cc.o
+
+test/game/monte_carlo_game_TEST.i: test/game/monte_carlo_game_TEST.cc.i
+.PHONY : test/game/monte_carlo_game_TEST.i
+
+# target to preprocess a source file
+test/game/monte_carlo_game_TEST.cc.i:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/game/monte_carlo_game_TEST.cc.i
+.PHONY : test/game/monte_carlo_game_TEST.cc.i
+
+test/game/monte_carlo_game_TEST.s: test/game/monte_carlo_game_TEST.cc.s
+.PHONY : test/game/monte_carlo_game_TEST.s
+
+# target to generate assembly for a file
+test/game/monte_carlo_game_TEST.cc.s:
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/test/game/monte_carlo_game_TEST.cc.s
+.PHONY : test/game/monte_carlo_game_TEST.cc.s
 
 usr/share/gtest-1.7.0/src/gtest_main.o: usr/share/gtest-1.7.0/src/gtest_main.cc.o
 .PHONY : usr/share/gtest-1.7.0/src/gtest_main.o
@@ -353,27 +458,39 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... tests"
-	@echo "... src/brd_change.o"
-	@echo "... src/brd_change.i"
-	@echo "... src/brd_change.s"
+	@echo "... src/board/board_difference.o"
+	@echo "... src/board/board_difference.i"
+	@echo "... src/board/board_difference.s"
+	@echo "... src/board/board_output.o"
+	@echo "... src/board/board_output.i"
+	@echo "... src/board/board_output.s"
+	@echo "... src/board/force.o"
+	@echo "... src/board/force.i"
+	@echo "... src/board/force.s"
+	@echo "... src/board/position.o"
+	@echo "... src/board/position.i"
+	@echo "... src/board/position.s"
 	@echo "... src/foolishgo.o"
 	@echo "... src/foolishgo.i"
 	@echo "... src/foolishgo.s"
-	@echo "... src/position.o"
-	@echo "... src/position.i"
-	@echo "... src/position.s"
-	@echo "... src/rand.o"
-	@echo "... src/rand.i"
-	@echo "... src/rand.s"
-	@echo "... src/vector_util.o"
-	@echo "... src/vector_util.i"
-	@echo "... src/vector_util.s"
-	@echo "... test/board_TEST.o"
-	@echo "... test/board_TEST.i"
-	@echo "... test/board_TEST.s"
-	@echo "... test/board_in_gm_TEST.o"
-	@echo "... test/board_in_gm_TEST.i"
-	@echo "... test/board_in_gm_TEST.s"
+	@echo "... src/math/rand.o"
+	@echo "... src/math/rand.i"
+	@echo "... src/math/rand.s"
+	@echo "... src/math/vector_util.o"
+	@echo "... src/math/vector_util.i"
+	@echo "... src/math/vector_util.s"
+	@echo "... src/util/log_util.o"
+	@echo "... src/util/log_util.i"
+	@echo "... src/util/log_util.s"
+	@echo "... test/board/board_TEST.o"
+	@echo "... test/board/board_TEST.i"
+	@echo "... test/board/board_TEST.s"
+	@echo "... test/board/full_board_TEST.o"
+	@echo "... test/board/full_board_TEST.i"
+	@echo "... test/board/full_board_TEST.s"
+	@echo "... test/game/monte_carlo_game_TEST.o"
+	@echo "... test/game/monte_carlo_game_TEST.i"
+	@echo "... test/game/monte_carlo_game_TEST.s"
 	@echo "... usr/share/gtest-1.7.0/src/gtest_main.o"
 	@echo "... usr/share/gtest-1.7.0/src/gtest_main.i"
 	@echo "... usr/share/gtest-1.7.0/src/gtest_main.s"

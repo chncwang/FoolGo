@@ -11,5 +11,7 @@ Testing/
 .cproject
 .project
 .settings/
+logs/
 foolgo
 tests
+Makefile
