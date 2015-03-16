@@ -8,12 +8,6 @@
 #include "game.h"
 
 namespace foolgo {
-namespace player {
-template<board::BoardLen BOARD_LEN> class RandomPlayer;
-} /* namespace player */
-} /* namespace foolgo */
-
-namespace foolgo {
 namespace game {
 
 template<board::BoardLen BOARD_LEN>

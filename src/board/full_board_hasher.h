@@ -2,7 +2,6 @@
 #define FOOLGO_SRC_BOARD_BOARD_HASHER_H_
 
 #include "../def.h"
-#include "full_board.h"
 #include "position.h"
 
 namespace foolgo {

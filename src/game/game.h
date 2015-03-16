@@ -39,15 +39,18 @@ class Game {
 template<board::BoardLen BOARD_LEN>
 Game<BOARD_LEN>::~Game() {
   for (auto ptr : player_ptrs_) {
-    delete ptr;
+    if (ptr != nullptr) {
+      delete ptr;
+    }
   }
 }
 
 template<board::BoardLen BOARD_LEN>
 void Game<BOARD_LEN>::Run() {
   const log4cplus::Logger &logger = GetLogger();
+  LOG4CPLUS_INFO(logger, "full_board_:" << full_board_.ToString(true));
 
-  while (!board::IsEnd(full_board_)) {
+  while (!full_board_.IsEnd()) {
     board::Force current_force = NextForce(full_board_);
     player::Player<BOARD_LEN> *current_player = player_ptrs_.at(current_force);
     board::PositionIndex next_index = current_player->NextMove(full_board_);
@@ -57,7 +60,8 @@ void Game<BOARD_LEN>::Run() {
       full_board_.PlayMove(board::Move(current_force, next_index));
     }
 
-    LOG4CPLUS_INFO(logger, "full_board_:" << full_board_.ToString(next_index));
+    LOG4CPLUS_INFO(logger,
+                   "full_board_:" << full_board_.ToString(next_index, true));
   }
 }
 
@@ -65,7 +69,7 @@ template<board::BoardLen BOARD_LEN>
 Game<BOARD_LEN>::Game(const board::FullBoard<BOARD_LEN> &full_board,
                       player::Player<BOARD_LEN> *black_player,
                       player::Player<BOARD_LEN> *white_player)
-    : full_board_(nullptr), player_ptrs_({black_player, white_player}) {
+    : player_ptrs_({black_player, white_player}) {
   full_board_.Copy(full_board);
 }
 

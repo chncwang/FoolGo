@@ -24,23 +24,21 @@ class RandomPlayer : public PassablePlayer<BOARD_LEN> {
   explicit RandomPlayer(uint32_t seed) : seed_(seed) {}
 
  protected:
-  board::PositionIndex NextMove(
-      const board::FullBoard<BOARD_LEN> &full_board,
-      const typename board::FullBoard<BOARD_LEN>::BitSet &playable_indexes);
+  board::PositionIndex NextMoveWithPlayableBoard(
+      const board::FullBoard<BOARD_LEN> &full_board);
 
  private:
   uint32_t seed_;
 };
 
 template<board::BoardLen BOARD_LEN>
-board::PositionIndex RandomPlayer<BOARD_LEN>::NextMove(
-    const board::FullBoard<BOARD_LEN>& full_board,
-    const typename board::FullBoard<BOARD_LEN>::BitSet &playable_indexes) {
-  assert(playable_indexes.count() > 0);
+board::PositionIndex RandomPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
+    const board::FullBoard<BOARD_LEN>& full_board) {
+  auto playable_indexes = full_board.PlayableIndexes(board::NextForce(full_board));
+  assert(!playable_indexes.empty());
 
-  board::PositionIndex rand = math::Rand(playable_indexes.count() - 1, seed_);
-  return math::CalSpecifiedOneOccurrenceTimeIndex<
-      board::BoardLenSquare<BOARD_LEN>()>(playable_indexes, rand);
+  board::PositionIndex rand = math::Rand(playable_indexes.size() - 1, seed_);
+  return playable_indexes.at(rand);
 }
 
 } /* namespace player */

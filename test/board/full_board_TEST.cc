@@ -13,8 +13,8 @@ class BoardInGmTest : public Test {
 };
 
 TEST_F(BoardInGmTest, Init) {
-  ZobHasher<DEFAULT_BOARD_LEN> zob_hasher(SEED);
-  FullBoard<DEFAULT_BOARD_LEN> board(&zob_hasher);
+  ZobHasher<DEFAULT_BOARD_LEN>::Init(SEED);
+  FullBoard<DEFAULT_BOARD_LEN> board;
   board.Init();
 
   for (int i = 0; i < BoardLenSquare<DEFAULT_BOARD_LEN>(); ++i) {

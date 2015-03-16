@@ -6,7 +6,6 @@
 #include "../def.h"
 #include "../math/rand.h"
 #include "board_difference.h"
-#include "full_board.h"
 #include "full_board_hasher.h"
 #include "position.h"
 
@@ -18,7 +17,11 @@ class BoardDifference;
 template<BoardLen BOARD_LEN>
 class ZobHasher : public FullBoardHasher<BOARD_LEN> {
  public:
-  ZobHasher(uint32_t seed);
+  static void Init(uint32_t seed);
+  static ZobHasher<BOARD_LEN> *InstancePtr() {
+    return zob_hasher_ptr_;
+  }
+
   ~ZobHasher() = default;
 
   HashKey GetHash(const FullBoard<BOARD_LEN> &b) const;
@@ -30,8 +33,20 @@ class ZobHasher : public FullBoardHasher<BOARD_LEN> {
   HashKey ko_hash_[BoardLenSquare<BOARD_LEN>()];
   HashKey noko_hash_;
 
+  static ZobHasher<BOARD_LEN> *zob_hasher_ptr_;
+
+  ZobHasher(uint32_t seed);
+
   DISALLOW_COPY_AND_ASSIGN_AND_MOVE(ZobHasher)
 };
+
+template<BoardLen BOARD_LEN>
+ZobHasher<BOARD_LEN> *ZobHasher<BOARD_LEN>::zob_hasher_ptr_ = nullptr;
+
+template<BoardLen BOARD_LEN>
+void ZobHasher<BOARD_LEN>::Init(uint32_t seed) {
+  zob_hasher_ptr_ = new ZobHasher<BOARD_LEN>(seed);
+}
 
 template<BoardLen BOARD_LEN>
 ZobHasher<BOARD_LEN>::ZobHasher(uint32_t seed) {

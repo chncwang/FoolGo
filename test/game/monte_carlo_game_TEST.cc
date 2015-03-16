@@ -14,14 +14,12 @@ using board::FullBoard;
 using board::ZobHasher;
 
 class MonteCarloGameTest : public Test {
- public:
-  MonteCarloGameTest(): zob_hasher_(SEED) {}
-
  protected:
   virtual void SetUp() {
     Test::SetUp();
 
-    FullBoard<DEFAULT_BOARD_LEN> full_board_(&zob_hasher_);
+    ZobHasher<DEFAULT_BOARD_LEN>::Init(SEED);
+    FullBoard<DEFAULT_BOARD_LEN> full_board_;
     full_board_.Init();
 
     game_ = new MonteCarloGame<DEFAULT_BOARD_LEN>(full_board_, SEED);
@@ -31,7 +29,6 @@ class MonteCarloGameTest : public Test {
     delete game_;
   }
 
-  ZobHasher<DEFAULT_BOARD_LEN> zob_hasher_;
   MonteCarloGame<DEFAULT_BOARD_LEN> *game_ = nullptr;
 };
 

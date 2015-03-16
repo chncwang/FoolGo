@@ -324,6 +324,33 @@ src/math/vector_util.cc.s:
 	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/math/vector_util.cc.s
 .PHONY : src/math/vector_util.cc.s
 
+src/player/node_record.o: src/player/node_record.cc.o
+.PHONY : src/player/node_record.o
+
+# target to build an object file
+src/player/node_record.cc.o:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/player/node_record.cc.o
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/player/node_record.cc.o
+.PHONY : src/player/node_record.cc.o
+
+src/player/node_record.i: src/player/node_record.cc.i
+.PHONY : src/player/node_record.i
+
+# target to preprocess a source file
+src/player/node_record.cc.i:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/player/node_record.cc.i
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/player/node_record.cc.i
+.PHONY : src/player/node_record.cc.i
+
+src/player/node_record.s: src/player/node_record.cc.s
+.PHONY : src/player/node_record.s
+
+# target to generate assembly for a file
+src/player/node_record.cc.s:
+	$(MAKE) -f CMakeFiles/foolgo.dir/build.make CMakeFiles/foolgo.dir/src/player/node_record.cc.s
+	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/player/node_record.cc.s
+.PHONY : src/player/node_record.cc.s
+
 src/util/log_util.o: src/util/log_util.cc.o
 .PHONY : src/util/log_util.o
 
@@ -479,6 +506,9 @@ help:
 	@echo "... src/math/vector_util.o"
 	@echo "... src/math/vector_util.i"
 	@echo "... src/math/vector_util.s"
+	@echo "... src/player/node_record.o"
+	@echo "... src/player/node_record.i"
+	@echo "... src/player/node_record.s"
 	@echo "... src/util/log_util.o"
 	@echo "... src/util/log_util.i"
 	@echo "... src/util/log_util.s"
