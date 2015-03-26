@@ -16,7 +16,6 @@ log4cplus::Logger logger = log4cplus::Logger::getInstance(
 
 const HashKey* NodeRecord::GetChildHashKeyPtr(
     board::PositionIndex position_index) const {
-  LOG4CPLUS_DEBUG(logger, "position_index:" << position_index);
   auto it = child_hash_keys_.find(position_index);
   return it == child_hash_keys_.end() ? nullptr : &(it->second);
 }

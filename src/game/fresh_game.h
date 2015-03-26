@@ -23,7 +23,11 @@ template<board::BoardLen BOARD_LEN>
 class FreshGame : public Game<BOARD_LEN> {
  public:
   static FreshGame* BuildHumanVsAiGame(bool input_player_plays_black,
-                                     uint32_t seed);
+                                       uint32_t seed,
+                                       int mc_game_count);
+  static FreshGame* BuildHumanVsHumanGame(bool only_log_board = true);
+  static FreshGame* BuildAiVsAiGame(uint32_t seed, int mc_game_count,
+                                    bool only_log_board = true);
   ~FreshGame() = default;
   const log4cplus::Logger &GetLogger() const {
     return logger_;
@@ -43,9 +47,9 @@ log4cplus::Logger FreshGame<BOARD_LEN>::logger_ =
 
 template<board::BoardLen BOARD_LEN>
 FreshGame<BOARD_LEN>* FreshGame<BOARD_LEN>::BuildHumanVsAiGame(
-    bool input_player_plays_black, uint32_t seed) {
+    bool input_player_plays_black, uint32_t seed, int mc_game_count) {
   auto input_player = new player::InputPlayer<BOARD_LEN>;
-  auto ai_player = new player::UctPlayer<BOARD_LEN>(seed);
+  auto ai_player = new player::UctPlayer<BOARD_LEN>(seed, mc_game_count);
 
   player::Player<BOARD_LEN> *black_player, *white_player;
   if (input_player_plays_black) {
@@ -60,6 +64,30 @@ FreshGame<BOARD_LEN>* FreshGame<BOARD_LEN>::BuildHumanVsAiGame(
   full_board.Init();
 
   return new FreshGame(full_board, black_player, white_player);
+}
+
+template<board::BoardLen BOARD_LEN>
+FreshGame<BOARD_LEN>* FreshGame<BOARD_LEN>::BuildHumanVsHumanGame(
+    bool only_log_board) {
+  auto black_player = new player::InputPlayer<BOARD_LEN>;
+  auto white_player = new player::InputPlayer<BOARD_LEN>;
+
+  board::FullBoard<BOARD_LEN> full_board;
+  full_board.Init();
+
+  return new FreshGame(full_board, black_player, white_player, only_log_board);
+}
+
+template<board::BoardLen BOARD_LEN>
+FreshGame<BOARD_LEN>* FreshGame<BOARD_LEN>::BuildAiVsAiGame(
+    uint32_t seed, int mc_game_count, bool only_log_board) {
+  auto black_player = new player::UctPlayer<BOARD_LEN>(seed, mc_game_count);
+  auto white_player = new player::UctPlayer<BOARD_LEN>(seed, mc_game_count);
+
+  board::FullBoard<BOARD_LEN> full_board;
+  full_board.Init();
+
+  return new FreshGame(full_board, black_player, white_player, only_log_board);
 }
 
 }

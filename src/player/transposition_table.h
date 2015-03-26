@@ -71,8 +71,15 @@ template<board::BoardLen BOARD_LEN>
 HashKey TranspositionTable<BOARD_LEN>::ChildHashKey(
     const board::FullBoard<BOARD_LEN> &full_board,
     board::PositionIndex position_index) {
+  HashKey result;
   NodeRecord *node_record_ptr = Get(full_board);
-  assert (node_record_ptr != nullptr);
+
+  if (node_record_ptr == nullptr) {
+    NodeRecord node_record(0, 0.0f);
+    Insert(full_board, node_record);
+    node_record_ptr = Get(full_board);
+  }
+
   const HashKey *hash_key_ptr = node_record_ptr->GetChildHashKeyPtr(
       position_index);
   if (hash_key_ptr == nullptr) {
@@ -80,10 +87,12 @@ HashKey TranspositionTable<BOARD_LEN>::ChildHashKey(
     child_node.Copy(full_board);
     board::Play(&child_node, position_index);
     node_record_ptr->InsertChildHashKey(position_index, child_node.HashKey());
-    return child_node.HashKey();
+    result = child_node.HashKey();
   } else {
-    return *hash_key_ptr;
+    result = *hash_key_ptr;
   }
+
+  return result;
 }
 
 }

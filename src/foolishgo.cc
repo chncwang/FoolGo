@@ -1,7 +1,12 @@
+#include <log4cplus/logger.h>
+#include <log4cplus/loggingmacros.h>
 #include <cstdint>
+#include <iostream>
 
 #include "board/zob_hasher.h"
+#include "def.h"
 #include "game/fresh_game.h"
+#include "game/game.h"
 #include "math/rand.h"
 #include "util/log_util.h"
 
@@ -11,14 +16,21 @@ using foolgo::game::Game;
 using foolgo::game::FreshGame;
 using foolgo::math::GetTimeSeed;
 using foolgo::util::InitLogConfig;
+using foolgo::MAIN_BOARD_LEN;
+using log4cplus::Logger;
 
 int main(int argc, const char *argv[]) {
   InitLogConfig();
 
-  uint32_t seed = GetTimeSeed();
-  ZobHasher<9>::Init(seed);
+  Logger logger = Logger::getRoot();
 
-  Game<9>* game = FreshGame<9>::BuildHumanVsAiGame(true, seed);
+  uint32_t seed = GetTimeSeed();
+  LOG4CPLUS_INFO(logger, "seed:" << seed);
+
+  ZobHasher<MAIN_BOARD_LEN>::Init(seed);
+
+  Game<MAIN_BOARD_LEN>* game = FreshGame<MAIN_BOARD_LEN>::BuildHumanVsAiGame(
+      false, seed, 10000);
 
   game->Run();
 

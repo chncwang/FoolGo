@@ -91,6 +91,7 @@ class FullBoard : private Board<BOARD_LEN> {
 
   std::vector<PositionIndex> PlayableIndexes(Force force) const;
   bool IsEnd() const;
+  bool IsSuicide(const Move &move) const;
 
   std::string ToString(
       std::function<std::string(const Board<BOARD_LEN>&)> board_to_string,
@@ -117,7 +118,6 @@ class FullBoard : private Board<BOARD_LEN> {
   bool IsSelfPieceOrEye(const Move &force_and_position_index) const;
 
   bool IsEmptySingly(PositionIndex indx) const;
-  bool IsSuicide(const Move &move) const;
 
   BitSet PlayableIndexBitSet(Force force) const;
 
@@ -151,6 +151,21 @@ class FullBoard : private Board<BOARD_LEN> {
 };
 
 template<BoardLen BOARD_LEN>
+Force NextForce(const FullBoard<BOARD_LEN> &b) {
+  return OppositeForce(b.LastForce());
+}
+
+template<BoardLen BOARD_LEN>
+void Play(FullBoard<BOARD_LEN> *full_board, PositionIndex position_index) {
+  Force force = NextForce(*full_board);
+  if (position_index == POSITION_INDEX_PASS) {
+    full_board->Pass(force);
+  } else {
+    full_board->PlayMove(Move(force, position_index));
+  }
+}
+
+template<BoardLen BOARD_LEN>
 log4cplus::Logger FullBoard<BOARD_LEN>::logger_ =
     log4cplus::Logger::getInstance("foolgo.board.FullBoard");
 
@@ -161,14 +176,37 @@ bool FullBoard<BOARD_LEN>::IsEnd() const {
 }
 
 template<BoardLen BOARD_LEN>
-Force NextForce(const FullBoard<BOARD_LEN> &b) {
-  return OppositeForce(b.LastForce());
-}
+bool FullBoard<BOARD_LEN>::IsSuicide(const Move &move) const {
+  assert(GetPointState(move.position_index) == EMPTY_POINT);
 
-template<BoardLen BOARD_LEN>
-void Play(FullBoard<BOARD_LEN> *full_board, PositionIndex position_index) {
-  Force force = NextForce(*full_board);
-  full_board->PlayMove(Move(force, position_index));
+  auto &pc = PstionAndIndxCcltr<BOARD_LEN>::Ins();
+  PositionIndex indx = move.position_index;
+  const Position &pos = pc.GetPosition(indx);
+  Force color = move.force;
+  Force oc = OppositeForce(color);
+
+  for (int i = 0; i < 4; ++i) {
+    Position adj_pos = AdjacentPosition(pos, i);
+    if (!pc.IsInBoard(adj_pos)) {
+      continue;
+    }
+
+    PointState point = GetPointState(adj_pos);
+    PositionIndex adj_indx = pc.GetIndex(adj_pos);
+    if (point == EMPTY_POINT) {
+      return false;
+    } else if (point == color) {
+      if (chain_sets_[color].GetAirCount(adj_indx) > 1) {
+        return false;
+      }
+    } else {
+      if (chain_sets_[oc].GetAirCount(adj_indx) == 1) {
+        return false;
+      }
+    }
+  }
+
+  return true;
 }
 
 template<BoardLen BOARD_LEN>
@@ -266,11 +304,6 @@ void FullBoard<BOARD_LEN>::PlayMove(const Move &move) {
       }
     }
 
-    LOG4CPLUS_DEBUG(
-        logger_,
-        "After modify adjacent real eyes state - PlayableStatesToString:" <<
-        PlayableStatesToString());
-
     // Modify Oblique real eyes state.
     for (int i = 0; i < 4; ++i) {
       Position oblq_pos = ObliquePosition(move_position, i);
@@ -285,11 +318,6 @@ void FullBoard<BOARD_LEN>::PlayMove(const Move &move) {
       Move oblq_move(move_force, oblq_indx);
       ModifyRealEyesState(oblq_move);
     }
-
-    LOG4CPLUS_DEBUG(
-        logger_,
-        "After modify oblique real eyes state - PlayableStatesToString:" <<
-        PlayableStatesToString());
 
     ModifyAdjacentIndexesPlayableState(move);
 
@@ -433,40 +461,6 @@ bool FullBoard<BOARD_LEN>::IsEmptySingly(PositionIndex indx) const {
 }
 
 template<BoardLen BOARD_LEN>
-bool FullBoard<BOARD_LEN>::IsSuicide(const Move &move) const {
-  assert(GetPointState(move.position_index) == EMPTY_POINT);
-
-  auto &pc = PstionAndIndxCcltr<BOARD_LEN>::Ins();
-  PositionIndex indx = move.position_index;
-  const Position &pos = pc.GetPosition(indx);
-  Force color = move.force;
-  Force oc = OppositeForce(color);
-
-  for (int i = 0; i < 4; ++i) {
-    Position adj_pos = AdjacentPosition(pos, i);
-    if (!pc.IsInBoard(adj_pos)) {
-      continue;
-    }
-
-    PointState point = GetPointState(adj_pos);
-    PositionIndex adj_indx = pc.GetIndex(adj_pos);
-    if (point == EMPTY_POINT) {
-      return false;
-    } else if (point == color) {
-      if (chain_sets_[color].GetAirCount(adj_indx) > 1) {
-        return false;
-      }
-    } else {
-      if (chain_sets_[oc].GetAirCount(adj_indx) == 1) {
-        return false;
-      }
-    }
-  }
-
-  return true;
-}
-
-template<BoardLen BOARD_LEN>
 typename FullBoard<BOARD_LEN>::BitSet FullBoard<BOARD_LEN>::PlayableIndexBitSet(
     Force force) const {
   if (KoIndex() == FullBoard<BOARD_LEN>::NONE) {
@@ -504,6 +498,7 @@ void FullBoard<BOARD_LEN>::PlayBasicMove(
     if (GetPointState(adjacent_index) == opposite_force
         && chain_sets_[opposite_force].GetAirCount(adjacent_index) == 1) {
       ate_piecies_indexes[i] = RemoveChain(Move(opposite_force, adjacent_index));
+      air_set.set(adjacent_index);
     } else if (GetPointState(adj_pos) == EMPTY_POINT) {
       air_set.set(adjacent_index);
     }
@@ -514,6 +509,7 @@ void FullBoard<BOARD_LEN>::PlayBasicMove(
   chain_sets_[move_force].AddPiece(move_index, air_set);
 
   if (chain_sets_[move_force].GetAirCount(move_index) == 0) {
+    LOG4CPLUS_DEBUG(logger_, "air count is zero!");
     *suicided_pieces_indexes = RemoveChain(move);
   }
 }
@@ -587,10 +583,6 @@ void FullBoard<BOARD_LEN>::ModifyRealEyesState(
   bool is_eye = eye_states_[force].IsEye(indx);
   std::string force_and_position_index_str = ForceAndPositionIndexToString<
       BOARD_LEN>(force_and_position_index);
-  LOG4CPLUS_DEBUG(
-      logger_,
-      "is_eye:" << is_eye << ", force_and_position_index:" <<
-      force_and_position_index_str);
 
   if (!is_eye) {
     eye_states_[force].SetRealEye(indx, false);

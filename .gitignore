@@ -2,7 +2,6 @@ build/
 cmake_install.cmake
 CMakeFiles/
 CMakeCache.txt
-Makefile
 Testing/
 *.o
 *.swp

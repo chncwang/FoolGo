@@ -27,11 +27,13 @@ class Game {
  protected:
   Game(const board::FullBoard<BOARD_LEN> &full_board,
        player::Player<BOARD_LEN> *black_player,
-       player::Player<BOARD_LEN> *white_player);
+       player::Player<BOARD_LEN> *white_player,
+       bool only_log_board = true);
   virtual const log4cplus::Logger &GetLogger() const = 0;
  private:
   board::FullBoard<BOARD_LEN> full_board_;
   std::array<player::Player<BOARD_LEN>*, 2> player_ptrs_;
+  bool only_log_board_;
 
   DISALLOW_COPY_AND_ASSIGN_AND_MOVE(Game)
 };
@@ -54,22 +56,21 @@ void Game<BOARD_LEN>::Run() {
     board::Force current_force = NextForce(full_board_);
     player::Player<BOARD_LEN> *current_player = player_ptrs_.at(current_force);
     board::PositionIndex next_index = current_player->NextMove(full_board_);
-    if (next_index == board::POSITION_INDEX_PASS) {
-      full_board_.Pass(current_force);
-    } else {
-      full_board_.PlayMove(board::Move(current_force, next_index));
-    }
+    board::Play(&full_board_, next_index);
 
-    LOG4CPLUS_INFO(logger,
-                   "full_board_:" << full_board_.ToString(next_index, true));
+    LOG4CPLUS_INFO(
+        logger,
+        "full_board_:" << full_board_.ToString(next_index, only_log_board_));
   }
 }
 
 template<board::BoardLen BOARD_LEN>
 Game<BOARD_LEN>::Game(const board::FullBoard<BOARD_LEN> &full_board,
                       player::Player<BOARD_LEN> *black_player,
-                      player::Player<BOARD_LEN> *white_player)
-    : player_ptrs_({black_player, white_player}) {
+                      player::Player<BOARD_LEN> *white_player,
+                      bool only_log_board)
+    : player_ptrs_( { black_player, white_player }),
+      only_log_board_(only_log_board) {
   full_board_.Copy(full_board);
 }
 

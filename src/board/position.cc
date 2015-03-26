@@ -6,6 +6,7 @@ namespace foolgo {
 namespace board {
 
 using boost::format;
+using std::string;
 
 const BoardLen Position::STRAIGHT_ORNTTIONS[4][2] = { { 0, -1 }, { 1, 0 }, { 0,
     1 }, { -1, 0 } };
@@ -13,7 +14,7 @@ const BoardLen Position::STRAIGHT_ORNTTIONS[4][2] = { { 0, -1 }, { 1, 0 }, { 0,
 const BoardLen Position::OBLIQUE_ORNTTIONS[4][2] = { { 1, -1 }, { 1, 1 }, { -1,
     1 }, { -1, -1 } };
 
-std::string PositionToString(const Position &position) {
+string PositionToString(const Position &position) {
   return (boost::format("{%1%, %2%}") % static_cast<int>(position.x)
       % static_cast<int>(position.y)).str();
 }

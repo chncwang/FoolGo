@@ -1,9 +1,9 @@
 #ifndef FOOLGO_SRC_PLAYER_UCT_PLAYER_H_
 #define FOOLGO_SRC_PLAYER_UCT_PLAYER_H_
 
+#include <log4cplus/logger.h>
 #include <cassert>
 #include <cmath>
-#include <cstddef>
 #include <cstdint>
 
 #include "../board/force.h"
@@ -30,6 +30,7 @@ class UctPlayer : public PassablePlayer<BOARD_LEN> {
   int mc_game_count_per_move_;
   TranspositionTable<BOARD_LEN> transposition_table_;
   uint32_t seed_;
+  static log4cplus::Logger logger_;
 
   board::PositionIndex MaxUcbChild(
       const board::FullBoard<BOARD_LEN> &full_board);
@@ -37,6 +38,10 @@ class UctPlayer : public PassablePlayer<BOARD_LEN> {
       board::FullBoard<BOARD_LEN> *full_board_ptr, int *mc_game_count_ptr);
   board::PositionIndex BestChild(const board::FullBoard<BOARD_LEN> &full_board);
 };
+
+template<board::BoardLen BOARD_LEN>
+log4cplus::Logger UctPlayer<BOARD_LEN>::logger_ =
+    log4cplus::Logger::getInstance("foolgo.player.UctPlayer");
 
 namespace {
 
@@ -99,14 +104,16 @@ board::PositionIndex UctPlayer<BOARD_LEN>::MaxUcbChild(
   }
 
   float max_ucb = -1.0f;
-  board::PositionIndex max_ucb_index;
+  board::PositionIndex max_ucb_index = board::POSITION_INDEX_PASS;
 
   for (board::PositionIndex position_index : playable_index_vector) {
     const NodeRecord *node_record_ptr = transposition_table_.GetChild(
         full_board, position_index);
     // It is guaranteed by the above loop that node_record_ptr is not nullptr.
     float ucb = Ucb(*node_record_ptr, visited_count_sum);
-    if (ucb > max_ucb) {
+    if (ucb > max_ucb
+        && !full_board.IsSuicide(
+            board::Move(board::NextForce(full_board), position_index))) {
       max_ucb = ucb;
       max_ucb_index = position_index;
     }
@@ -123,9 +130,10 @@ float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
 
   if (node_record_ptr == nullptr) {
     game::MonteCarloGame<BOARD_LEN> monte_carlo_game(*full_board_ptr, seed_);
-    if (full_board_ptr->IsEnd()) {
+    if (!full_board_ptr->IsEnd()) {
       monte_carlo_game.Run();
     }
+    ++(*mc_game_count_ptr);
     board::Force force = full_board_ptr->LastForce();
     new_profit = GetRegionRatio(monte_carlo_game.GetFullBoard(), force);
     player::NodeRecord node_record(1, new_profit);
@@ -135,8 +143,19 @@ float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
       ++(*mc_game_count_ptr);
       new_profit = node_record_ptr->GetAverageProfit();
     } else {
-      board::PositionIndex max_ucb_index = MaxUcbChild(*full_board_ptr);
-      board::Play(full_board_ptr, max_ucb_index);
+      if (full_board_ptr->PlayableIndexes(board::NextForce(*full_board_ptr))
+          .empty()) {
+        full_board_ptr->Pass(board::NextForce(*full_board_ptr));
+      } else {
+        board::PositionIndex max_ucb_index = MaxUcbChild(*full_board_ptr);
+        LOG4CPLUS_DEBUG(
+            logger_,
+            "max_ucb_index:" <<
+            board::PositionToString(board::PstionAndIndxCcltr<BOARD_LEN>::Ins().
+                                    GetPosition(max_ucb_index)) <<
+            "full_board:" << *full_board_ptr);
+        board::Play(full_board_ptr, max_ucb_index);
+      }
       new_profit = 1.0f
           - ModifyAverageProfitAndReturnNewProfit(full_board_ptr,
                                                   mc_game_count_ptr);
@@ -164,6 +183,7 @@ board::PositionIndex UctPlayer<BOARD_LEN>::BestChild(
   for (board::PositionIndex index : playable_index_vector) {
     const NodeRecord *node_record = transposition_table_.GetChild(full_board,
                                                                   index);
+    assert(node_record != nullptr);
     if (node_record->GetVisitedTime() > max_visited_count) {
       max_visited_count = node_record->GetVisitedTime();
       most_visited_index = index;
