@@ -2,11 +2,13 @@
 
 #define FOOLGO_SRC_PLAYER_UCT_PLAYER_H_
 
+#include <atomic>
 #include <boost/lexical_cast.hpp>
 #include <log4cplus/logger.h>
 #include <cassert>
 #include <cmath>
 #include <cstdint>
+#include <thread>
 
 #include "../board/force.h"
 #include "../board/full_board.h"
@@ -37,7 +39,8 @@ class UctPlayer : public PassablePlayer<BOARD_LEN> {
   board::PositionIndex MaxUcbChild(
       const board::FullBoard<BOARD_LEN> &full_board);
   float ModifyAverageProfitAndReturnNewProfit(
-      board::FullBoard<BOARD_LEN> *full_board_ptr, int *mc_game_count_ptr);
+      board::FullBoard<BOARD_LEN> *full_board_ptr,
+      std::atomic<int> *mc_game_count_ptr);
   board::PositionIndex BestChild(const board::FullBoard<BOARD_LEN> &full_board);
   void LogProfits(const board::FullBoard<BOARD_LEN> &full_board);
 };
@@ -72,7 +75,8 @@ UctPlayer<BOARD_LEN>::UctPlayer(uint32_t seed, int mc_game_count_per_move)
 template<board::BoardLen BOARD_LEN>
 board::PositionIndex UctPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
       const board::FullBoard<BOARD_LEN> &full_board) {
-  int current_mc_game_count = 0;
+  std::atomic<int> current_mc_game_count(0);
+  std::array<std::thread, 4> threads;
 
   while (current_mc_game_count < mc_game_count_per_move_) {
     board::PositionIndex max_ucb_index = MaxUcbChild(full_board);
@@ -129,7 +133,8 @@ board::PositionIndex UctPlayer<BOARD_LEN>::MaxUcbChild(
 
 template<board::BoardLen BOARD_LEN>
 float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
-    board::FullBoard<BOARD_LEN> *full_board_ptr, int *mc_game_count_ptr) {
+    board::FullBoard<BOARD_LEN> *full_board_ptr,
+    std::atomic<int> *mc_game_count_ptr) {
   float new_profit;
   NodeRecord *node_record_ptr = transposition_table_.Get(*full_board_ptr);
 

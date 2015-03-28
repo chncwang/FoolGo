@@ -106,7 +106,7 @@ HashKey ZobHasher<BOARD_LEN>::GetHash(HashKey hash,
   HashKey r = hash ^ HashChange(chng.KoChng(), getko)
       ^ HashChange(chng.LastForceChng(), getplayer);
 
-  for (auto pair : chng.PointsChng()) {
+  for (const auto &pair : chng.PointsChng()) {
     PositionIndex pair_indx = pair.position_index;
     auto getpnt = [this, pair_indx](PointState pnt) {
       return board_hash_[pair_indx][pnt];
