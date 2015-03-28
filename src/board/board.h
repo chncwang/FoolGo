@@ -74,9 +74,11 @@ inline void Board<BOARD_LEN>::SetPoint(const Position &pos, PointState point) {
 }
 
 template<BoardLen BOARD_LEN>
-std::string ToString(
-    const Board<BOARD_LEN> &board,
-    std::function<char(PointState, PositionIndex)> get_output) {
+std::string ToString(std::function<std::string(PositionIndex)> get_output,
+                     int width = 1) {
+  int final_width = width % 2 == 1 ? width + 1 : width + 2;
+  int blank_line_count = final_width / 2 - 1;
+
   std::string result = RETURN + std::string(2, BLANK);
 
   for (int i=0; i<BOARD_LEN; ++i) {
@@ -89,14 +91,12 @@ std::string ToString(
     result += (boost::format("%1% ") % y).str();
 
     for (int x=0; x<BOARD_LEN; ++x) {
-      PointState point_state = board.GetPoint(Position(x, y));
       PositionIndex position_index = PstionAndIndxCcltr<BOARD_LEN>::Ins()
           .GetIndex(Position(x, y));
-      result +=
-          (boost::format("%1% ") % get_output(point_state, position_index)).str();
+      result += (boost::format("%1% ") % get_output(position_index)).str();
     }
 
-    result += RETURN;
+    result += std::string(blank_line_count + 1, RETURN);
   }
 
   return result;
@@ -104,11 +104,10 @@ std::string ToString(
 
 template<BoardLen BOARD_LEN>
 std::string ToString(const Board<BOARD_LEN> &board) {
-  static auto get_output =
-      [](PointState point_state, PositionIndex position_index) {
-    return GetPointStateOutput(point_state, false);
+  static auto get_output = [&board](PositionIndex position_index) {
+    return GetPointStateOutput(board.GetPoint(position_index), false);
   };
-  return ToString(board, get_output);
+  return ToString<BOARD_LEN>(get_output);
 }
 
 template<BoardLen BOARD_LEN>

@@ -1,6 +1,8 @@
 #ifndef FOOLGO_SRC_PLAYER_UCT_PLAYER_H_
+
 #define FOOLGO_SRC_PLAYER_UCT_PLAYER_H_
 
+#include <boost/lexical_cast.hpp>
 #include <log4cplus/logger.h>
 #include <cassert>
 #include <cmath>
@@ -37,6 +39,7 @@ class UctPlayer : public PassablePlayer<BOARD_LEN> {
   float ModifyAverageProfitAndReturnNewProfit(
       board::FullBoard<BOARD_LEN> *full_board_ptr, int *mc_game_count_ptr);
   board::PositionIndex BestChild(const board::FullBoard<BOARD_LEN> &full_board);
+  void LogProfits(const board::FullBoard<BOARD_LEN> &full_board);
 };
 
 template<board::BoardLen BOARD_LEN>
@@ -79,6 +82,8 @@ board::PositionIndex UctPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
     ModifyAverageProfitAndReturnNewProfit(&max_ucb_child,
                                           &current_mc_game_count);
   }
+
+  LogProfits(full_board);
 
   return BestChild(full_board);
 }
@@ -148,12 +153,6 @@ float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
         full_board_ptr->Pass(board::NextForce(*full_board_ptr));
       } else {
         board::PositionIndex max_ucb_index = MaxUcbChild(*full_board_ptr);
-        LOG4CPLUS_DEBUG(
-            logger_,
-            "max_ucb_index:" <<
-            board::PositionToString(board::PstionAndIndxCcltr<BOARD_LEN>::Ins().
-                                    GetPosition(max_ucb_index)) <<
-            "full_board:" << *full_board_ptr);
         board::Play(full_board_ptr, max_ucb_index);
       }
       new_profit = 1.0f
@@ -191,6 +190,29 @@ board::PositionIndex UctPlayer<BOARD_LEN>::BestChild(
   }
 
   return most_visited_index;
+}
+
+template<board::BoardLen BOARD_LEN>
+void UctPlayer<BOARD_LEN>::LogProfits(
+    const board::FullBoard<BOARD_LEN> &full_board) {
+  auto get_profit_str =
+      [this, &full_board](board::PositionIndex position_index) {
+    board::Force force = board::NextForce(full_board);
+    auto indexes = full_board.PlayableIndexes(force);
+    auto it = std::find(indexes.begin(), indexes.end(), position_index);
+    if (it == indexes.end()) {
+      return 'N' + std::string(3, ' ');
+    } else {
+      NodeRecord *node_record = transposition_table_.GetChild(full_board,
+                                                              position_index);
+      assert(node_record != nullptr);
+      float profit = node_record->GetAverageProfit();
+      return boost::lexical_cast<std::string>(profit).substr(0, 4);
+    }
+  };
+
+  LOG4CPLUS_DEBUG(logger_,
+                 "profits:"<< board::ToString<BOARD_LEN>(get_profit_str, 4));
 }
 
 }

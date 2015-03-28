@@ -7,7 +7,9 @@
 namespace foolgo {
 namespace board {
 
-char GetPointStateOutput(PointState point_state, bool is_last_move) {
+using std::string;
+
+string GetPointStateOutput(PointState point_state, bool is_last_move) {
   char output = EMPTY_OUTPUT;
 
   if (point_state == BLACK_POINT) {
@@ -20,7 +22,7 @@ char GetPointStateOutput(PointState point_state, bool is_last_move) {
     assert(false);
   }
 
-  return output;
+  return string(1, output);
 }
 
 }

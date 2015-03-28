@@ -388,18 +388,15 @@ std::string FullBoard<BOARD_LEN>::ToString(
 }
 
 template<BoardLen BOARD_LEN>
-std::string FullBoard<BOARD_LEN>::ToString(
-    const PositionIndex &last_move_index, bool board_only) const {
-  auto get_output =
-      [last_move_index](PointState point_state, PositionIndex position_index) {
-        return GetPointStateOutput(point_state,
-                                   last_move_index == position_index);
-      };
-  auto board_to_string =
-      [this, get_output](const Board<BOARD_LEN> &board) {
-        return board::ToString(static_cast<const Board<BOARD_LEN>&>(*this),
-                               get_output);
-      };
+std::string FullBoard<BOARD_LEN>::ToString(const PositionIndex &last_move_index,
+                                           bool board_only) const {
+  auto get_output = [this, last_move_index](PositionIndex position_index) {
+    PointState point_state = GetPointState(position_index);
+    return GetPointStateOutput(point_state, last_move_index == position_index);
+  };
+  auto board_to_string = [this, get_output](const Board<BOARD_LEN> &board) {
+    return board::ToString<BOARD_LEN>(get_output);
+  };
   return ToString(board_to_string, board_only);
 }
 
@@ -581,8 +578,6 @@ void FullBoard<BOARD_LEN>::ModifyRealEyesState(
   Force force = force_and_position_index.force;
   PositionIndex indx = force_and_position_index.position_index;
   bool is_eye = eye_states_[force].IsEye(indx);
-  std::string force_and_position_index_str = ForceAndPositionIndexToString<
-      BOARD_LEN>(force_and_position_index);
 
   if (!is_eye) {
     eye_states_[force].SetRealEye(indx, false);
@@ -708,12 +703,13 @@ void FullBoard<BOARD_LEN>::ModifyAtePiecesAdjacentChains(
 template<BoardLen BOARD_LEN>
 std::string FullBoard<BOARD_LEN>::PlayableStatesToString() const {
   auto get_output =
-      [this](PointState point_state, PositionIndex position_index) {
+      [this](PositionIndex position_index) {
+        PointState point_state = GetPointState(position_index);
         bool black_playable_state =
             point_playable_states_array_[BLACK_FORCE][position_index];
         bool white_playable_state =
             point_playable_states_array_[WHITE_FORCE][position_index];
-        char output;
+        std::string output;
         if (black_playable_state && white_playable_state) {
           assert(point_state == EMPTY_POINT);
           output = 'A';
@@ -732,8 +728,7 @@ std::string FullBoard<BOARD_LEN>::PlayableStatesToString() const {
         }
         return output;
       };
-  return board::ToString(static_cast<const Board<BOARD_LEN>&>(*this),
-                         get_output);
+  return board::ToString<BOARD_LEN>(get_output);
 }
 
 }
