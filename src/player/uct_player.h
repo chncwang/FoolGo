@@ -6,8 +6,10 @@
 #include <boost/lexical_cast.hpp>
 #include <log4cplus/logger.h>
 #include <cassert>
+#include <condition_variable>
 #include <cmath>
 #include <cstdint>
+#include <mutex>
 #include <thread>
 
 #include "../board/force.h"
@@ -34,8 +36,14 @@ class UctPlayer : public PassablePlayer<BOARD_LEN> {
   int mc_game_count_per_move_;
   TranspositionTable<BOARD_LEN> transposition_table_;
   uint32_t seed_;
+  mutable std::mutex wait_search_mutex_;
+  mutable std::condition_variable condition_variable_;
+  mutable std::mutex mutex_;
+
   static log4cplus::Logger logger_;
 
+  void SearchAndModifyNodes(const board::FullBoard<BOARD_LEN> &full_board,
+                            std::atomic<int> *mc_game_count_ptr);
   board::PositionIndex MaxUcbChild(
       const board::FullBoard<BOARD_LEN> &full_board);
   float ModifyAverageProfitAndReturnNewProfit(
@@ -77,15 +85,19 @@ board::PositionIndex UctPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
       const board::FullBoard<BOARD_LEN> &full_board) {
   std::atomic<int> current_mc_game_count(0);
   std::array<std::thread, 4> threads;
+//  SearchAndModifyNodes(full_board, &current_mc_game_count);
 
-  while (current_mc_game_count < mc_game_count_per_move_) {
-    board::PositionIndex max_ucb_index = MaxUcbChild(full_board);
-    board::FullBoard<BOARD_LEN> max_ucb_child;
-    max_ucb_child.Copy(full_board);
-    board::Play(&max_ucb_child, max_ucb_index);
-    ModifyAverageProfitAndReturnNewProfit(&max_ucb_child,
-                                          &current_mc_game_count);
+  for (int i=0; i<4; ++i) {
+    threads.at(i) = std::thread(&UctPlayer<BOARD_LEN>::SearchAndModifyNodes,
+                                this, std::cref(full_board),
+                                &current_mc_game_count);
+    LOG4CPLUS_DEBUG(logger_, "thread index:" << i);
+    threads.at(i).detach();
+    LOG4CPLUS_DEBUG(logger_, "thread joined - thread index:" << i);
   }
+
+  std::unique_lock<std::mutex> unique_lock(wait_search_mutex_);
+  condition_variable_.wait(unique_lock);
 
   LogProfits(full_board);
 
@@ -93,8 +105,25 @@ board::PositionIndex UctPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
 }
 
 template<board::BoardLen BOARD_LEN>
+void UctPlayer<BOARD_LEN>::SearchAndModifyNodes(
+    const board::FullBoard<BOARD_LEN> &full_board,
+    std::atomic<int> *mc_game_count_ptr) {
+  while (*mc_game_count_ptr < mc_game_count_per_move_) {
+    board::PositionIndex max_ucb_index = MaxUcbChild(full_board);
+    board::FullBoard<BOARD_LEN> max_ucb_child;
+    max_ucb_child.Copy(full_board);
+    board::Play(&max_ucb_child, max_ucb_index);
+    ModifyAverageProfitAndReturnNewProfit(&max_ucb_child, mc_game_count_ptr);
+  }
+
+  condition_variable_.notify_one();
+}
+
+template<board::BoardLen BOARD_LEN>
 board::PositionIndex UctPlayer<BOARD_LEN>::MaxUcbChild(
     const board::FullBoard<BOARD_LEN> &full_board) {
+  std::lock_guard<std::mutex> lock(mutex_);
+
   board::Force current_force = board::NextForce(full_board);
   auto playable_index_vector = full_board.PlayableIndexes(current_force);
 
@@ -118,6 +147,9 @@ board::PositionIndex UctPlayer<BOARD_LEN>::MaxUcbChild(
   for (board::PositionIndex position_index : playable_index_vector) {
     const NodeRecord *node_record_ptr = transposition_table_.GetChild(
         full_board, position_index);
+    if (node_record_ptr->IsInSearch()) {
+      continue;
+    }
     // It is guaranteed by the above loop that node_record_ptr is not nullptr.
     float ucb = Ucb(*node_record_ptr, visited_count_sum);
     if (ucb > max_ucb
@@ -137,6 +169,9 @@ float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
     std::atomic<int> *mc_game_count_ptr) {
   float new_profit;
   NodeRecord *node_record_ptr = transposition_table_.Get(*full_board_ptr);
+  mutex_.lock();
+  node_record_ptr->SetIsInSearch(true);
+  mutex_.unlock();
 
   if (node_record_ptr == nullptr) {
     game::MonteCarloGame<BOARD_LEN> monte_carlo_game(*full_board_ptr, seed_);
@@ -146,7 +181,7 @@ float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
     ++(*mc_game_count_ptr);
     board::Force force = full_board_ptr->LastForce();
     new_profit = GetRegionRatio(monte_carlo_game.GetFullBoard(), force);
-    player::NodeRecord node_record(1, new_profit);
+    player::NodeRecord node_record(1, new_profit, false);
     transposition_table_.Insert(*full_board_ptr, node_record);
   } else {
     if (full_board_ptr->IsEnd()) {
@@ -163,6 +198,7 @@ float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
       new_profit = 1.0f
           - ModifyAverageProfitAndReturnNewProfit(full_board_ptr,
                                                   mc_game_count_ptr);
+      std::lock_guard<std::mutex> lock(mutex_);
       float previous_profit = node_record_ptr->GetAverageProfit();
       float modified_profit = (previous_profit
           * node_record_ptr->GetVisitedTime() + new_profit)
@@ -173,6 +209,9 @@ float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
     node_record_ptr->SetVisitedTimes(node_record_ptr->GetVisitedTime() + 1);
   }
 
+  mutex_.lock();
+  node_record_ptr->SetIsInSearch(false);
+  mutex_.unlock();
   return new_profit;
 }
 

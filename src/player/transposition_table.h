@@ -2,6 +2,7 @@
 #define FOOLGO_SRC_PLAYER_TRANSPOSITION_TABLE_H_
 
 #include <cstddef>
+#include <mutex>
 #include <unordered_map>
 
 #include "../board/full_board.h"
@@ -31,6 +32,7 @@ class TranspositionTable {
 
  private:
   std::unordered_map<HashKey, NodeRecord, StaySelfHasher> node_record_map_;
+  mutable std::mutex mutex_;
 
   NodeRecord *Get(HashKey hash_key) const;
   HashKey ChildHashKey(const board::FullBoard<BOARD_LEN> &full_board,
@@ -56,11 +58,15 @@ template<board::BoardLen BOARD_LEN>
 void TranspositionTable<BOARD_LEN>::Insert(
     const board::FullBoard<BOARD_LEN> &full_board,
     const NodeRecord &node_record) {
-  node_record_map_.insert(std::make_pair(full_board.HashKey(), node_record));
+  std::lock_guard<std::mutex> lock(mutex_);
+  if (node_record_map_.find(full_board.HashKey()) == node_record_map_.end()) {
+    node_record_map_.insert(std::make_pair(full_board.HashKey(), node_record));
+  }
 }
 
 template<board::BoardLen BOARD_LEN>
 NodeRecord *TranspositionTable<BOARD_LEN>::Get(HashKey hash_key) const {
+  std::lock_guard<std::mutex> lock(mutex_);
   auto it = node_record_map_.find(hash_key);
   return
       it == node_record_map_.end() ?
@@ -75,7 +81,7 @@ HashKey TranspositionTable<BOARD_LEN>::ChildHashKey(
   NodeRecord *node_record_ptr = Get(full_board);
 
   if (node_record_ptr == nullptr) {
-    NodeRecord node_record(0, 0.0f);
+    NodeRecord node_record(0, 0.0f, false);
     Insert(full_board, node_record);
     node_record_ptr = Get(full_board);
   }
