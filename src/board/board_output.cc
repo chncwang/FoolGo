@@ -17,7 +17,7 @@ string GetPointStateOutput(PointState point_state, bool is_last_move) {
   } else if (point_state == WHITE_POINT) {
     output = is_last_move ? LAST_MOVE_WHITE_OUTPUT : WHITE_OUTPUT;
   } else if (point_state == EMPTY_POINT) {
-    output = EMPTY_OUTPUT;
+    output = is_last_move ? LAST_MOVE_EMPTY_OUTPUT : EMPTY_OUTPUT;
   } else {
     assert(false);
   }

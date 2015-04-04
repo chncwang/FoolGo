@@ -13,7 +13,8 @@ namespace game {
 template<board::BoardLen BOARD_LEN>
 class MonteCarloGame : public Game<BOARD_LEN> {
  public:
-  MonteCarloGame(const board::FullBoard<BOARD_LEN> &full_board, uint32_t seed);
+  MonteCarloGame(const board::FullBoard<BOARD_LEN> &full_board, uint32_t seed,
+                 bool only_log_board = true);
   ~MonteCarloGame() = default;
   const log4cplus::Logger &GetLogger() const {
     return logger_;
@@ -28,9 +29,11 @@ log4cplus::Logger MonteCarloGame<BOARD_LEN>::logger_ =
 
 template<board::BoardLen BOARD_LEN>
 MonteCarloGame<BOARD_LEN>::MonteCarloGame(
-    const board::FullBoard<BOARD_LEN> &full_board, uint32_t seed)
+    const board::FullBoard<BOARD_LEN> &full_board, uint32_t seed,
+    bool only_log_board )
     : Game<BOARD_LEN>(full_board, new player::RandomPlayer<BOARD_LEN>(seed),
-                      new player::RandomPlayer<BOARD_LEN>(seed)) {}
+                      new player::RandomPlayer<BOARD_LEN>(seed),
+                      only_log_board) {}
 
 } /* namespace player */
 } /* namespace foolgo */

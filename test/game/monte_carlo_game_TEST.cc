@@ -22,7 +22,7 @@ class MonteCarloGameTest : public Test {
     FullBoard<DEFAULT_BOARD_LEN> full_board_;
     full_board_.Init();
 
-    game_ = new MonteCarloGame<DEFAULT_BOARD_LEN>(full_board_, SEED);
+    game_ = new MonteCarloGame<DEFAULT_BOARD_LEN>(full_board_, SEED, false);
   }
 
   virtual void TearDown() {
