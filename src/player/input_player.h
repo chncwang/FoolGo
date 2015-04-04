@@ -42,12 +42,10 @@ template<board::BoardLen BOARD_LEN>
 board::PositionIndex InputPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
     const board::FullBoard<BOARD_LEN> &full_board) {
   board::Position position;
-  do {
-    std::cout << "x, y: ";
-    int x, y;
-    std::cin >> x >> y;
-    position = board::Position(x, y);
-  } while (!IsPostionIndexLegalMove(position, full_board));
+  std::cout << "x, y: ";
+  int x, y;
+  std::cin >> x >> y;
+  position = board::Position(x, y);
 
   return board::PstionAndIndxCcltr<BOARD_LEN>::Ins().GetIndex(position);
 }

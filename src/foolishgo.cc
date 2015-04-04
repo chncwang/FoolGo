@@ -24,13 +24,14 @@ int main(int argc, const char *argv[]) {
 
   Logger logger = Logger::getRoot();
 
-  uint32_t seed = GetTimeSeed();
+//  uint32_t seed = GetTimeSeed();
+  uint32_t seed = 2318570214;
   LOG4CPLUS_INFO(logger, "seed:" << seed);
 
   ZobHasher<MAIN_BOARD_LEN>::Init(seed);
 
-  Game<MAIN_BOARD_LEN>* game = FreshGame<MAIN_BOARD_LEN>::BuildAiVsAiGame(
-      seed, 30000);
+  Game<MAIN_BOARD_LEN>* game = FreshGame<MAIN_BOARD_LEN>::BuildHumanVsHumanGame(
+      false);
   game->Run();
 
   delete game;

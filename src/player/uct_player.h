@@ -84,10 +84,9 @@ template<board::BoardLen BOARD_LEN>
 board::PositionIndex UctPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
       const board::FullBoard<BOARD_LEN> &full_board) {
   std::atomic<int> current_mc_game_count(0);
-  std::array<std::thread, 4> threads;
-//  SearchAndModifyNodes(full_board, &current_mc_game_count);
+  std::array<std::thread, 2> threads;
 
-  for (int i=0; i<4; ++i) {
+  for (int i=0; i<2; ++i) {
     threads.at(i) = std::thread(&UctPlayer<BOARD_LEN>::SearchAndModifyNodes,
                                 this, std::cref(full_board),
                                 &current_mc_game_count);
@@ -169,9 +168,6 @@ float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
     std::atomic<int> *mc_game_count_ptr) {
   float new_profit;
   NodeRecord *node_record_ptr = transposition_table_.Get(*full_board_ptr);
-  mutex_.lock();
-  node_record_ptr->SetIsInSearch(true);
-  mutex_.unlock();
 
   if (node_record_ptr == nullptr) {
     game::MonteCarloGame<BOARD_LEN> monte_carlo_game(*full_board_ptr, seed_);
@@ -184,6 +180,10 @@ float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
     player::NodeRecord node_record(1, new_profit, false);
     transposition_table_.Insert(*full_board_ptr, node_record);
   } else {
+    mutex_.lock();
+    node_record_ptr->SetIsInSearch(true);
+    mutex_.unlock();
+
     if (full_board_ptr->IsEnd()) {
       ++(*mc_game_count_ptr);
       new_profit = node_record_ptr->GetAverageProfit();
@@ -209,9 +209,10 @@ float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
     node_record_ptr->SetVisitedTimes(node_record_ptr->GetVisitedTime() + 1);
   }
 
-  mutex_.lock();
-  node_record_ptr->SetIsInSearch(false);
-  mutex_.unlock();
+  if (node_record_ptr != nullptr) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    node_record_ptr->SetIsInSearch(false);
+  }
   return new_profit;
 }
 
