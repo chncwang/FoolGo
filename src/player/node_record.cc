@@ -1,5 +1,6 @@
 #include "node_record.h"
 
+#include <boost/format.hpp>
 #include <log4cplus/logger.h>
 #include <log4cplus/loggingmacros.h>
 #include <utility>
@@ -10,7 +11,9 @@ namespace player {
 using std::make_pair;
 using std::lock_guard;
 using std::mutex;
+using std::ostream;
 using board::PositionIndex;
+using boost::format;
 
 namespace {
 log4cplus::Logger logger = log4cplus::Logger::getInstance(
@@ -39,6 +42,13 @@ void NodeRecord::InsertChildHashKey(PositionIndex position_index,
   if (child_hash_keys_.find(position_index) == child_hash_keys_.end()) {
     child_hash_keys_.insert(make_pair(position_index, hash_key));
   }
+}
+
+ostream& operator <<(ostream &os, const NodeRecord &node_record) {
+  os << (format("{visited_time_:%1%, average_profit_:%2%, is_in_search_:%3%")
+      % node_record.visited_time_ % node_record.average_profit_ %
+      node_record.is_in_search_);
+  return os;
 }
 
 }

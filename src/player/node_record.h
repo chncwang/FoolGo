@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <map>
 #include <mutex>
+#include <ostream>
 
 #include "../board/position.h"
 #include "../def.h"
@@ -49,6 +50,9 @@ class NodeRecord {
   std::atomic<bool> is_in_search_;
   std::map<board::PositionIndex, HashKey> child_hash_keys_;
   mutable std::mutex mutex_;
+
+  friend std::ostream& operator <<(std::ostream &os,
+                                   const NodeRecord &node_record);
 };
 
 }

@@ -21,19 +21,18 @@ typedef char AirCount;
 template<board::BoardLen BOARD_LEN>
 class ChainSet {
  public:
-  typedef std::bitset<board::BoardLenSquare<BOARD_LEN>()> AirSet;
-  typedef std::vector<board::PositionIndex> PntIndxVector;
-
   ChainSet() = default;
   ~ChainSet() = default;
   void Copy(const ChainSet &c);
 
-  AirSet GetAirSetByPiece(board::PositionIndex piece_i) const;
+  board::BitSet<BOARD_LEN> GetAirSetByPiece(board::PositionIndex piece_i) const;
   AirCount GetAirCount(board::PositionIndex piece_i) const;
-  PntIndxVector GetPieces(board::PositionIndex piece_i) const;
+  std::vector<board::PositionIndex> GetPieces(
+      board::PositionIndex piece_i) const;
 
   void SetAir(board::PositionIndex indx, board::PositionIndex air_i, bool v);
-  void AddPiece(board::PositionIndex indx, const AirSet &air_set);
+  void AddPiece(board::PositionIndex indx,
+                const board::BitSet<BOARD_LEN> &air_set);
   void RemoveListByPiece(board::PositionIndex piece_i);
 
  private:
@@ -48,7 +47,7 @@ class ChainSet {
 
   struct List {
     board::PositionIndex tail_, len_;
-    AirSet air_set_;
+    board::BitSet<BOARD_LEN> air_set_;
     AirCount air_count_;
   } lists_[board::BoardLenSquare<BOARD_LEN>()];
 
@@ -59,16 +58,18 @@ class ChainSet {
   inline board::PositionIndex GetListHead(board::PositionIndex node_i) const {
     return nodes_[node_i].list_head_;
   }
-  void CreateList(board::PositionIndex node_i, const AirSet &air_set);
+  void CreateList(board::PositionIndex node_i,
+                  const board::BitSet<BOARD_LEN> &air_set);
 
   board::PositionIndex MergeLists(board::PositionIndex head_a,
                                board::PositionIndex head_b);
 
   void RemoveList(board::PositionIndex head);
 
-  AirSet GetAirSetOfChain(board::PositionIndex head) const;
+  board::BitSet<BOARD_LEN> GetAirSetOfChain(board::PositionIndex head) const;
   AirCount GetAirCountOfChain(board::PositionIndex list_i) const;
-  PntIndxVector GetPiecesOfChain(board::PositionIndex list_i) const;
+  std::vector<board::PositionIndex> GetPiecesOfChain(
+      board::PositionIndex list_i) const;
 
   DISALLOW_COPY_AND_ASSIGN_AND_MOVE(ChainSet)
 };
@@ -85,8 +86,8 @@ void ChainSet<BOARD_LEN>::Copy(const ChainSet<BOARD_LEN> &c) {
 }
 
 template<board::BoardLen BOARD_LEN>
-typename ChainSet<BOARD_LEN>::AirSet
-inline ChainSet<BOARD_LEN>::GetAirSetByPiece(board::PositionIndex piece_i) const {
+board::BitSet<BOARD_LEN> ChainSet<BOARD_LEN>::GetAirSetByPiece(
+    board::PositionIndex piece_i) const {
   return GetAirSetOfChain(nodes_[piece_i].list_head_);
 }
 
@@ -98,8 +99,8 @@ inline AirCount ChainSet<BOARD_LEN>::GetAirCount(
 }
 
 template<board::BoardLen BOARD_LEN>
-typename ChainSet<BOARD_LEN>::PntIndxVector
-inline ChainSet<BOARD_LEN>::GetPieces(board::PositionIndex piece_i) const {
+std::vector<board::PositionIndex> ChainSet<BOARD_LEN>::GetPieces(
+    board::PositionIndex piece_i) const {
   assert(IS_POINT_NOT_EMPTY(piece_i));
   return GetPiecesOfChain(GetListHead(piece_i));
 }
@@ -107,21 +108,21 @@ inline ChainSet<BOARD_LEN>::GetPieces(board::PositionIndex piece_i) const {
 template<board::BoardLen BOARD_LEN>
 void ChainSet<BOARD_LEN>::SetAir(board::PositionIndex indx,
                                  board::PositionIndex air_i, bool v) {
-  AirSet air_set;
+  board::BitSet<BOARD_LEN> air_set;
   if (!v)
     air_set.set();
   air_set[air_i] = v;
   board::PositionIndex head = GetListHead(indx);
   assert(head != ChainSet<BOARD_LEN>::NONE_LIST);
   List *pl = lists_ + head;
-  const AirSet &r_as = pl->air_set_;
+  const board::BitSet<BOARD_LEN> &r_as = pl->air_set_;
   pl->air_set_ = v ? (r_as | air_set) : (r_as & air_set);
   pl->air_count_ = pl->air_set_.count();
 }
 
 template<board::BoardLen BOARD_LEN>
 void ChainSet<BOARD_LEN>::AddPiece(board::PositionIndex indx,
-                                   const ChainSet<BOARD_LEN>::AirSet &air_set) {
+                                   const board::BitSet<BOARD_LEN> &air_set) {
   const board::PstionAndIndxCcltr<BOARD_LEN> &ins = GetPosClcltr();
   CreateList(indx, air_set);
   board::PositionIndex list_i = indx;
@@ -153,7 +154,7 @@ void ChainSet<BOARD_LEN>::RemoveListByPiece(board::PositionIndex piece_i) {
 
 template<board::BoardLen BOARD_LEN>
 void ChainSet<BOARD_LEN>::CreateList(
-    board::PositionIndex node_i, const ChainSet<BOARD_LEN>::AirSet &air_set) {
+    board::PositionIndex node_i, const board::BitSet<BOARD_LEN> &air_set) {
   nodes_[node_i].list_head_ = node_i;
   List *list = lists_ + node_i;
   list->tail_ = node_i;
@@ -196,8 +197,8 @@ void ChainSet<BOARD_LEN>::RemoveList(board::PositionIndex head) {
 }
 
 template<board::BoardLen BOARD_LEN>
-typename ChainSet<BOARD_LEN>::AirSet
-inline ChainSet<BOARD_LEN>::GetAirSetOfChain(board::PositionIndex head) const {
+board::BitSet<BOARD_LEN> ChainSet<BOARD_LEN>::GetAirSetOfChain(
+    board::PositionIndex head) const {
   return lists_[head].air_set_;
 }
 
@@ -208,10 +209,10 @@ inline AirCount ChainSet<BOARD_LEN>::GetAirCountOfChain(
 }
 
 template<board::BoardLen BOARD_LEN>
-typename ChainSet<BOARD_LEN>::PntIndxVector ChainSet<BOARD_LEN>::GetPiecesOfChain(
+std::vector<board::PositionIndex> ChainSet<BOARD_LEN>::GetPiecesOfChain(
     board::PositionIndex list_i) const {
   auto pl = lists_ + list_i;
-  ChainSet<BOARD_LEN>::PntIndxVector v(pl->len_);
+  std::vector<board::PositionIndex> v(pl->len_);
   int vi = 0;
 
   for (int i = list_i;; i = nodes_[i].next_) {

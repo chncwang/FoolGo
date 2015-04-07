@@ -1,6 +1,8 @@
 #ifndef FOOLGO_SRC_BOARD_BOARD_H_
 #define FOOLGO_SRC_BOARD_BOARD_H_
 
+#include <log4cplus/logger.h>
+#include <log4cplus/loggingmacros.h>
 #include <boost/format.hpp>
 #include <functional>
 #include <cassert>
@@ -35,8 +37,12 @@ class Board {
 };
 
 namespace {
+
+log4cplus::Logger board_logger = log4cplus::Logger::getInstance("foolgo.board");
+
 const char BLANK = ' ';
 const char RETURN = '\n';
+
 }
 
 template<BoardLen BOARD_LEN>
@@ -104,7 +110,10 @@ std::string ToString(std::function<std::string(PositionIndex)> get_output,
 
 template<BoardLen BOARD_LEN>
 std::string ToString(const Board<BOARD_LEN> &board) {
-  static auto get_output = [&board](PositionIndex position_index) {
+  auto get_output = [&board](PositionIndex position_index) {
+    LOG4CPLUS_DEBUG(board_logger, "board address:" << &board <<
+                    " position_index:" << position_index << " state:" <<
+                    static_cast<int>(board.GetPoint(position_index)));
     return GetPointStateOutput(board.GetPoint(position_index), false);
   };
   return ToString<BOARD_LEN>(get_output);

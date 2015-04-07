@@ -12,8 +12,6 @@ namespace piece_structure {
 template<board::BoardLen BOARD_LEN>
 class EyeSet {
  public:
-  typedef std::bitset<board::BoardLenSquare<BOARD_LEN>()> BitSet;
-
   EyeSet() = default;
   ~EyeSet() = default;
   void Copy(const EyeSet &es);
@@ -34,13 +32,14 @@ class EyeSet {
     return real_eyes_.count();
   }
 
-  const BitSet &GetRealEyes() const {
-    return real_eyes_;
+  std::vector<board::PositionIndex> GetRealEyes() const {
+    return math::GetOnePositionIndexes<board::BoardLenSquare<BOARD_LEN>()>(
+        real_eyes_);
   }
 
  private:
-  BitSet eyes_;
-  BitSet real_eyes_;
+  board::BitSet<BOARD_LEN> eyes_;
+  board::BitSet<BOARD_LEN> real_eyes_;
 
   DISALLOW_COPY_AND_ASSIGN_AND_MOVE(EyeSet)
 };

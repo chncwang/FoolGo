@@ -2,6 +2,7 @@
 #define FOOLGO_SRC_BOARD_POSITION_H_
 
 #include <stdint.h>
+#include <bitset>
 #include <iostream>
 
 namespace foolgo {
@@ -36,6 +37,9 @@ template<BoardLen BOARD_LEN>
 constexpr PositionIndex BoardLenSquare() {
   return BOARD_LEN * BOARD_LEN;
 }
+
+template<BoardLen BOARD_LEN>
+using BitSet = std::bitset<BoardLenSquare<BOARD_LEN>()>;
 
 template<BoardLen BOARD_LEN>
 constexpr BoardLen BoardLenMinusOne() {

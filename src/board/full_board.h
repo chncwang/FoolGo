@@ -54,8 +54,6 @@ std::string ForceAndPositionIndexToString(
 template<BoardLen BOARD_LEN>
 class FullBoard : private Board<BOARD_LEN> {
  public:
-  typedef std::bitset<BoardLenSquare<BOARD_LEN>()> BitSet;
-
   static const PositionIndex NONE = -1;
 
   explicit FullBoard()
@@ -80,7 +78,7 @@ class FullBoard : private Board<BOARD_LEN> {
     return ko_indx_;
   }
   PositionIndex BlackRegion() const {
-    return black_pieces_count_ + eye_states_[BLACK_FORCE].RealCount();
+    return black_pieces_count_ + eye_states_array_[BLACK_FORCE].RealCount();
   }
   HashKey HashKey() const {
     return hash_key_;
@@ -106,8 +104,8 @@ class FullBoard : private Board<BOARD_LEN> {
   static log4cplus::Logger logger_;
 
   piece_structure::ChainSet<BOARD_LEN> chain_sets_[2];
-  std::array<BitSet, 2> playable_states_array_;
-  piece_structure::EyeSet<BOARD_LEN> eye_states_[2];
+  std::array<BitSet<BOARD_LEN>, 2> playable_states_array_;
+  std::array<piece_structure::EyeSet<BOARD_LEN>, 2> eye_states_array_;
   PositionIndex ko_indx_;
   Force last_force_;
   PositionIndex black_pieces_count_;
@@ -119,7 +117,7 @@ class FullBoard : private Board<BOARD_LEN> {
 
   bool IsEmptySingly(PositionIndex indx) const;
 
-  BitSet PlayableIndexBitSet(Force force) const;
+  BitSet<BOARD_LEN> PlayableIndexBitSet(Force force) const;
 
   /**
    * Execute basic operations for the move. The basic operations area as below:
@@ -137,6 +135,8 @@ class FullBoard : private Board<BOARD_LEN> {
 
   void ModifyAtePiecesAdjacentChains(const PointIndxVector &ate_pieces,
                                      Force ate_force);
+  void ModifyRealEyesPlayableState();
+  void SetRealEyeAsTrue(const ForceAndPositionIndex &force_and_index);
 
   friend std::ostream &operator <<(std::ostream &os,
                                    const FullBoard<BOARD_LEN> &full_board) {
@@ -228,7 +228,7 @@ void FullBoard<BOARD_LEN>::Copy(const FullBoard &b) {
 
   for (int i = 0; i < 2; ++i) {
     playable_states_array_[i] = b.playable_states_array_[i];
-    eye_states_[i].Copy(b.eye_states_[i]);
+    eye_states_array_[i].Copy(b.eye_states_array_[i]);
     chain_sets_[i].Copy(b.chain_sets_[i]);
   }
 }
@@ -247,8 +247,8 @@ void FullBoard<BOARD_LEN>::PlayMove(const Move &move) {
 
   for (int i = 0; i < 2; ++i) {
     playable_states_array_[i].reset(move_index);
-    eye_states_[i].SetEye(move_index, false);
-    eye_states_[i].SetRealEye(move_index, false);
+    eye_states_array_[i].SetEye(move_index, false);
+    eye_states_array_[i].SetRealEye(move_index, false);
   }
 
   Force opposite_force = OppositeForce(move_force);
@@ -268,8 +268,8 @@ void FullBoard<BOARD_LEN>::PlayMove(const Move &move) {
   if (suisided_piece_indexes.empty()) {
     for (int i = 0; i < 2; ++i) {
       playable_states_array_[i].reset(move_index);
-      eye_states_[i].SetEye(move_index, false);
-      eye_states_[i].SetRealEye(move_index, false);
+      eye_states_array_[i].SetEye(move_index, false);
+      eye_states_array_[i].SetRealEye(move_index, false);
     }
 
     // Modify adjacent eyes state.
@@ -292,7 +292,6 @@ void FullBoard<BOARD_LEN>::PlayMove(const Move &move) {
                     ToString(false));
 
     // Modify adjacent real eyes state.
-    // If it is a fake eye, modify the playable state.
     for (int i = 0; i < 4; ++i) {
       Position adjacent_position = AdjacentPosition(move_position, i);
       if (!calculator.IsInBoard(adjacent_position)) {
@@ -305,12 +304,15 @@ void FullBoard<BOARD_LEN>::PlayMove(const Move &move) {
       PositionIndex adjacent_indx = calculator.GetIndex(adjacent_position);
       ForceAndPositionIndex adjcnt_frce_and_indx(move_force, adjacent_indx);
       ModifyRealEyesState(adjcnt_frce_and_indx);
-      if (IsFakeEye(eye_states_[adjcnt_frce_and_indx.force],
-                    adjcnt_frce_and_indx.position_index)) {
-        playable_states_array_[opposite_force][adjacent_indx] = IsSuicide(
-            Move(opposite_force, adjacent_indx));
-      }
+//      if (IsFakeEye(eye_states_array_[adjcnt_frce_and_indx.force],
+//                    adjcnt_frce_and_indx.position_index)) {
+//        playable_states_array_[opposite_force][adjacent_indx] = IsSuicide(
+//            Move(opposite_force, adjacent_indx));
+//      }
     }
+
+    LOG4CPLUS_DEBUG(logger_, "after modify adjacent real eyes state - *this:" <<
+                    ToString(false));
 
     // Modify Oblique real eyes state.
     for (int i = 0; i < 4; ++i) {
@@ -330,14 +332,8 @@ void FullBoard<BOARD_LEN>::PlayMove(const Move &move) {
       }
     }
 
-//    LOG4CPLUS_DEBUG(logger_, "after modify oblique real eyes state - *this:" <<
-//                    ToString(false));
-
-//    ModifyAdjacentIndexesPlayableState(move);
-
-//    LOG4CPLUS_DEBUG(logger_,
-//                    "after modify adjacent indexes playable state - *this:" <<
-//                    ToString(false));
+    LOG4CPLUS_DEBUG(logger_, "after modify oblique real eyes state - *this:" <<
+                    ToString(false));
 
     // The playable state of adjacent positions of the chains, which is adjacent
     // to ate pieces, should be modified.
@@ -345,8 +341,8 @@ void FullBoard<BOARD_LEN>::PlayMove(const Move &move) {
       ModifyAtePiecesAdjacentChains(ate_piece_indexes_array[i], opposite_force);
     }
 
-//    LOG4CPLUS_DEBUG(logger_, "after modify ate pieces adjacent chains - *this:"
-//                    << ToString(false));
+    LOG4CPLUS_DEBUG(logger_, "after modify ate pieces adjacent chains - *this:"
+                    << ToString(false));
 
     ko_indx_ = FullBoard<BOARD_LEN>::NONE;
     PositionIndex single_ate_piece_index = FullBoard<BOARD_LEN>::NONE;
@@ -364,8 +360,10 @@ void FullBoard<BOARD_LEN>::PlayMove(const Move &move) {
       ko_indx_ = single_ate_piece_index;
     }
   } else if (suisided_piece_indexes.size() == 1) {
-    eye_states_[opposite_force].SetEye(move_index, true);
+    eye_states_array_[opposite_force].SetEye(move_index, true);
   }
+
+  ModifyRealEyesPlayableState();
 
   last_force_ = move_force;
 
@@ -459,7 +457,7 @@ bool FullBoard<BOARD_LEN>::IsSelfPieceOrEye(
     const ForceAndPositionIndex &force_and_position_index) const {
   PositionIndex indx = force_and_position_index.position_index;
   Force color = force_and_position_index.force;
-  return GetPointState(indx) == color || eye_states_[color].IsEye(indx);
+  return GetPointState(indx) == color || eye_states_array_[color].IsEye(indx);
 }
 
 template<BoardLen BOARD_LEN>
@@ -482,12 +480,12 @@ bool FullBoard<BOARD_LEN>::IsEmptySingly(PositionIndex indx) const {
 }
 
 template<BoardLen BOARD_LEN>
-typename FullBoard<BOARD_LEN>::BitSet FullBoard<BOARD_LEN>::PlayableIndexBitSet(
+BitSet<BOARD_LEN> FullBoard<BOARD_LEN>::PlayableIndexBitSet(
     Force force) const {
   if (KoIndex() == FullBoard<BOARD_LEN>::NONE) {
     return playable_states_array_.at(force);
   } else {
-    typename FullBoard<BOARD_LEN>::BitSet kobits;
+    BitSet<BOARD_LEN> kobits;
     kobits.set();
     kobits.reset(KoIndex());
     return kobits & playable_states_array_.at(force);
@@ -574,12 +572,12 @@ void FullBoard<BOARD_LEN>::ModifyEyesStateAndObliqueRealEyesState(
       continue;
     } else if (GetPointState(AdjacentPosition(position, i))
         != force) {
-      eye_states_[force].SetEye(indx, false);
+      eye_states_array_[force].SetEye(indx, false);
       return;
     }
   }
 
-  eye_states_[force].SetEye(indx, true);
+  eye_states_array_[force].SetEye(indx, true);
 
   for (int i = 0; i < 4; ++i) {
     const Position oblq_position = ObliquePosition(position, i);
@@ -601,14 +599,14 @@ void FullBoard<BOARD_LEN>::ModifyRealEyesState(
 
   Force force = force_and_position_index.force;
   PositionIndex indx = force_and_position_index.position_index;
-  bool is_eye = eye_states_[force].IsEye(indx);
-  LOG4CPLUS_DEBUG(
-      logger_,
-      "force_and_index:" << (ForceAndPositionIndexToString<BOARD_LEN>(
-          force_and_position_index)) << " is_eye:" << is_eye);
+  bool is_eye = eye_states_array_[force].IsEye(indx);
+//  LOG4CPLUS_DEBUG(
+//      logger_,
+//      "force_and_index:" << (ForceAndPositionIndexToString<BOARD_LEN>(
+//          force_and_position_index)) << " is_eye:" << is_eye);
 
   if (!is_eye) {
-    eye_states_[force].SetRealEye(indx, false);
+    eye_states_array_[force].SetRealEye(indx, false);
     return;
   }
 
@@ -635,9 +633,7 @@ void FullBoard<BOARD_LEN>::ModifyRealEyesState(
   auto state = calculator.CentralOrEdgeOrCorner(position);
   if (TABLE[state] <= piece_or_eye_count) {
     LOG4CPLUS_DEBUG(logger_, "is real eye");
-    eye_states_[force].SetRealEye(indx, true);
-    playable_states_array_[force].reset(indx);
-    playable_states_array_[OppositeForce(force)].reset(indx);
+    SetRealEyeAsTrue(ForceAndPositionIndex(force, indx));
   } else {
     LOG4CPLUS_DEBUG(logger_, "is not real eye");
     playable_states_array_[force].set(indx);
@@ -663,6 +659,47 @@ void FullBoard<BOARD_LEN>::ModifyAtePiecesAdjacentChains(
       }
     }
   }
+}
+
+template<BoardLen BOARD_LEN>
+void FullBoard<BOARD_LEN>::ModifyRealEyesPlayableState() {
+  auto &calculator = PstionAndIndxCcltr<BOARD_LEN>::Ins();
+
+  for (int i=0; i<2; ++i) {
+    const auto &eye_states = eye_states_array_.at(i);
+    std::vector<PositionIndex> real_eyes = eye_states.GetRealEyes();
+
+    for (PositionIndex eye_index : real_eyes) {
+      const Position &eye_position = calculator.GetPosition(eye_index);
+
+      for (int j=0; j<4; ++j) {
+        Position adjacent_position = AdjacentPosition(eye_position, j);
+        if (calculator.IsInBoard(adjacent_position)) {
+          PositionIndex adjacent_index = calculator.GetIndex(adjacent_position);
+          Force force = static_cast<Force>(i);
+          Force opposite_force = OppositeForce(force);
+          if (chain_sets_[i].GetAirCount(adjacent_index) == 1) {
+            playable_states_array_.at(opposite_force).set(eye_index);
+          } else {
+            playable_states_array_.at(opposite_force).reset(eye_index);
+          }
+          break;
+        }
+      }
+    }
+  }
+}
+
+template<BoardLen BOARD_LEN>
+void FullBoard<BOARD_LEN>::SetRealEyeAsTrue(
+    const ForceAndPositionIndex &force_and_index) {
+  Force force = force_and_index.force;
+  PositionIndex position_index = force_and_index.position_index;
+  eye_states_array_[force].SetRealEye(position_index, true);
+  playable_states_array_.at(force).reset(position_index);
+
+  Force oppsite_force = OppositeForce(force);
+  playable_states_array_.at(oppsite_force).reset(position_index);
 }
 
 template<BoardLen BOARD_LEN>
@@ -707,7 +744,7 @@ std::string FullBoard<BOARD_LEN>::EyeStatesToString() const {
     auto get_output = [this, force](PositionIndex position_index) {
       std::string output;
       PointState point_state = GetPointState(position_index);
-      auto &eye_set = eye_states_[force];
+      auto &eye_set = eye_states_array_[force];
       if (eye_set.IsRealEye(position_index)) {
         assert(point_state == EMPTY_POINT);
         output = 'R';
