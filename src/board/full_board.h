@@ -356,7 +356,8 @@ void FullBoard<BOARD_LEN>::PlayMove(const Move &move) {
 
     if (single_ate_piece_index != FullBoard<BOARD_LEN>::NONE
         && GetPointState(move_index) == move_force
-        && chain_sets_[move_force].GetAirCount(move_index) == 1) {
+        && chain_sets_[move_force].GetAirCount(move_index) == 1
+        && chain_sets_[move_force].GetPieces(move_index).size() == 1) {
       ko_indx_ = single_ate_piece_index;
     }
   } else if (suisided_piece_indexes.size() == 1) {

@@ -24,7 +24,8 @@ class FreshGame : public Game<BOARD_LEN> {
  public:
   static FreshGame* BuildHumanVsAiGame(bool input_player_plays_black,
                                        uint32_t seed,
-                                       int mc_game_count);
+                                       int mc_game_count,
+                                       int thread_count);
   static FreshGame* BuildHumanVsHumanGame(bool only_log_board);
   static FreshGame* BuildAiVsAiGame(uint32_t seed, int mc_game_count,
                                     int thread_couunt,
@@ -48,9 +49,11 @@ log4cplus::Logger FreshGame<BOARD_LEN>::logger_ =
 
 template<board::BoardLen BOARD_LEN>
 FreshGame<BOARD_LEN>* FreshGame<BOARD_LEN>::BuildHumanVsAiGame(
-    bool input_player_plays_black, uint32_t seed, int mc_game_count) {
+    bool input_player_plays_black, uint32_t seed, int mc_game_count,
+    int thread_count) {
   auto input_player = new player::InputPlayer<BOARD_LEN>;
-  auto ai_player = new player::UctPlayer<BOARD_LEN>(seed, mc_game_count);
+  auto ai_player = new player::UctPlayer<BOARD_LEN>(seed, mc_game_count,
+                                                    thread_count);
 
   player::Player<BOARD_LEN> *black_player, *white_player;
   if (input_player_plays_black) {

@@ -39,20 +39,21 @@ class UctPlayer : public PassablePlayer<BOARD_LEN> {
   TranspositionTable<BOARD_LEN> transposition_table_;
   uint32_t seed_;
   int thread_count_;
-  mutable std::mutex wait_search_mutex_;
-  mutable std::condition_variable condition_variable_;
   mutable std::mutex mutex_;
 
   static log4cplus::Logger logger_;
 
   void SearchAndModifyNodes(const board::FullBoard<BOARD_LEN> &full_board,
                             std::atomic<int> *mc_game_count_ptr,
-                            std::atomic<bool> *is_end_ptr);
+                            std::atomic<bool> *is_end_ptr,
+                            int thread_index);
   board::PositionIndex MaxUcbChild(
-      const board::FullBoard<BOARD_LEN> &full_board);
+      const board::FullBoard<BOARD_LEN> &full_board,
+      int thread_index);
   float ModifyAverageProfitAndReturnNewProfit(
       board::FullBoard<BOARD_LEN> *full_board_ptr,
-      std::atomic<int> *mc_game_count_ptr);
+      std::atomic<int> *mc_game_count_ptr,
+      int thread_index);
   board::PositionIndex BestChild(const board::FullBoard<BOARD_LEN> &full_board);
   void LogProfits(const board::FullBoard<BOARD_LEN> &full_board);
 };
@@ -91,26 +92,31 @@ template<board::BoardLen BOARD_LEN>
 board::PositionIndex UctPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
       const board::FullBoard<BOARD_LEN> &full_board) {
   std::atomic<int> current_mc_game_count(0);
-  std::atomic<bool> is_end;
+  std::atomic<bool> is_end(false);
   std::vector<std::future<void>> futures;
 
-  SearchAndModifyNodes(full_board, &current_mc_game_count, &is_end);
+//  SearchAndModifyNodes(full_board, &current_mc_game_count, &is_end);
 
-//  for (int i=0; i<thread_count_; ++i) {
-//    auto f = std::async(std::launch::async,
-//                        &UctPlayer<BOARD_LEN>::SearchAndModifyNodes, this,
-//                        std::ref(full_board),
-//                        &current_mc_game_count,
-//                        &is_end);
-//    futures.push_back(std::move(f));
-//  }
-//
-//  if (!is_end.load()) {
-//    std::unique_lock<std::mutex> lock(wait_search_mutex_);
-//    condition_variable_.wait(lock);
-//  }
+  for (int i=0; i<thread_count_; ++i) {
+    auto f = std::async(std::launch::async,
+                        &UctPlayer<BOARD_LEN>::SearchAndModifyNodes, this,
+                        std::ref(full_board),
+                        &current_mc_game_count,
+                        &is_end,
+                        i);
+    futures.push_back(std::move(f));
+  }
+
+  for (std::future<void> &future : futures) {
+    LOG4CPLUS_DEBUG(logger_, "waiting...");
+    future.wait();
+  }
+
+  LOG4CPLUS_DEBUG(logger_, "wait end");
 
   LogProfits(full_board);
+
+  LOG4CPLUS_DEBUG(logger_, "log profits end");
 
   return BestChild(full_board);
 }
@@ -119,24 +125,24 @@ template<board::BoardLen BOARD_LEN>
 void UctPlayer<BOARD_LEN>::SearchAndModifyNodes(
     const board::FullBoard<BOARD_LEN> &full_board,
     std::atomic<int> *mc_game_count_ptr,
-    std::atomic<bool> *is_end_ptr) {
+    std::atomic<bool> *is_end_ptr,
+    int thread_index) {
   while (*mc_game_count_ptr < mc_game_count_per_move_) {
-    board::PositionIndex max_ucb_index = MaxUcbChild(full_board);
-//    LOG4CPLUS_DEBUG(logger_, "max_ucb_index:" << max_ucb_index);
+    board::PositionIndex max_ucb_index = MaxUcbChild(full_board, thread_index);
     board::FullBoard<BOARD_LEN> max_ucb_child;
     max_ucb_child.Copy(full_board);
     board::Play(&max_ucb_child, max_ucb_index);
-    ModifyAverageProfitAndReturnNewProfit(&max_ucb_child, mc_game_count_ptr);
+    ModifyAverageProfitAndReturnNewProfit(&max_ucb_child, mc_game_count_ptr,
+                                          thread_index);
   }
 
-  is_end_ptr->store(true);
-
-  condition_variable_.notify_one();
+  LOG4CPLUS_DEBUG(logger_, "should notify");
 }
 
 template<board::BoardLen BOARD_LEN>
 board::PositionIndex UctPlayer<BOARD_LEN>::MaxUcbChild(
-    const board::FullBoard<BOARD_LEN> &full_board) {
+    const board::FullBoard<BOARD_LEN> &full_board,
+    int thread_index) {
   std::lock_guard<std::mutex> lock(mutex_);
 
   board::Force current_force = board::NextForce(full_board);
@@ -145,18 +151,24 @@ board::PositionIndex UctPlayer<BOARD_LEN>::MaxUcbChild(
   assert(!playable_index_vector.empty());
 
   int visited_count_sum = 0;
+  std::vector<board::PositionIndex> null_indexes;
 
   for (board::PositionIndex position_index : playable_index_vector) {
     const NodeRecord *node_record_ptr = transposition_table_.GetChild(
         full_board, position_index);
-//    LOG4CPLUS_DEBUG(logger_, "position_index:" <<
-//                    static_cast<int>(position_index) << " node_record_ptr:" <<
-//                    node_record_ptr);
     if (node_record_ptr == nullptr) {
-      return position_index;
+      null_indexes.push_back(position_index);
+    } else if (null_indexes.empty()) {
+      visited_count_sum += node_record_ptr->GetVisitedTime();
     }
+  }
 
-    visited_count_sum += node_record_ptr->GetVisitedTime();
+  if (!null_indexes.empty()) {
+    int index = thread_index % thread_count_;
+    if (index < null_indexes.size()) {
+      return null_indexes.at(index);
+    }
+    return null_indexes.at(index < null_indexes.size() ? index : 0);
   }
 
   float max_ucb = -1.0f;
@@ -165,13 +177,11 @@ board::PositionIndex UctPlayer<BOARD_LEN>::MaxUcbChild(
   for (board::PositionIndex position_index : playable_index_vector) {
     const NodeRecord *node_record_ptr = transposition_table_.GetChild(
         full_board, position_index);
-//    LOG4CPLUS_DEBUG(logger_, "node_record:" << *node_record_ptr);
-    if (node_record_ptr->IsInSearch()) {
+    if (node_record_ptr == nullptr || node_record_ptr->IsInSearch()) {
       continue;
     }
     // It is guaranteed by the above loop that node_record_ptr is not nullptr.
     float ucb = Ucb(*node_record_ptr, visited_count_sum);
-//    LOG4CPLUS_DEBUG(logger_, "ucb:" << ucb);
     if (ucb > max_ucb
         && !full_board.IsSuicide(
             board::Move(board::NextForce(full_board), position_index))) {
@@ -186,10 +196,10 @@ board::PositionIndex UctPlayer<BOARD_LEN>::MaxUcbChild(
 template<board::BoardLen BOARD_LEN>
 float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
     board::FullBoard<BOARD_LEN> *full_board_ptr,
-    std::atomic<int> *mc_game_count_ptr) {
-//  LOG4CPLUS_DEBUG(logger_, "full_board:" << full_board_ptr->ToString(false) <<
-//                  "mc_game_count:" << *mc_game_count_ptr);
-
+    std::atomic<int> *mc_game_count_ptr,
+    int thread_index) {
+  LOG4CPLUS_DEBUG(logger_, "full_board" << *full_board_ptr << " thread_index:"
+                  << thread_index);
   float new_profit;
   NodeRecord *node_record_ptr = transposition_table_.Get(*full_board_ptr);
 
@@ -216,13 +226,19 @@ float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
           .empty()) {
         full_board_ptr->Pass(board::NextForce(*full_board_ptr));
       } else {
-        board::PositionIndex max_ucb_index = MaxUcbChild(*full_board_ptr);
+        LOG4CPLUS_DEBUG(logger_, "full_board" << *full_board_ptr <<
+                        " thread_index:" << thread_index);
+        board::PositionIndex max_ucb_index = MaxUcbChild(*full_board_ptr,
+                                                         thread_index);
         board::Play(full_board_ptr, max_ucb_index);
       }
+      LOG4CPLUS_DEBUG(
+          logger_,
+          "full_board" << *full_board_ptr << " thread_index:" << thread_index);
       new_profit = 1.0f
           - ModifyAverageProfitAndReturnNewProfit(full_board_ptr,
-                                                  mc_game_count_ptr);
-      std::lock_guard<std::mutex> lock(mutex_);
+                                                  mc_game_count_ptr,
+                                                  thread_index);
       float previous_profit = node_record_ptr->GetAverageProfit();
       float modified_profit = (previous_profit
           * node_record_ptr->GetVisitedTime() + new_profit)

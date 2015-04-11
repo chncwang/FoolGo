@@ -20,8 +20,8 @@ class MonteCarloGameTest : public Test {
   virtual void SetUp() {
     Test::SetUp();
 
-//    uint32_t seed = math::GetTimeSeed();
-    uint32_t seed = 657062556;
+    uint32_t seed = math::GetTimeSeed();
+//    uint32_t seed = 3285699190;
     LOG4CPLUS_INFO(logger_, "seed:" << seed);
 
     ZobHasher<DEFAULT_BOARD_LEN>::Init(seed);

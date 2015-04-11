@@ -55,8 +55,8 @@ template<board::BoardLen BOARD_LEN>
 NodeRecord *TranspositionTable<BOARD_LEN>::GetChild(
     const board::FullBoard<BOARD_LEN> &full_board,
     board::PositionIndex position_index) {
+  LOG4CPLUS_DEBUG(logger_, "full_board" << full_board);
   HashKey hash_key = ChildHashKey(full_board, position_index);
-  LOG4CPLUS_DEBUG(logger_, "hash_key:" << hash_key);
   return Get(hash_key);
 }
 
@@ -72,15 +72,14 @@ void TranspositionTable<BOARD_LEN>::Insert(
 
 template<board::BoardLen BOARD_LEN>
 NodeRecord *TranspositionTable<BOARD_LEN>::Get(HashKey hash_key) const {
-  LOG4CPLUS_DEBUG(logger_, "hash_key:" << hash_key);
-  std::lock_guard<std::mutex> lock(mutex_);
+  mutex_.lock();
   auto it = node_record_map_.find(hash_key);
+  mutex_.unlock();
   NodeRecord *result;
   if (it == node_record_map_.end()) {
-    LOG4CPLUS_DEBUG(logger_, "it is end");
+    LOG4CPLUS_DEBUG(logger_, "it is end!");
     result = nullptr;
   } else {
-    LOG4CPLUS_DEBUG(logger_, "it->second:" << it->second);
     result = const_cast<NodeRecord*>(&(it->second));
   }
   return result;
@@ -91,9 +90,11 @@ HashKey TranspositionTable<BOARD_LEN>::ChildHashKey(
     const board::FullBoard<BOARD_LEN> &full_board,
     board::PositionIndex position_index) {
   HashKey result;
+  LOG4CPLUS_DEBUG(logger_, "full_board:" << full_board);
   NodeRecord *node_record_ptr = Get(full_board);
 
   if (node_record_ptr == nullptr) {
+    LOG4CPLUS_DEBUG(logger_, "node_record_ptr is null");
     NodeRecord node_record(0, 0.0f, false);
     Insert(full_board, node_record);
     node_record_ptr = Get(full_board);

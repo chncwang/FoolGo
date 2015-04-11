@@ -45,9 +45,9 @@ class NodeRecord {
                           HashKey hash_key);
 
  private:
-  std::atomic<int32_t> visited_time_;
-  std::atomic<float> average_profit_;
-  std::atomic<bool> is_in_search_;
+  int32_t visited_time_;
+  float average_profit_;
+  bool is_in_search_;
   std::map<board::PositionIndex, HashKey> child_hash_keys_;
   mutable std::mutex mutex_;
 

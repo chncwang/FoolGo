@@ -79,9 +79,9 @@ class ChainSet {
 
 template<board::BoardLen BOARD_LEN>
 void ChainSet<BOARD_LEN>::Copy(const ChainSet<BOARD_LEN> &c) {
-  memcpy(nodes_, c.nodes_, sizeof(nodes_));
   for (int i = 0; i < board::BoardLenSquare<BOARD_LEN>(); ++i) {
     lists_[i] = c.lists_[i];
+    nodes_[i] = c.nodes_[i];
   }
 }
 

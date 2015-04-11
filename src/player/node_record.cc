@@ -24,15 +24,16 @@ NodeRecord::NodeRecord() : NodeRecord(0, 0.0f, false) {}
 
 NodeRecord::NodeRecord(const NodeRecord &node_record)
     : child_hash_keys_(node_record.child_hash_keys_) {
-  visited_time_ = node_record.visited_time_.load();
-  average_profit_ = node_record.average_profit_.load();
-  is_in_search_ = node_record.is_in_search_.load();
+  visited_time_ = node_record.visited_time_;
+  average_profit_ = node_record.average_profit_;
+  is_in_search_ = node_record.is_in_search_;
 }
 
 const HashKey* NodeRecord::GetChildHashKeyPtr(
     PositionIndex position_index) const {
-  lock_guard<mutex> lock(mutex_);
+  mutex_.lock();
   auto it = child_hash_keys_.find(position_index);
+  mutex_.unlock();
   return it == child_hash_keys_.end() ? nullptr : &(it->second);
 }
 
