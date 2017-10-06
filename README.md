@@ -29,7 +29,7 @@ C++编码指南
 
 有想过基于tensorflow，开始做这个事情，大致的步骤：
 1. 只过一个隐层实现rollout policy network
-2. 根据论文中的列特征，加特征，以期达到论文中rollout policy network的准确率（也有论文提到可以用CNN实现rollout policy network）
+2. 根据论文中罗列的特征，加特征，以期达到论文中rollout policy network的准确率（也有论文提到可以用CNN实现rollout policy network）
 3. 用单层的CNN，实现policy network
 4. 把policy network融合进蒙特卡罗树搜索
 5. 尝试用多层CNN（估计不用指望能达到论文中的准确率）
