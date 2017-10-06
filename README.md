@@ -24,8 +24,18 @@ C++编码指南
 * 尽量用智能指针管理内存，极少数地方用了raw pointer（方法名New前缀），杜绝内存泄露。
 * 用gtest做单元测试，用log4cplus打log
 
-##TODO
-看到Github上有一个AlphaGo的同名开源项目，开发语言是python，我不确定python是否能胜任高性能计算的任务（毕竟是连多线程都不支持的解释型语言），如果你有兴趣模仿一下AlphaGo，并且也不喜欢python，那么基于这个项目，从引入快速走子网络开始，替换掉原来的RandomPlayer，是个非常好的选择。
+## TODO
+如果你有兴趣模仿一下AlphaGo，并且也不喜欢python，那么基于这个项目，从实现论文中的rollout policy network开始，替换掉原来的RandomPlayer，是个非常好的选择。
+
+有想过基于tensorflow，开始做这个事情，大致的步骤：
+1. 只过一个隐层
+2. 根据论文中的列特征，加特征，以期达到论文中rollout policy network的准确率（也有论文提到可以用CNN实现rollout policy network）
+3. 用单层的CNN，实现policy network
+4. 把policy network融合进蒙特卡罗树搜索
+5. 尝试用多层CNN（估计不用指望能达到论文中的准确率）
+6. 以上步骤都采用通过人类的棋谱有监督学习，至于value network和强化学习部分，我还不太会，欢迎邮件交流
+
+本人实在是没时间继续写这个项目，欢迎有兴趣的同学pull request，或者邮件交流~
 
 ## Make
 * 进入项目根目录
@@ -34,5 +44,4 @@ C++编码指南
 * 不怎么会用CMake，所以第三方库的构建没有纳入CMake的管理，需要根据错误信息在特定的目录下放有相关依赖文件（这个项目目前只依赖gtest和log4cplus）
 
 ## 问题交流
-* My Blog : http://www.cnblogs.com/qswang
 * Send me an email : chncwang@gmail.com
