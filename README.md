@@ -28,7 +28,7 @@ C++编码指南
 如果你有兴趣模仿一下AlphaGo，并且也不喜欢python，那么基于这个项目，从实现论文中的rollout policy network开始，替换掉原来的RandomPlayer，是个非常好的选择。
 
 有想过基于tensorflow，开始做这个事情，大致的步骤：
-1. 只过一个隐层
+1. 只过一个隐层实现rollout policy network
 2. 根据论文中的列特征，加特征，以期达到论文中rollout policy network的准确率（也有论文提到可以用CNN实现rollout policy network）
 3. 用单层的CNN，实现policy network
 4. 把policy network融合进蒙特卡罗树搜索
