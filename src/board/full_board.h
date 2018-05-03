@@ -80,7 +80,7 @@ class FullBoard : private Board<BOARD_LEN> {
   PositionIndex BlackRegion() const {
     return black_pieces_count_ + eye_states_array_[BLACK_FORCE].RealCount();
   }
-  HashKey HashKey() const {
+  foolgo::HashKey HashKey() const {
     return hash_key_;
   }
 
