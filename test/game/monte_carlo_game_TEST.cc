@@ -1,7 +1,6 @@
 #include "../../src/game/monte_carlo_game.h"
 
 #include <gtest/gtest.h>
-#include <spdlog/spdlog.h>
 
 #include "../../src/board/full_board.h"
 #include "../../src/board/zob_hasher.h"
@@ -21,7 +20,7 @@ class MonteCarloGameTest : public Test {
     Test::SetUp();
 
     uint32_t seed = math::GetTimeSeed();
-    logger_->info("seed:{}", seed);
+    std::cout << "seed:" << seed << std::endl;
 
     ZobHasher<DEFAULT_BOARD_LEN>::Init(seed);
     FullBoard<DEFAULT_BOARD_LEN> full_board_;
@@ -35,12 +34,7 @@ class MonteCarloGameTest : public Test {
   }
 
   MonteCarloGame<DEFAULT_BOARD_LEN> *game_ = nullptr;
-
-  static std::shared_ptr<spdlog::logger> logger_;
 };
-
-std::shared_ptr<spdlog::logger> MonteCarloGameTest::logger_ =
-    spdlog::stdout_logger_st("foolgo.game.MonteCarloGameTest");
 
 TEST_F(MonteCarloGameTest, Run) {
   game_->Run();

@@ -1,7 +1,6 @@
 #include "node_record.h"
 
 #include <boost/format.hpp>
-#include <spdlog/spdlog.h>
 #include <utility>
 
 namespace foolgo {
@@ -13,12 +12,6 @@ using std::mutex;
 using std::ostream;
 using board::PositionIndex;
 using boost::format;
-
-namespace {
-
-auto logger = spdlog::stdout_logger_st("foolgo.player.NodeRecord");
-
-}
 
 NodeRecord::NodeRecord() : NodeRecord(0, 0.0f, false) {}
 

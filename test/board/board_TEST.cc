@@ -2,18 +2,12 @@
 
 #include <gtest/gtest.h>
 #include <gtest/internal/gtest-internal.h>
-#include <spdlog/spdlog.h>
-#include <spdlog/fmt/ostr.h>
 
 #include "../def_for_test.h"
 #include "../test.h"
 
 namespace foolgo {
 namespace board {
-
-namespace {
-auto logger = spdlog::stdout_logger_st("foolgo.board.BoardTest");
-}
 
 class BoardTest : public Test {
  protected:
@@ -29,7 +23,7 @@ class BoardTest : public Test {
 };
 
 TEST_F(BoardTest, DoubleLeftArrow) {
-  logger->info("board:{}", board_);
+  std::cout << "board:" << board_ << std::endl;
 }
 
 TEST_F(BoardTest, Init) {

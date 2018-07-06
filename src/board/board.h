@@ -1,7 +1,6 @@
 #ifndef FOOLGO_SRC_BOARD_BOARD_H_
 #define FOOLGO_SRC_BOARD_BOARD_H_
 
-#include <spdlog/spdlog.h>
 #include <boost/format.hpp>
 #include <functional>
 #include <cassert>
@@ -22,6 +21,7 @@ class Board {
  public:
   Board() = default;
   virtual ~Board() {}
+  DISALLOW_COPY_AND_ASSIGN_AND_MOVE(Board);
   virtual void Init();
   virtual void Copy(const Board<BOARD_LEN> &b);
 
@@ -107,8 +107,6 @@ std::string ToString(std::function<std::string(PositionIndex)> get_output,
 template<BoardLen BOARD_LEN>
 std::string ToString(const Board<BOARD_LEN> &board) {
   auto get_output = [&](PositionIndex position_index) {
-//    logger->debug("board address:{} position_index:{} state:{}", &board,
-//            position_index, static_cast<int>(board.GetPoint(position_index)));
     return GetPointStateOutput(board.GetPoint(position_index), false);
   };
   return ToString<BOARD_LEN>(get_output);

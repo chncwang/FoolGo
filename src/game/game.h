@@ -1,7 +1,6 @@
 #ifndef FOOLGO_SRC_GAME_GAME_H_
 #define FOOLGO_SRC_GAME_GAME_H_
 
-#include <spdlog/spdlog.h>
 #include <array>
 #include <iostream>
 
@@ -29,7 +28,10 @@ class Game {
        player::Player<BOARD_LEN> *black_player,
        player::Player<BOARD_LEN> *white_player,
        bool only_log_board = true);
-  virtual spdlog::logger &GetLogger() const = 0;
+  virtual bool ShouldLog() const {
+    return false;
+  }
+
  private:
   board::FullBoard<BOARD_LEN> full_board_;
   std::array<player::Player<BOARD_LEN>*, 2> player_ptrs_;
@@ -49,8 +51,9 @@ Game<BOARD_LEN>::~Game() {
 
 template<board::BoardLen BOARD_LEN>
 void Game<BOARD_LEN>::Run() {
-  spdlog::logger &logger = GetLogger();
-  logger.info("full_board_:{}", full_board_.ToString(true));
+  if (ShouldLog()) {
+    std::cout << full_board_.ToString(only_log_board_) << std::endl;
+  }
 
   while (!full_board_.IsEnd()) {
     board::Force current_force = NextForce(full_board_);
@@ -58,8 +61,10 @@ void Game<BOARD_LEN>::Run() {
     board::PositionIndex next_index = current_player->NextMove(full_board_);
     board::Play(&full_board_, next_index);
 
-    logger.info("full_board_:{}",
-            full_board_.ToString(next_index, only_log_board_));
+    if (ShouldLog()) {
+      std::cout << full_board_.ToString(next_index, only_log_board_) <<
+        std::endl;
+    }
   }
 }
 
