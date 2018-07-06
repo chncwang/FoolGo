@@ -38,10 +38,10 @@ C++编码指南
 本人实在是没时间继续写这个项目，欢迎有兴趣的同学pull request，或者邮件交流~
 
 ## Make
-* 进入项目根目录
-* cmake .
+* boost is required
+* mkdir build && cd build
+* cmake ..
 * make
-* 不怎么会用CMake，所以第三方库的构建没有纳入CMake的管理，需要根据错误信息在特定的目录下放有相关依赖文件（这个项目目前只依赖gtest和log4cplus）
 
 ## 问题交流
 * Send me an email : chncwang@gmail.com
