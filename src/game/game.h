@@ -1,7 +1,7 @@
 #ifndef FOOLGO_SRC_GAME_GAME_H_
 #define FOOLGO_SRC_GAME_GAME_H_
 
-#include <log4cplus/loggingmacros.h>
+#include <spdlog/spdlog.h>
 #include <array>
 #include <iostream>
 
@@ -29,7 +29,7 @@ class Game {
        player::Player<BOARD_LEN> *black_player,
        player::Player<BOARD_LEN> *white_player,
        bool only_log_board = true);
-  virtual const log4cplus::Logger &GetLogger() const = 0;
+  virtual spdlog::logger &GetLogger() const = 0;
  private:
   board::FullBoard<BOARD_LEN> full_board_;
   std::array<player::Player<BOARD_LEN>*, 2> player_ptrs_;
@@ -49,8 +49,8 @@ Game<BOARD_LEN>::~Game() {
 
 template<board::BoardLen BOARD_LEN>
 void Game<BOARD_LEN>::Run() {
-  const log4cplus::Logger &logger = GetLogger();
-  LOG4CPLUS_INFO(logger, "full_board_:" << full_board_.ToString(true));
+  spdlog::logger &logger = GetLogger();
+  logger.info("full_board_:{}", full_board_.ToString(true));
 
   while (!full_board_.IsEnd()) {
     board::Force current_force = NextForce(full_board_);
@@ -58,9 +58,8 @@ void Game<BOARD_LEN>::Run() {
     board::PositionIndex next_index = current_player->NextMove(full_board_);
     board::Play(&full_board_, next_index);
 
-    LOG4CPLUS_INFO(
-        logger,
-        "full_board_:" << full_board_.ToString(next_index, only_log_board_));
+    logger.info("full_board_:{}",
+            full_board_.ToString(next_index, only_log_board_));
   }
 }
 

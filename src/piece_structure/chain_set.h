@@ -70,8 +70,6 @@ class ChainSet {
   AirCount GetAirCountOfChain(board::PositionIndex list_i) const;
   std::vector<board::PositionIndex> GetPiecesOfChain(
       board::PositionIndex list_i) const;
-
-  DISALLOW_COPY_AND_ASSIGN_AND_MOVE(ChainSet)
 };
 
 #define IS_POINT_NOT_EMPTY(piece_i) \

@@ -2,8 +2,8 @@
 
 #include <gtest/gtest.h>
 #include <gtest/internal/gtest-internal.h>
-#include <log4cplus/logger.h>
-#include <log4cplus/loggingmacros.h>
+#include <spdlog/spdlog.h>
+#include <spdlog/fmt/ostr.h>
 
 #include "../def_for_test.h"
 #include "../test.h"
@@ -11,10 +11,8 @@
 namespace foolgo {
 namespace board {
 
-using log4cplus::Logger;
-
 namespace {
-Logger logger = Logger::getInstance("foolgo.board.BoardTest");
+auto logger = spdlog::stdout_logger_st("foolgo.board.BoardTest");
 }
 
 class BoardTest : public Test {
@@ -31,7 +29,7 @@ class BoardTest : public Test {
 };
 
 TEST_F(BoardTest, DoubleLeftArrow) {
-  LOG4CPLUS_INFO(logger, "board:" << board_);
+  logger->info("board:{}", board_);
 }
 
 TEST_F(BoardTest, Init) {

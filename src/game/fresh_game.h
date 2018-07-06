@@ -1,7 +1,7 @@
 #ifndef FOOLGO_SRC_GAME_FRESH_GAME_H_
 #define FOOLGO_SRC_GAME_FRESH_GAME_H_
 
-#include <log4cplus/logger.h>
+#include <spdlog/spdlog.h>
 #include <cstdint>
 
 #include "../board/position.h"
@@ -31,21 +31,21 @@ class FreshGame : public Game<BOARD_LEN> {
                                     int thread_couunt,
                                     bool only_log_board);
   ~FreshGame() = default;
-  const log4cplus::Logger &GetLogger() const {
-    return logger_;
+  spdlog::logger &GetLogger() const {
+    return *logger_;
   }
  protected:
   using Game<BOARD_LEN>::Game;
 
  private:
-  static log4cplus::Logger logger_;
+  static std::shared_ptr<spdlog::logger> logger_;
 
   DISALLOW_COPY_AND_ASSIGN_AND_MOVE(FreshGame)
 };
 
 template<board::BoardLen BOARD_LEN>
-log4cplus::Logger FreshGame<BOARD_LEN>::logger_ =
-    log4cplus::Logger::getInstance("foolgo.game.FreshGame");
+std::shared_ptr<spdlog::logger> FreshGame<BOARD_LEN>::logger_ =
+spdlog::stdout_logger_st("foolgo.game.FreshGame");
 
 template<board::BoardLen BOARD_LEN>
 FreshGame<BOARD_LEN>* FreshGame<BOARD_LEN>::BuildHumanVsAiGame(

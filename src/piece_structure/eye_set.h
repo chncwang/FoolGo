@@ -40,8 +40,6 @@ class EyeSet {
  private:
   board::BitSet<BOARD_LEN> eyes_;
   board::BitSet<BOARD_LEN> real_eyes_;
-
-  DISALLOW_COPY_AND_ASSIGN_AND_MOVE(EyeSet)
 };
 
 template<board::BoardLen BOARD_LEN>
