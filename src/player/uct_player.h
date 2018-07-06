@@ -4,7 +4,6 @@
 
 #include <atomic>
 #include <boost/lexical_cast.hpp>
-#include <log4cplus/logger.h>
 #include <cassert>
 #include <condition_variable>
 #include <cmath>
@@ -41,7 +40,7 @@ class UctPlayer : public PassablePlayer<BOARD_LEN> {
   int thread_count_;
   mutable std::mutex mutex_;
 
-  static log4cplus::Logger logger_;
+  //std::shared_ptr<spdlog::logger> logger_;
 
   void SearchAndModifyNodes(const board::FullBoard<BOARD_LEN> &full_board,
                             std::atomic<int> *mc_game_count_ptr,
@@ -57,10 +56,6 @@ class UctPlayer : public PassablePlayer<BOARD_LEN> {
   board::PositionIndex BestChild(const board::FullBoard<BOARD_LEN> &full_board);
   void LogProfits(const board::FullBoard<BOARD_LEN> &full_board);
 };
-
-template<board::BoardLen BOARD_LEN>
-log4cplus::Logger UctPlayer<BOARD_LEN>::logger_ =
-    log4cplus::Logger::getInstance("foolgo.player.UctPlayer");
 
 namespace {
 
@@ -108,15 +103,10 @@ board::PositionIndex UctPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
   }
 
   for (std::future<void> &future : futures) {
-    LOG4CPLUS_DEBUG(logger_, "waiting...");
     future.wait();
   }
 
-  LOG4CPLUS_DEBUG(logger_, "wait end");
-
   LogProfits(full_board);
-
-  LOG4CPLUS_DEBUG(logger_, "log profits end");
 
   return BestChild(full_board);
 }
@@ -135,8 +125,6 @@ void UctPlayer<BOARD_LEN>::SearchAndModifyNodes(
     ModifyAverageProfitAndReturnNewProfit(&max_ucb_child, mc_game_count_ptr,
                                           thread_index);
   }
-
-  LOG4CPLUS_DEBUG(logger_, "should notify");
 }
 
 template<board::BoardLen BOARD_LEN>
@@ -198,8 +186,6 @@ float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
     board::FullBoard<BOARD_LEN> *full_board_ptr,
     std::atomic<int> *mc_game_count_ptr,
     int thread_index) {
-  LOG4CPLUS_DEBUG(logger_, "full_board" << *full_board_ptr << " thread_index:"
-                  << thread_index);
   float new_profit;
   NodeRecord *node_record_ptr = transposition_table_.Get(*full_board_ptr);
 
@@ -226,17 +212,11 @@ float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
           .empty()) {
         full_board_ptr->Pass(board::NextForce(*full_board_ptr));
       } else {
-        LOG4CPLUS_DEBUG(logger_, "full_board" << *full_board_ptr <<
-                        " thread_index:" << thread_index);
         board::PositionIndex max_ucb_index = MaxUcbChild(*full_board_ptr,
                                                          thread_index);
         board::Play(full_board_ptr, max_ucb_index);
       }
-      LOG4CPLUS_DEBUG(
-          logger_,
-          "full_board" << *full_board_ptr << " thread_index:" << thread_index);
-      new_profit = 1.0f
-          - ModifyAverageProfitAndReturnNewProfit(full_board_ptr,
+      new_profit = 1.0f - ModifyAverageProfitAndReturnNewProfit(full_board_ptr,
                                                   mc_game_count_ptr,
                                                   thread_index);
       float previous_profit = node_record_ptr->GetAverageProfit();
@@ -295,9 +275,6 @@ void UctPlayer<BOARD_LEN>::LogProfits(
       return boost::lexical_cast<std::string>(profit).substr(0, 4);
     }
   };
-
-  LOG4CPLUS_DEBUG(logger_,
-                 "profits:"<< board::ToString<BOARD_LEN>(get_profit_str, 4));
 }
 
 }

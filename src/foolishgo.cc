@@ -1,5 +1,3 @@
-#include <log4cplus/logger.h>
-#include <log4cplus/loggingmacros.h>
 #include <cstdint>
 #include <iostream>
 
@@ -17,21 +15,17 @@ using foolgo::game::FreshGame;
 using foolgo::math::GetTimeSeed;
 using foolgo::util::InitLogConfig;
 using foolgo::MAIN_BOARD_LEN;
-using log4cplus::Logger;
+using std::cout;
 
 int main(int argc, const char *argv[]) {
-  InitLogConfig();
-
-  Logger logger = Logger::getRoot();
-
   uint32_t seed = GetTimeSeed();
 //  uint32_t seed = 2479583645;
-  LOG4CPLUS_INFO(logger, "seed:" << seed);
+  cout << "seed:" << seed << std::endl;
 
   ZobHasher<MAIN_BOARD_LEN>::Init(seed);
 
   Game<MAIN_BOARD_LEN>* game =
-      FreshGame<MAIN_BOARD_LEN>::BuildHumanVsAiGame(false, seed, 40000, 3);
+      FreshGame<MAIN_BOARD_LEN>::BuildHumanVsAiGame(false, seed, 40000, 4);
   game->Run();
 
   delete game;

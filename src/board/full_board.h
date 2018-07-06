@@ -8,8 +8,6 @@
 #include <cstddef>
 #include <ostream>
 #include <vector>
-#include <log4cplus/logger.h>
-#include <log4cplus/loggingmacros.h>
 
 #include "../def.h"
 #include "../math/bitset_util.h"
@@ -62,6 +60,7 @@ class FullBoard : private Board<BOARD_LEN> {
         black_pieces_count_(0),
         hash_key_(0) {}
   ~FullBoard() = default;
+  DISALLOW_COPY_AND_ASSIGN_AND_MOVE(FullBoard);
   void Init();
   void Copy(const FullBoard &b);
 
@@ -100,8 +99,6 @@ class FullBoard : private Board<BOARD_LEN> {
 
  private:
   typedef std::vector<PositionIndex> PointIndxVector;
-
-  static log4cplus::Logger logger_;
 
   piece_structure::ChainSet<BOARD_LEN> chain_sets_[2];
   std::array<BitSet<BOARD_LEN>, 2> playable_states_array_;
@@ -145,8 +142,6 @@ class FullBoard : private Board<BOARD_LEN> {
 
   std::string PlayableStatesToString() const;
   std::string EyeStatesToString() const;
-
-  DISALLOW_COPY_AND_ASSIGN_AND_MOVE(FullBoard)
 };
 
 template<BoardLen BOARD_LEN>
@@ -163,10 +158,6 @@ void Play(FullBoard<BOARD_LEN> *full_board, PositionIndex position_index) {
     full_board->PlayMove(Move(force, position_index));
   }
 }
-
-template<BoardLen BOARD_LEN>
-log4cplus::Logger FullBoard<BOARD_LEN>::logger_ =
-    log4cplus::Logger::getInstance("foolgo.board.FullBoard");
 
 template<BoardLen BOARD_LEN>
 bool FullBoard<BOARD_LEN>::IsEnd() const {
@@ -288,9 +279,6 @@ void FullBoard<BOARD_LEN>::PlayMove(const Move &move) {
           ForceAndPositionIndex(move_force, adjacent_index));
     }
 
-    LOG4CPLUS_DEBUG(logger_, "after modify adjacent eyes state - *this:" <<
-                    ToString(false));
-
     // Modify adjacent real eyes state.
     for (int i = 0; i < 4; ++i) {
       Position adjacent_position = AdjacentPosition(move_position, i);
@@ -311,9 +299,6 @@ void FullBoard<BOARD_LEN>::PlayMove(const Move &move) {
 //      }
     }
 
-    LOG4CPLUS_DEBUG(logger_, "after modify adjacent real eyes state - *this:" <<
-                    ToString(false));
-
     // Modify Oblique real eyes state.
     for (int i = 0; i < 4; ++i) {
       Position oblq_pos = ObliquePosition(move_position, i);
@@ -332,17 +317,11 @@ void FullBoard<BOARD_LEN>::PlayMove(const Move &move) {
       }
     }
 
-    LOG4CPLUS_DEBUG(logger_, "after modify oblique real eyes state - *this:" <<
-                    ToString(false));
-
     // The playable state of adjacent positions of the chains, which is adjacent
     // to ate pieces, should be modified.
     for (int i = 0; i < 4; ++i) {
       ModifyAtePiecesAdjacentChains(ate_piece_indexes_array[i], opposite_force);
     }
-
-    LOG4CPLUS_DEBUG(logger_, "after modify ate pieces adjacent chains - *this:"
-                    << ToString(false));
 
     ko_indx_ = FullBoard<BOARD_LEN>::NONE;
     PositionIndex single_ate_piece_index = FullBoard<BOARD_LEN>::NONE;
@@ -529,7 +508,6 @@ void FullBoard<BOARD_LEN>::PlayBasicMove(
   chain_sets_[move_force].AddPiece(move_index, air_set);
 
   if (chain_sets_[move_force].GetAirCount(move_index) == 0) {
-    LOG4CPLUS_DEBUG(logger_, "air count is zero!");
     *suicided_pieces_indexes = RemoveChain(move);
   }
 }
@@ -601,10 +579,6 @@ void FullBoard<BOARD_LEN>::ModifyRealEyesState(
   Force force = force_and_position_index.force;
   PositionIndex indx = force_and_position_index.position_index;
   bool is_eye = eye_states_array_[force].IsEye(indx);
-//  LOG4CPLUS_DEBUG(
-//      logger_,
-//      "force_and_index:" << (ForceAndPositionIndexToString<BOARD_LEN>(
-//          force_and_position_index)) << " is_eye:" << is_eye);
 
   if (!is_eye) {
     eye_states_array_[force].SetRealEye(indx, false);
@@ -628,15 +602,11 @@ void FullBoard<BOARD_LEN>::ModifyRealEyesState(
     }
   }
 
-  LOG4CPLUS_DEBUG(logger_, "piece_or_eye_count:" << piece_or_eye_count);
-
   static const PositionIndex TABLE[3] = { 3, 2, 1 };
   auto state = calculator.CentralOrEdgeOrCorner(position);
   if (TABLE[state] <= piece_or_eye_count) {
-    LOG4CPLUS_DEBUG(logger_, "is real eye");
     SetRealEyeAsTrue(ForceAndPositionIndex(force, indx));
   } else {
-    LOG4CPLUS_DEBUG(logger_, "is not real eye");
     playable_states_array_[force].set(indx);
     playable_states_array_[OppositeForce(force)].set(indx);
   }

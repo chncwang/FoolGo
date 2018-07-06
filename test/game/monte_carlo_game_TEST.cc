@@ -13,7 +13,6 @@ namespace game {
 
 using board::FullBoard;
 using board::ZobHasher;
-using log4cplus::Logger;
 
 class MonteCarloGameTest : public Test {
  protected:
@@ -21,8 +20,7 @@ class MonteCarloGameTest : public Test {
     Test::SetUp();
 
     uint32_t seed = math::GetTimeSeed();
-//    uint32_t seed = 3285699190;
-    LOG4CPLUS_INFO(logger_, "seed:" << seed);
+    std::cout << "seed:" << seed << std::endl;
 
     ZobHasher<DEFAULT_BOARD_LEN>::Init(seed);
     FullBoard<DEFAULT_BOARD_LEN> full_board_;
@@ -36,12 +34,7 @@ class MonteCarloGameTest : public Test {
   }
 
   MonteCarloGame<DEFAULT_BOARD_LEN> *game_ = nullptr;
-
-  static Logger logger_;
 };
-
-Logger MonteCarloGameTest::logger_ =
-    Logger::getInstance("foolgo.game.MonteCarloGameTest");
 
 TEST_F(MonteCarloGameTest, Run) {
   game_->Run();

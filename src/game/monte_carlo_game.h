@@ -1,8 +1,6 @@
 #ifndef FOOLGO_SRC_GAME_MONTE_CARLO_GAME_H_
 #define FOOLGO_SRC_GAME_MONTE_CARLO_GAME_H_
 
-#include <log4cplus/logger.h>
-
 #include "../board/position.h"
 #include "../player/random_player.h"
 #include "game.h"
@@ -16,16 +14,11 @@ class MonteCarloGame : public Game<BOARD_LEN> {
   MonteCarloGame(const board::FullBoard<BOARD_LEN> &full_board, uint32_t seed,
                  bool only_log_board = true);
   ~MonteCarloGame() = default;
-  const log4cplus::Logger &GetLogger() const {
-    return logger_;
-  }
-private:
-  static log4cplus::Logger logger_;
-};
 
-template<board::BoardLen BOARD_LEN>
-log4cplus::Logger MonteCarloGame<BOARD_LEN>::logger_ =
-    log4cplus::Logger::getInstance("foolgo.game.MonteCarloGame");
+  bool ShouldLog() const override {
+    return false;
+  }
+};
 
 template<board::BoardLen BOARD_LEN>
 MonteCarloGame<BOARD_LEN>::MonteCarloGame(

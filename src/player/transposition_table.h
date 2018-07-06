@@ -31,7 +31,6 @@ class TranspositionTable {
               const NodeRecord &node_record);
 
  private:
-  static log4cplus::Logger logger_;
   std::unordered_map<HashKey, NodeRecord, StaySelfHasher> node_record_map_;
   mutable std::mutex mutex_;
 
@@ -39,10 +38,6 @@ class TranspositionTable {
   HashKey ChildHashKey(const board::FullBoard<BOARD_LEN> &full_board,
                        board::PositionIndex position_index);
 };
-
-template<board::BoardLen BOARD_LEN>
-log4cplus::Logger TranspositionTable<BOARD_LEN>::logger_ =
-    log4cplus::Logger::getInstance("foolgo.player.TranspositionTable");
 
 template<board::BoardLen BOARD_LEN>
 NodeRecord *TranspositionTable<BOARD_LEN>::Get(
@@ -55,7 +50,6 @@ template<board::BoardLen BOARD_LEN>
 NodeRecord *TranspositionTable<BOARD_LEN>::GetChild(
     const board::FullBoard<BOARD_LEN> &full_board,
     board::PositionIndex position_index) {
-  LOG4CPLUS_DEBUG(logger_, "full_board" << full_board);
   HashKey hash_key = ChildHashKey(full_board, position_index);
   return Get(hash_key);
 }
@@ -77,7 +71,6 @@ NodeRecord *TranspositionTable<BOARD_LEN>::Get(HashKey hash_key) const {
   mutex_.unlock();
   NodeRecord *result;
   if (it == node_record_map_.end()) {
-    LOG4CPLUS_DEBUG(logger_, "it is end!");
     result = nullptr;
   } else {
     result = const_cast<NodeRecord*>(&(it->second));
@@ -90,11 +83,9 @@ HashKey TranspositionTable<BOARD_LEN>::ChildHashKey(
     const board::FullBoard<BOARD_LEN> &full_board,
     board::PositionIndex position_index) {
   HashKey result;
-  LOG4CPLUS_DEBUG(logger_, "full_board:" << full_board);
   NodeRecord *node_record_ptr = Get(full_board);
 
   if (node_record_ptr == nullptr) {
-    LOG4CPLUS_DEBUG(logger_, "node_record_ptr is null");
     NodeRecord node_record(0, 0.0f, false);
     Insert(full_board, node_record);
     node_record_ptr = Get(full_board);
