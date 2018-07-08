@@ -6,7 +6,6 @@
 #include "../def.h"
 
 namespace foolgo {
-namespace board {
 
 const char BLACK_OUTPUT = 'x';
 const char LAST_MOVE_BLACK_OUTPUT = 'X';
@@ -17,7 +16,6 @@ const char LAST_MOVE_EMPTY_OUTPUT = '*';
 
 std::string GetPointStateOutput(PointState point_state, bool is_last_move);
 
-}
 }
 
 #endif /* FOOLGO_SRC_BOARD_BOARD_OUTPUT_H_ */

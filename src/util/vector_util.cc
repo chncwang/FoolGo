@@ -10,8 +10,6 @@
 namespace foolgo {
 namespace util {
 
-using board::PositionIndex;
-
 void RandomizeVector(std::vector<PositionIndex> *vctr, uint32_t seed) {
   int len = vctr->size();
   assert(len > 0);

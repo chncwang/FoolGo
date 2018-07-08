@@ -3,7 +3,6 @@
 #include <boost/format.hpp>
 
 namespace foolgo {
-namespace board {
 
 using boost::format;
 using std::string;
@@ -33,5 +32,4 @@ Position ObliquePosition(const Position &position, int i) {
                   position.y + Position::OBLIQUE_ORNTTIONS[i][1]);
 }
 
-}
 }

@@ -23,7 +23,6 @@
 #include "zob_hasher.h"
 
 namespace foolgo {
-namespace board {
 
 const PositionIndex POSITION_INDEX_PASS = -1;
 
@@ -370,7 +369,7 @@ template<BoardLen BOARD_LEN>
 std::vector<PositionIndex> FullBoard<BOARD_LEN>::PlayableIndexes(
     Force force) const {
   auto index_bitset = PlayableIndexBitSet(force);
-  return util::GetOnePositionIndexes<board::BoardLenSquare<BOARD_LEN>()>(
+  return util::GetOnePositionIndexes<BoardLenSquare<BOARD_LEN>()>(
       index_bitset);
 }
 
@@ -397,7 +396,7 @@ std::string FullBoard<BOARD_LEN>::ToString(const PositionIndex &last_move_index,
     return GetPointStateOutput(point_state, last_move_index == position_index);
   };
   auto board_to_string = [this, get_output](const Board<BOARD_LEN> &board) {
-    return board::ToString<BOARD_LEN>(get_output);
+    return BoardToString<BOARD_LEN>(get_output);
   };
   return ToString(board_to_string, board_only);
 }
@@ -405,7 +404,7 @@ std::string FullBoard<BOARD_LEN>::ToString(const PositionIndex &last_move_index,
 template<BoardLen BOARD_LEN>
 std::string FullBoard<BOARD_LEN>::ToString(bool board_only) const {
   auto board_to_string = [this](const Board<BOARD_LEN> &board) {
-    return board::ToString(board);
+    return BoardToString(board);
   };
   return ToString(board_to_string, board_only);
 }
@@ -700,7 +699,7 @@ std::string FullBoard<BOARD_LEN>::PlayableStatesToString() const {
     }
     return output;
   };
-  return board::ToString<BOARD_LEN>(get_output);
+  return BoardToString<BOARD_LEN>(get_output);
 }
 
 template<BoardLen BOARD_LEN>
@@ -732,13 +731,12 @@ std::string FullBoard<BOARD_LEN>::EyeStatesToString() const {
       return output;
     };
 
-    result += board::ToString<BOARD_LEN>(get_output);
+    result += BoardToString<BOARD_LEN>(get_output);
   }
 
   return result;
 }
 
-}
 }
 
 #endif

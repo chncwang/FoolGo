@@ -7,20 +7,18 @@
 
 namespace foolgo {
 
-namespace board {
-template<board::BoardLen BOARD_LEN> class FullBoard;
-} /* namespace board */
+template<BoardLen BOARD_LEN> class FullBoard;
 
 namespace player {
 
-template<board::BoardLen BOARD_LEN>
+template<BoardLen BOARD_LEN>
 class Player {
  public:
   Player() = default;
   virtual ~Player() = default;
 
-  virtual board::PositionIndex NextMove(
-      const board::FullBoard<BOARD_LEN> &full_board) = 0;
+  virtual PositionIndex NextMove(
+      const FullBoard<BOARD_LEN> &full_board) = 0;
 
  private:
   DISALLOW_COPY_AND_ASSIGN_AND_MOVE(Player)

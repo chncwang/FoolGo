@@ -3,7 +3,6 @@
 #include <cassert>
 
 namespace foolgo {
-namespace board {
 
 using std::string;
 
@@ -21,5 +20,4 @@ Force PointToForce(PointState point) {
   return static_cast<Force>(point);
 }
 
-}
 }

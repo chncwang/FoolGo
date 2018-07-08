@@ -8,7 +8,7 @@
 namespace foolgo {
 namespace util {
 
-void RandomizeVector(std::vector<board::PositionIndex> *vctr, uint32_t seed);
+void RandomizeVector(std::vector<PositionIndex> *vctr, uint32_t seed);
 
 template<typename T>
 std::vector<T> ConcatVectors(const std::vector<T> vctrs[4]) {

@@ -7,7 +7,6 @@
 #include "position.h"
 
 namespace foolgo {
-namespace board {
 
 template<BoardLen BOARD_LEN>
 class PstionAndIndxCcltr {
@@ -82,7 +81,6 @@ PstionAndIndxCcltr<BOARD_LEN>::PstionAndIndxCcltr() {
   }
 }
 
-}
 }
 
 #endif

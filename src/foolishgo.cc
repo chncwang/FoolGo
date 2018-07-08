@@ -7,8 +7,8 @@
 #include "game/game.h"
 #include "util/rand.h"
 
-using foolgo::board::FullBoard;
-using foolgo::board::ZobHasher;
+using foolgo::FullBoard;
+using foolgo::ZobHasher;
 using foolgo::game::Game;
 using foolgo::game::FreshGame;
 using foolgo::util::GetTimeSeed;

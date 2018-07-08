@@ -10,7 +10,6 @@
 #include "position.h"
 
 namespace foolgo {
-namespace board {
 
 class BoardDifference;
 
@@ -117,7 +116,6 @@ HashKey ZobHasher<BOARD_LEN>::GetHash(HashKey hash,
   return r;
 }
 
-}
 }
 
 #endif

@@ -9,45 +9,45 @@
 namespace foolgo {
 namespace piece_structure {
 
-template<board::BoardLen BOARD_LEN>
+template<BoardLen BOARD_LEN>
 class EyeSet {
  public:
   EyeSet() = default;
   ~EyeSet() = default;
   void Copy(const EyeSet &es);
 
-  void SetEye(board::PositionIndex indx, bool v) {
+  void SetEye(PositionIndex indx, bool v) {
     eyes_[indx] = v;
   }
-  void SetRealEye(board::PositionIndex indx, bool v) {
+  void SetRealEye(PositionIndex indx, bool v) {
     real_eyes_[indx] = v;
   }
-  bool IsEye(board::PositionIndex indx) const {
+  bool IsEye(PositionIndex indx) const {
     return eyes_[indx];
   }
-  bool IsRealEye(board::PositionIndex indx) const {
+  bool IsRealEye(PositionIndex indx) const {
     return real_eyes_[indx];
   }
-  board::PositionIndex RealCount() const {
+  PositionIndex RealCount() const {
     return real_eyes_.count();
   }
 
-  std::vector<board::PositionIndex> GetRealEyes() const {
-    return util::GetOnePositionIndexes<board::BoardLenSquare<BOARD_LEN>()>(
+  std::vector<PositionIndex> GetRealEyes() const {
+    return util::GetOnePositionIndexes<BoardLenSquare<BOARD_LEN>()>(
         real_eyes_);
   }
 
  private:
-  board::BitSet<BOARD_LEN> eyes_;
-  board::BitSet<BOARD_LEN> real_eyes_;
+  BitSet<BOARD_LEN> eyes_;
+  BitSet<BOARD_LEN> real_eyes_;
 };
 
-template<board::BoardLen BOARD_LEN>
-bool IsFakeEye(const EyeSet<BOARD_LEN> &eyeset, board::PositionIndex indx) {
+template<BoardLen BOARD_LEN>
+bool IsFakeEye(const EyeSet<BOARD_LEN> &eyeset, PositionIndex indx) {
   return eyeset.IsEye(indx) && !eyeset.IsRealEye(indx);
 }
 
-template<board::BoardLen BOARD_LEN>
+template<BoardLen BOARD_LEN>
 inline void EyeSet<BOARD_LEN>::Copy(const EyeSet &es) {
   eyes_ = es.eyes_;
   real_eyes_ = es.real_eyes_;

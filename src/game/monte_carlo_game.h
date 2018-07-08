@@ -8,10 +8,10 @@
 namespace foolgo {
 namespace game {
 
-template<board::BoardLen BOARD_LEN>
+template<BoardLen BOARD_LEN>
 class MonteCarloGame : public Game<BOARD_LEN> {
  public:
-  MonteCarloGame(const board::FullBoard<BOARD_LEN> &full_board, uint32_t seed,
+  MonteCarloGame(const FullBoard<BOARD_LEN> &full_board, uint32_t seed,
                  bool only_log_board = true);
   ~MonteCarloGame() = default;
 
@@ -20,9 +20,9 @@ class MonteCarloGame : public Game<BOARD_LEN> {
   }
 };
 
-template<board::BoardLen BOARD_LEN>
+template<BoardLen BOARD_LEN>
 MonteCarloGame<BOARD_LEN>::MonteCarloGame(
-    const board::FullBoard<BOARD_LEN> &full_board, uint32_t seed,
+    const FullBoard<BOARD_LEN> &full_board, uint32_t seed,
     bool only_log_board )
     : Game<BOARD_LEN>(full_board, new player::RandomPlayer<BOARD_LEN>(seed),
                       new player::RandomPlayer<BOARD_LEN>(seed),

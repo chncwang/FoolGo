@@ -10,7 +10,6 @@ using std::make_pair;
 using std::lock_guard;
 using std::mutex;
 using std::ostream;
-using board::PositionIndex;
 using boost::format;
 
 NodeRecord::NodeRecord() : NodeRecord(0, 0.0f, false) {}

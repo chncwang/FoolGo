@@ -1,7 +1,6 @@
 #include "board_difference.h"
 
 namespace foolgo {
-namespace board {
 
 void BoardDifference::ModifyToCurrentState(
     PositionIndex ko_position_index, PositionIndex move_position_index,
@@ -28,5 +27,4 @@ void BoardDifference::ModifyToCurrentState(
       move_position_index, EMPTY_POINT, last_force_difference_.current_state);
 }
 
-}
 }

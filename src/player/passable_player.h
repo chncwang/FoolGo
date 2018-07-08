@@ -9,24 +9,24 @@
 namespace foolgo {
 namespace player {
 
-template<board::BoardLen BOARD_LEN>
+template<BoardLen BOARD_LEN>
 class PassablePlayer : public Player<BOARD_LEN> {
  public:
   virtual ~PassablePlayer() = default;
-  board::PositionIndex NextMove(
-      const board::FullBoard<BOARD_LEN> &full_board);
+  PositionIndex NextMove(
+      const FullBoard<BOARD_LEN> &full_board);
  protected:
-  virtual board::PositionIndex NextMoveWithPlayableBoard(
-      const board::FullBoard<BOARD_LEN> &full_board) = 0;
+  virtual PositionIndex NextMoveWithPlayableBoard(
+      const FullBoard<BOARD_LEN> &full_board) = 0;
 };
 
-template<board::BoardLen BOARD_LEN>
-board::PositionIndex PassablePlayer<BOARD_LEN>::NextMove(
-    const board::FullBoard<BOARD_LEN> &full_board) {
-  board::Force current_force = board::NextForce(full_board);
+template<BoardLen BOARD_LEN>
+PositionIndex PassablePlayer<BOARD_LEN>::NextMove(
+    const FullBoard<BOARD_LEN> &full_board) {
+  Force current_force = NextForce(full_board);
   auto playable_indexes = full_board.PlayableIndexes(current_force);
   if (playable_indexes.empty()) {
-    return board::POSITION_INDEX_PASS;
+    return POSITION_INDEX_PASS;
   } else {
     return NextMoveWithPlayableBoard(full_board);
   }

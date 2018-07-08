@@ -37,11 +37,11 @@ int CalSpecifiedOneOccurrenceTimeIndex(const std::bitset<LEN> &b, int x) {
 }
 
 template<int LEN>
-std::vector<board::PositionIndex> GetOnePositionIndexes(
+std::vector<PositionIndex> GetOnePositionIndexes(
     const std::bitset<LEN> &b) {
-  board::PositionIndex c = b.count();
-  std::vector<board::PositionIndex> v(c);
-  board::PositionIndex vi = 0;
+  PositionIndex c = b.count();
+  std::vector<PositionIndex> v(c);
+  PositionIndex vi = 0;
 
   for (int i = 0; i < b.size(); ++i) {
     if (b[i]) {

@@ -11,9 +11,6 @@
 namespace foolgo {
 namespace game {
 
-using board::FullBoard;
-using board::ZobHasher;
-
 class MonteCarloGameTest : public Test {
  protected:
   virtual void SetUp() {

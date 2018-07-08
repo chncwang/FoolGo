@@ -5,7 +5,6 @@
 #include "../def.h"
 
 namespace foolgo {
-namespace board {
 
 using std::string;
 
@@ -25,5 +24,4 @@ string GetPointStateOutput(PointState point_state, bool is_last_move) {
   return string(1, output);
 }
 
-}
 }
