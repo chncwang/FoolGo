@@ -26,8 +26,6 @@
 #include <string>
 #include <vector>
 
-#include "SGFTree.h"
-
 class SGFParser {
 private:
     static std::string parse_property_name(std::istringstream & strm);
@@ -38,7 +36,7 @@ public:
                                              size_t stopat = SIZE_MAX);
     static std::vector<std::string> chop_stream(std::istream& ins,
                                                 size_t stopat = SIZE_MAX);
-    static void parse(std::istringstream & strm, SGFTree * node);
+    //static void parse(std::istringstream & strm, SGFTree * node);
 };
 
 

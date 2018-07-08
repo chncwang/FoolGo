@@ -18,18 +18,17 @@ SET(CMAKE_EXE_LINKER_FLAGS["Debug"] "-g")
 
 INCLUDE_DIRECTORIES(src googletest/googletest/include spdlog/include)
 
-AUX_SOURCE_DIRECTORY(src SRCS)
 AUX_SOURCE_DIRECTORY(src/board SRCS)
 AUX_SOURCE_DIRECTORY(src/piece_structure SRCS)
 AUX_SOURCE_DIRECTORY(src/game SRCS)
 AUX_SOURCE_DIRECTORY(src/player SRCS)
 AUX_SOURCE_DIRECTORY(src/util SRCS)
-ADD_EXECUTABLE(foolgo ${SRCS})
-TARGET_LINK_LIBRARIES(foolgo pthread)
+ADD_EXECUTABLE(foolgo ${SRCS} src/foolishgo.cc)
 IF (APPLE)
     TARGET_LINK_LIBRARIES(foolgo c++)
 ENDIF()
-
+TARGET_LINK_LIBRARIES(foolgo pthread)
+ADD_EXECUTABLE(trainer ${SRCS} src/trainer.cc)
 
 # Test configs.
 ENABLE_TESTING()

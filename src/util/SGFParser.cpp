@@ -23,9 +23,10 @@
 #include <fstream>
 #include <stdexcept>
 #include <string>
+#include <iostream>
 
-#include "SGFTree.h"
-#include "Utils.h"
+using std::cout;
+using std::endl;
 
 std::vector<std::string> SGFParser::chop_stream(std::istream& ins,
                                                 size_t stopat) {
@@ -71,7 +72,7 @@ std::vector<std::string> SGFParser::chop_stream(std::istream& ins,
             intag = true;
         } else if (c == ']') {
             if (intag == false) {
-                Utils::myprintf("Tag error on line %d", line);
+              cout << "Tag error on line " << line << endl;
             }
             intag = false;
         }
@@ -157,68 +158,68 @@ bool SGFParser::parse_property_value(std::istringstream & strm,
     return true;
 }
 
-void SGFParser::parse(std::istringstream & strm, SGFTree * node) {
-    bool splitpoint = false;
-
-    char c;
-    while (strm >> c) {
-        if (strm.fail()) {
-            return;
-        }
-
-        if (std::isspace(c)) {
-            continue;
-        }
-
-        // parse a property
-        if (std::isalpha(c) && std::isupper(c)) {
-            strm.unget();
-
-            std::string propname = parse_property_name(strm);
-            bool success;
-
-            do {
-                std::string propval;
-                success = parse_property_value(strm, propval);
-                if (success) {
-                    node->add_property(propname, propval);
-                }
-            } while (success);
-
-            continue;
-        }
-
-        if (c == '(') {
-            // eat first ;
-            char cc;
-            do {
-                strm >> cc;
-            } while (std::isspace(cc));
-            if (cc != ';') {
-                strm.unget();
-            }
-            // start a variation here
-            splitpoint = true;
-            // new node
-            SGFTree * newptr = node->add_child();
-            parse(strm, newptr);
-        } else if (c == ')') {
-            // variation ends, go back
-            // if the variation didn't start here, then
-            // push the "variation ends" mark back
-            // and try again one level up the tree
-            if (!splitpoint) {
-                strm.unget();
-                return;
-            } else {
-                splitpoint = false;
-                continue;
-            }
-        } else if (c == ';') {
-            // new node
-            SGFTree * newptr = node->add_child();
-            node = newptr;
-            continue;
-        }
-    }
-}
+//void SGFParser::parse(std::istringstream & strm, SGFTree * node) {
+//    bool splitpoint = false;
+//
+//    char c;
+//    while (strm >> c) {
+//        if (strm.fail()) {
+//            return;
+//        }
+//
+//        if (std::isspace(c)) {
+//            continue;
+//        }
+//
+//        // parse a property
+//        if (std::isalpha(c) && std::isupper(c)) {
+//            strm.unget();
+//
+//            std::string propname = parse_property_name(strm);
+//            bool success;
+//
+//            do {
+//                std::string propval;
+//                success = parse_property_value(strm, propval);
+//                if (success) {
+//                    node->add_property(propname, propval);
+//                }
+//            } while (success);
+//
+//            continue;
+//        }
+//
+//        if (c == '(') {
+//            // eat first ;
+//            char cc;
+//            do {
+//                strm >> cc;
+//            } while (std::isspace(cc));
+//            if (cc != ';') {
+//                strm.unget();
+//            }
+//            // start a variation here
+//            splitpoint = true;
+//            // new node
+//            SGFTree * newptr = node->add_child();
+//            parse(strm, newptr);
+//        } else if (c == ')') {
+//            // variation ends, go back
+//            // if the variation didn't start here, then
+//            // push the "variation ends" mark back
+//            // and try again one level up the tree
+//            if (!splitpoint) {
+//                strm.unget();
+//                return;
+//            } else {
+//                splitpoint = false;
+//                continue;
+//            }
+//        } else if (c == ';') {
+//            // new node
+//            SGFTree * newptr = node->add_child();
+//            node = newptr;
+//            continue;
+//        }
+//    }
+//}
