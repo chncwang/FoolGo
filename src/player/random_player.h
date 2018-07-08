@@ -4,9 +4,9 @@
 #include <cassert>
 #include <cstdint>
 
-#include "../board/full_board.h"
-#include "../board/position.h"
-#include "../math/rand.h"
+#include "board/full_board.h"
+#include "board/position.h"
+#include "util/rand.h"
 #include "passable_player.h"
 
 namespace foolgo {
@@ -37,7 +37,7 @@ board::PositionIndex RandomPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
   auto playable_indexes = full_board.PlayableIndexes(board::NextForce(full_board));
   assert(!playable_indexes.empty());
 
-  board::PositionIndex rand = math::Rand(playable_indexes.size() - 1, seed_);
+  board::PositionIndex rand = util::Rand(playable_indexes.size() - 1, seed_);
   return playable_indexes.at(rand);
 }
 

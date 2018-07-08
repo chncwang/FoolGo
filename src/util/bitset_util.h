@@ -8,7 +8,7 @@
 #include "../board/position.h"
 
 namespace foolgo {
-namespace math {
+namespace util {
 
 template<int LEN>
 int GetLowestOne(const std::bitset<LEN> &b) {

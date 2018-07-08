@@ -33,7 +33,7 @@ class EyeSet {
   }
 
   std::vector<board::PositionIndex> GetRealEyes() const {
-    return math::GetOnePositionIndexes<board::BoardLenSquare<BOARD_LEN>()>(
+    return util::GetOnePositionIndexes<board::BoardLenSquare<BOARD_LEN>()>(
         real_eyes_);
   }
 

@@ -6,7 +6,7 @@
 #include "../board/position.h"
 
 namespace foolgo {
-namespace math {
+namespace util {
 
 void RandomizeVector(std::vector<board::PositionIndex> *vctr, uint32_t seed);
 

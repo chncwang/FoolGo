@@ -8,7 +8,7 @@
 #include "rand.h"
 
 namespace foolgo {
-namespace math {
+namespace util {
 
 using board::PositionIndex;
 

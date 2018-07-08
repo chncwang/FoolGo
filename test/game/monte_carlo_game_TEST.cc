@@ -2,9 +2,9 @@
 
 #include <gtest/gtest.h>
 
-#include "../../src/board/full_board.h"
-#include "../../src/board/zob_hasher.h"
-#include "../../src/math/rand.h"
+#include "board/full_board.h"
+#include "board/zob_hasher.h"
+#include "util/rand.h"
 #include "../def_for_test.h"
 #include "../test.h"
 
@@ -19,7 +19,7 @@ class MonteCarloGameTest : public Test {
   virtual void SetUp() {
     Test::SetUp();
 
-    uint32_t seed = math::GetTimeSeed();
+    uint32_t seed = util::GetTimeSeed();
     std::cout << "seed:" << seed << std::endl;
 
     ZobHasher<DEFAULT_BOARD_LEN>::Init(seed);

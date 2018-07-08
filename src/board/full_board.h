@@ -9,11 +9,11 @@
 #include <ostream>
 #include <vector>
 
-#include "../def.h"
-#include "../math/bitset_util.h"
-#include "../math/vector_util.h"
-#include "../piece_structure/chain_set.h"
-#include "../piece_structure/eye_set.h"
+#include "def.h"
+#include "util/bitset_util.h"
+#include "util/vector_util.h"
+#include "piece_structure/chain_set.h"
+#include "piece_structure/eye_set.h"
 #include "board.h"
 #include "board_difference.h"
 #include "force.h"
@@ -351,7 +351,7 @@ void FullBoard<BOARD_LEN>::PlayMove(const Move &move) {
     board_difference.ModifyToCurrentState(ko_indx_, move_index, true,
                                           suisided_piece_indexes);
   } else {
-    auto ates = math::ConcatVectors(ate_piece_indexes_array);
+    auto ates = util::ConcatVectors(ate_piece_indexes_array);
     board_difference.ModifyToCurrentState(ko_indx_, move_index, false, ates);
   }
 
@@ -370,7 +370,7 @@ template<BoardLen BOARD_LEN>
 std::vector<PositionIndex> FullBoard<BOARD_LEN>::PlayableIndexes(
     Force force) const {
   auto index_bitset = PlayableIndexBitSet(force);
-  return math::GetOnePositionIndexes<board::BoardLenSquare<BOARD_LEN>()>(
+  return util::GetOnePositionIndexes<board::BoardLenSquare<BOARD_LEN>()>(
       index_bitset);
 }
 
