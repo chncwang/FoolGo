@@ -24,9 +24,18 @@
 #include <stdexcept>
 #include <string>
 #include <iostream>
+#include <regex>
+#include <utility>
+
+namespace foolgo {
 
 using std::cout;
 using std::endl;
+using std::string;
+using std::vector;
+using std::regex;
+using std::sregex_iterator;
+using std::move;
 
 std::vector<std::string> SGFParser::chop_stream(std::istream& ins,
                                                 size_t stopat) {
@@ -86,7 +95,7 @@ std::vector<std::string> SGFParser::chop_stream(std::istream& ins,
     return result;
 }
 
-std::vector<std::string> SGFParser::chop_all(std::string filename,
+std::vector<std::string> SGFParser::chop_all(const std::string &filename,
                                              size_t stopat) {
     std::ifstream ins(filename.c_str(), std::ifstream::binary | std::ifstream::in);
 
@@ -101,7 +110,7 @@ std::vector<std::string> SGFParser::chop_all(std::string filename,
 }
 
 // scan the file and extract the game with number index
-std::string SGFParser::chop_from_file(std::string filename, size_t index) {
+std::string SGFParser::chop_from_file(const std::string &filename, size_t index) {
     auto vec = chop_all(filename, index);
     return vec[index];
 }
@@ -158,68 +167,65 @@ bool SGFParser::parse_property_value(std::istringstream & strm,
     return true;
 }
 
-//void SGFParser::parse(std::istringstream & strm, SGFTree * node) {
-//    bool splitpoint = false;
-//
-//    char c;
-//    while (strm >> c) {
-//        if (strm.fail()) {
-//            return;
-//        }
-//
-//        if (std::isspace(c)) {
-//            continue;
-//        }
-//
-//        // parse a property
-//        if (std::isalpha(c) && std::isupper(c)) {
-//            strm.unget();
-//
-//            std::string propname = parse_property_name(strm);
-//            bool success;
-//
-//            do {
-//                std::string propval;
-//                success = parse_property_value(strm, propval);
-//                if (success) {
-//                    node->add_property(propname, propval);
-//                }
-//            } while (success);
-//
-//            continue;
-//        }
-//
-//        if (c == '(') {
-//            // eat first ;
-//            char cc;
-//            do {
-//                strm >> cc;
-//            } while (std::isspace(cc));
-//            if (cc != ';') {
-//                strm.unget();
-//            }
-//            // start a variation here
-//            splitpoint = true;
-//            // new node
-//            SGFTree * newptr = node->add_child();
-//            parse(strm, newptr);
-//        } else if (c == ')') {
-//            // variation ends, go back
-//            // if the variation didn't start here, then
-//            // push the "variation ends" mark back
-//            // and try again one level up the tree
-//            if (!splitpoint) {
-//                strm.unget();
-//                return;
-//            } else {
-//                splitpoint = false;
-//                continue;
-//            }
-//        } else if (c == ';') {
-//            // new node
-//            SGFTree * newptr = node->add_child();
-//            node = newptr;
-//            continue;
-//        }
-//    }
-//}
+void Validate(const GameInfo &game_info) {
+  const Move *last_move = nullptr;
+
+  for (const Move &move : game_info.moves) {
+    if (last_move == nullptr) {
+      if (move.force != Force::BLACK_FORCE) {
+        abort();
+      }
+    } else {
+      if (OppositeForce(move.force) != last_move->force) {
+        abort();
+      }
+    }
+
+    last_move = &move;
+  }
+}
+
+vector<GameInfo> SGFParser::get_game_infos(const string &fname) {
+   vector<string> strs = chop_all(fname);
+   vector<GameInfo> game_infos;
+
+   for (auto &str : strs) {
+     static regex PATTERN("([WB])\\[([a-z][a-z])\\]");
+     vector<Move> moves;
+     for (sregex_iterator it =
+         sregex_iterator(str.begin(), str.end(), PATTERN);
+         it != sregex_iterator(); ++it) {
+       Move move;
+       Force force;
+       string force_str = it->str(1);
+       if (force_str == "B") {
+         force = Force::BLACK_FORCE;
+       } else if (force_str == "W") {
+         force = Force::WHITE_FORCE;
+       } else {
+         abort();
+       }
+       move.force = force;
+
+       char col_ch = it->str(2).at(0);
+       int x = col_ch - 'a';
+
+       char row_ch = it->str(2).at(1);
+       int y = row_ch - 'a';
+
+       PositionIndex indx =
+         PstionAndIndxCcltr<19>::Ins().GetIndex(Position(x, y));
+       move.position_index = indx;
+
+       moves.push_back(move);
+     }
+     GameInfo game_info;
+     game_info.moves = move(moves);
+
+     game_infos.push_back(move(game_info));
+   }
+
+   return game_infos;
+}
+
+}

@@ -14,9 +14,7 @@ namespace foolgo {
 
 namespace player {
 template<BoardLen BOARD_LEN> class Player;
-} /* namespace player */
-
-namespace game {
+}
 
 template<BoardLen BOARD_LEN>
 class FreshGame : public Game<BOARD_LEN> {
@@ -89,7 +87,6 @@ FreshGame<BOARD_LEN>* FreshGame<BOARD_LEN>::BuildAiVsAiGame(
   return new FreshGame(full_board, black_player, white_player, only_log_board);
 }
 
-}
 }
 
 #endif

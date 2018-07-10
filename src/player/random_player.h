@@ -35,7 +35,7 @@ PositionIndex RandomPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
   auto playable_indexes = full_board.PlayableIndexes(NextForce(full_board));
   assert(!playable_indexes.empty());
 
-  PositionIndex rand = util::Rand(playable_indexes.size() - 1, seed_);
+  PositionIndex rand = Rand(playable_indexes.size() - 1, seed_);
   return playable_indexes.at(rand);
 }
 

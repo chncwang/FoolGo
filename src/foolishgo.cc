@@ -7,12 +7,7 @@
 #include "game/game.h"
 #include "util/rand.h"
 
-using foolgo::FullBoard;
-using foolgo::ZobHasher;
-using foolgo::game::Game;
-using foolgo::game::FreshGame;
-using foolgo::util::GetTimeSeed;
-using foolgo::MAIN_BOARD_LEN;
+using namespace foolgo;
 using std::cout;
 
 int main(int argc, const char *argv[]) {

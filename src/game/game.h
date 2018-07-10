@@ -11,7 +11,6 @@
 #include "../player/player.h"
 
 namespace foolgo {
-namespace game {
 
 template <BoardLen BOARD_LEN>
 class Game {
@@ -79,7 +78,6 @@ Game<BOARD_LEN>::Game(const FullBoard<BOARD_LEN> &full_board,
 }
 
 
-} /* namespace player */
 } /* namespace foolgo */
 
 #endif /* SRC_GAME_GAME_H_ */

@@ -190,7 +190,7 @@ float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
   NodeRecord *node_record_ptr = transposition_table_.Get(*full_board_ptr);
 
   if (node_record_ptr == nullptr) {
-    game::MonteCarloGame<BOARD_LEN> monte_carlo_game(*full_board_ptr, seed_);
+    MonteCarloGame<BOARD_LEN> monte_carlo_game(*full_board_ptr, seed_);
     if (!full_board_ptr->IsEnd()) {
       monte_carlo_game.Run();
     }

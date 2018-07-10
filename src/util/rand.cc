@@ -6,7 +6,6 @@
 
 
 namespace foolgo {
-namespace util {
 
 uint32_t Rand(uint32_t max, uint32_t seed) {
   static std::mt19937 gen(seed);
@@ -14,5 +13,4 @@ uint32_t Rand(uint32_t max, uint32_t seed) {
   return dstrbtion(gen);
 }
 
-}
 }

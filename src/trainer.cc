@@ -4,13 +4,12 @@
 #include <vector>
 
 #include "board/full_board.h"
+#include "game/game_info.h"
 #include "def.h"
 #include "util/cxxopts.hpp"
 #include "util/SGFParser.h"
 
-using foolgo::ZobHasher;
-using foolgo::util::GetTimeSeed;
-using foolgo::MAIN_BOARD_LEN;
+using namespace foolgo;
 using std::cout;
 using std::endl;
 using cxxopts::Options;
@@ -30,6 +29,13 @@ int main(int argc, char *argv[]) {
   cout << strs.size() << endl;
   for (string &str : strs) {
     cout << str << endl;
+  }
+  vector<GameInfo> game_infos = parser.get_game_infos(sgf_file_name);
+
+  for (const GameInfo &info : game_infos) {
+    for (const Move &move : info.moves) {
+      cout << move.force << " " << move.position_index << std::endl;
+    }
   }
 
   uint32_t seed = GetTimeSeed();

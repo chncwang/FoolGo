@@ -6,7 +6,6 @@
 #include "game.h"
 
 namespace foolgo {
-namespace game {
 
 template<BoardLen BOARD_LEN>
 class MonteCarloGame : public Game<BOARD_LEN> {
@@ -28,7 +27,6 @@ MonteCarloGame<BOARD_LEN>::MonteCarloGame(
                       new player::RandomPlayer<BOARD_LEN>(seed),
                       only_log_board) {}
 
-} /* namespace player */
 } /* namespace foolgo */
 
 #endif

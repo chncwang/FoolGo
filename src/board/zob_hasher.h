@@ -53,19 +53,19 @@ ZobHasher<BOARD_LEN>::ZobHasher(uint32_t seed) {
 
   for (int i = 0; i < BoardLenSquare<BOARD_LEN>(); ++i) {
     for (int j = 0; j < 3; ++j) {
-      board_hash_[i][j] = util::Rand(max, seed);
+      board_hash_[i][j] = Rand(max, seed);
     }
   }
 
   for (int i = 0; i < 2; ++i) {
-    player_hash_[i] = util::Rand(max, seed);
+    player_hash_[i] = Rand(max, seed);
   }
 
   for (int i = 0; i < BoardLenSquare<BOARD_LEN>(); ++i) {
-    ko_hash_[i] = util::Rand(max, seed);
+    ko_hash_[i] = Rand(max, seed);
   }
 
-  noko_hash_ = util::Rand(max, seed);
+  noko_hash_ = Rand(max, seed);
 }
 
 template<typename T, typename GetHash>
