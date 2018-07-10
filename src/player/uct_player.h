@@ -22,7 +22,6 @@
 #include "transposition_table.h"
 
 namespace foolgo {
-namespace player {
 
 template<BoardLen BOARD_LEN>
 class UctPlayer : public PassablePlayer<BOARD_LEN> {
@@ -197,7 +196,7 @@ float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
     ++(*mc_game_count_ptr);
     Force force = full_board_ptr->LastForce();
     new_profit = GetRegionRatio(monte_carlo_game.GetFullBoard(), force);
-    player::NodeRecord node_record(1, new_profit, false);
+    NodeRecord node_record(1, new_profit, false);
     transposition_table_.Insert(*full_board_ptr, node_record);
   } else {
     mutex_.lock();
@@ -277,7 +276,6 @@ void UctPlayer<BOARD_LEN>::LogProfits(
   };
 }
 
-}
 }
 
 #endif /* FOOLGO_SRC_PLAYER_UCT_PLAYER_H_ */

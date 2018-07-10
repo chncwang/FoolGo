@@ -7,7 +7,6 @@
 #include "player.h"
 
 namespace foolgo {
-namespace player {
 
 template<BoardLen BOARD_LEN>
 class PassablePlayer : public Player<BOARD_LEN> {
@@ -32,7 +31,6 @@ PositionIndex PassablePlayer<BOARD_LEN>::NextMove(
   }
 }
 
-}
 }
 
 #endif

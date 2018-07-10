@@ -14,8 +14,6 @@ namespace foolgo {
 template<BoardLen BOARD_LEN> class FullBoard;
 struct Move;
 
-namespace player {
-
 template <BoardLen BOARD_LEN>
 class RandomPlayer : public PassablePlayer<BOARD_LEN> {
  public:
@@ -39,7 +37,6 @@ PositionIndex RandomPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
   return playable_indexes.at(rand);
 }
 
-} /* namespace player */
 } /* namespace foolgo */
 
 #endif

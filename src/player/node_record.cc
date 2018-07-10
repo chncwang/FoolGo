@@ -4,7 +4,6 @@
 #include <utility>
 
 namespace foolgo {
-namespace player {
 
 using std::make_pair;
 using std::lock_guard;
@@ -44,5 +43,4 @@ ostream& operator <<(ostream &os, const NodeRecord &node_record) {
   return os;
 }
 
-}
 }

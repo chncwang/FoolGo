@@ -9,7 +9,6 @@ namespace foolgo {
 
 template<BoardLen BOARD_LEN> class FullBoard;
 
-namespace player {
 
 template<BoardLen BOARD_LEN>
 class Player {
@@ -24,7 +23,6 @@ class Player {
   DISALLOW_COPY_AND_ASSIGN_AND_MOVE(Player)
 };
 
-} /* namespace player */
 } /* namespace foolgo */
 
 #endif /* SRC_PLAYER_PLAYER_H_ */

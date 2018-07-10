@@ -3,13 +3,12 @@
 
 #include <iostream>
 
-#include "../board/full_board.h"
-#include "../board/pos_cal.h"
-#include "../board/position.h"
+#include "board/full_board.h"
+#include "board/pos_cal.h"
+#include "board/position.h"
 #include "passable_player.h"
 
 namespace foolgo {
-namespace player {
 
 namespace {
 template<BoardLen BOARD_LEN>
@@ -50,7 +49,6 @@ PositionIndex InputPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
   return PstionAndIndxCcltr<BOARD_LEN>::Ins().GetIndex(position);
 }
 
-}
 }
 
 #endif /* FOOLGO_SRC_PLAYER_INPUT_PLAYER_H_ */

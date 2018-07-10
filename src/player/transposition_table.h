@@ -11,7 +11,6 @@
 #include "node_record.h"
 
 namespace foolgo {
-namespace player {
 
 namespace {
 struct StaySelfHasher {
@@ -106,7 +105,6 @@ HashKey TranspositionTable<BOARD_LEN>::ChildHashKey(
   return result;
 }
 
-}
 }
 
 #endif /* FOOLGO_SRC_PLAYER_TRANSPOSITION_TABLE_H_ */

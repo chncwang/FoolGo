@@ -42,11 +42,11 @@ template<BoardLen BOARD_LEN>
 FreshGame<BOARD_LEN>* FreshGame<BOARD_LEN>::BuildHumanVsAiGame(
     bool input_player_plays_black, uint32_t seed, int mc_game_count,
     int thread_count) {
-  auto input_player = new player::InputPlayer<BOARD_LEN>;
-  auto ai_player = new player::UctPlayer<BOARD_LEN>(seed, mc_game_count,
+  auto input_player = new InputPlayer<BOARD_LEN>;
+  auto ai_player = new UctPlayer<BOARD_LEN>(seed, mc_game_count,
                                                     thread_count);
 
-  player::Player<BOARD_LEN> *black_player, *white_player;
+  Player<BOARD_LEN> *black_player, *white_player;
   if (input_player_plays_black) {
     black_player = input_player;
     white_player = ai_player;
@@ -64,8 +64,8 @@ FreshGame<BOARD_LEN>* FreshGame<BOARD_LEN>::BuildHumanVsAiGame(
 template<BoardLen BOARD_LEN>
 FreshGame<BOARD_LEN>* FreshGame<BOARD_LEN>::BuildHumanVsHumanGame(
     bool only_log_board) {
-  auto black_player = new player::InputPlayer<BOARD_LEN>;
-  auto white_player = new player::InputPlayer<BOARD_LEN>;
+  auto black_player = new InputPlayer<BOARD_LEN>;
+  auto white_player = new InputPlayer<BOARD_LEN>;
 
   FullBoard<BOARD_LEN> full_board;
   full_board.Init();
@@ -76,9 +76,9 @@ FreshGame<BOARD_LEN>* FreshGame<BOARD_LEN>::BuildHumanVsHumanGame(
 template<BoardLen BOARD_LEN>
 FreshGame<BOARD_LEN>* FreshGame<BOARD_LEN>::BuildAiVsAiGame(
     uint32_t seed, int mc_game_count, int thread_couunt, bool only_log_board) {
-  auto black_player = new player::UctPlayer<BOARD_LEN>(seed, mc_game_count,
+  auto black_player = new UctPlayer<BOARD_LEN>(seed, mc_game_count,
                                                        thread_couunt);
-  auto white_player = new player::UctPlayer<BOARD_LEN>(seed, mc_game_count,
+  auto white_player = new UctPlayer<BOARD_LEN>(seed, mc_game_count,
                                                        thread_couunt);
 
   FullBoard<BOARD_LEN> full_board;

@@ -23,8 +23,8 @@ template<BoardLen BOARD_LEN>
 MonteCarloGame<BOARD_LEN>::MonteCarloGame(
     const FullBoard<BOARD_LEN> &full_board, uint32_t seed,
     bool only_log_board )
-    : Game<BOARD_LEN>(full_board, new player::RandomPlayer<BOARD_LEN>(seed),
-                      new player::RandomPlayer<BOARD_LEN>(seed),
+    : Game<BOARD_LEN>(full_board, new RandomPlayer<BOARD_LEN>(seed),
+                      new RandomPlayer<BOARD_LEN>(seed),
                       only_log_board) {}
 
 } /* namespace foolgo */

@@ -11,7 +11,6 @@
 #include "../def.h"
 
 namespace foolgo {
-namespace player {
 
 class NodeRecord {
  public:
@@ -55,7 +54,6 @@ class NodeRecord {
                                    const NodeRecord &node_record);
 };
 
-}
 }
 
 #endif /* FOOLGO_SRC_PLAYER_NODE_RECORD_H_ */
