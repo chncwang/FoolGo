@@ -2,21 +2,23 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "board/full_board.h"
 #include "game/game_info.h"
+#include "game/sgf_game.h"
 #include "def.h"
 #include "util/cxxopts.hpp"
 #include "util/SGFParser.h"
 
 using namespace foolgo;
-using std::cout;
-using std::endl;
-using cxxopts::Options;
-using std::string;
-using std::vector;
+using namespace std;
+using namespace cxxopts;
 
 int main(int argc, char *argv[]) {
+  uint32_t seed = GetTimeSeed();
+  cout << "seed:" << seed << endl;
+  ZobHasher<19>::Init(seed);
   Options options("FoolGo", "A montecarlo Go A.I.");
   options.add_options()
     ("s,sgf", "sgf file name", cxxopts::value<string>());
@@ -27,20 +29,12 @@ int main(int argc, char *argv[]) {
   SGFParser parser;
   vector<string> strs = parser.chop_all(sgf_file_name);
   cout << strs.size() << endl;
-  for (string &str : strs) {
-    cout << str << endl;
-  }
   vector<GameInfo> game_infos = parser.get_game_infos(sgf_file_name);
-
-  for (const GameInfo &info : game_infos) {
-    for (const Move &move : info.moves) {
-      cout << move.force << " " << move.position_index << std::endl;
-    }
+  for (const GameInfo &game_info : game_infos) {
+    auto sgf_game = SgfGame<19>::BuildSgfGame(game_info);
+    sgf_game->Run();
+    break;
   }
-
-  uint32_t seed = GetTimeSeed();
-  cout << "seed:" << seed << std::endl;
-  ZobHasher<MAIN_BOARD_LEN>::Init(seed);
 
   return 0;
 }

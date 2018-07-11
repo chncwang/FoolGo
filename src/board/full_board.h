@@ -25,6 +25,7 @@
 namespace foolgo {
 
 const PositionIndex POSITION_INDEX_PASS = -1;
+const PositionIndex POSITION_INDEX_END = -2;
 
 struct Move {
   Force force;
@@ -66,20 +67,29 @@ class FullBoard : private Board<BOARD_LEN> {
   PointState GetPointState(PositionIndex indx) const {
     return Board<BOARD_LEN>::GetPoint(indx);
   }
+
   PointState GetPointState(const Position &pos) const {
     return Board<BOARD_LEN>::GetPoint(pos);
   }
+
   Force LastForce() const {
     return last_force_;
   }
+
   PositionIndex KoIndex() const {
     return ko_indx_;
   }
+
   PositionIndex BlackRegion() const {
     return black_pieces_count_ + eye_states_array_[BLACK_FORCE].RealCount();
   }
+
   foolgo::HashKey HashKey() const {
     return hash_key_;
+  }
+
+  int MoveCount() const {
+    return move_count_;
   }
 
   void PlayMove(const Move &move);
@@ -87,6 +97,11 @@ class FullBoard : private Board<BOARD_LEN> {
 
   std::vector<PositionIndex> PlayableIndexes(Force force) const;
   bool IsEnd() const;
+
+  void SetAsEnd() {
+    is_end = true;
+  }
+
   bool IsSuicide(const Move &move) const;
 
   std::string ToString(
@@ -106,6 +121,8 @@ class FullBoard : private Board<BOARD_LEN> {
   Force last_force_;
   PositionIndex black_pieces_count_;
   foolgo::HashKey hash_key_;
+  int move_count_ = 0;
+  bool is_end = false;
 
   void SetSpecifiedAirForAdjacentChains(PositionIndex indx, bool v);
 
@@ -160,8 +177,8 @@ void Play(FullBoard<BOARD_LEN> *full_board, PositionIndex position_index) {
 
 template<BoardLen BOARD_LEN>
 bool FullBoard<BOARD_LEN>::IsEnd() const {
-  return PlayableIndexBitSet(Force::BLACK_FORCE).none()
-      && PlayableIndexBitSet(Force::WHITE_FORCE).none();
+  return is_end || (PlayableIndexBitSet(Force::BLACK_FORCE).none()
+      && PlayableIndexBitSet(Force::WHITE_FORCE).none());
 }
 
 template<BoardLen BOARD_LEN>
@@ -355,7 +372,8 @@ void FullBoard<BOARD_LEN>::PlayMove(const Move &move) {
   }
 
   hash_key_ = ZobHasher<BOARD_LEN>::InstancePtr()->GetHash(hash_key_,
-                                                           board_difference);
+      board_difference);
+  ++move_count_;
 }
 
 template<BoardLen BOARD_LEN>
@@ -363,6 +381,7 @@ void FullBoard<BOARD_LEN>::Pass(Force force) {
   last_force_ = force;
   ko_indx_ = FullBoard<BOARD_LEN>::NONE;
   hash_key_ = ZobHasher<BOARD_LEN>::InstancePtr()->GetHash(*this);
+  ++move_count_;
 }
 
 template<BoardLen BOARD_LEN>

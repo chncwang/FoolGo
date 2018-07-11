@@ -11,10 +11,10 @@ IF(APPLE)
 ENDIF()
 
 SET(BASE_FLAGS "-std=c++0x -Wno-unused-result -iquote src")
-SET(CMAKE_BUILD_TYPE "Release")
+SET(CMAKE_BUILD_TYPE "debug")
 SET(CMAKE_CXX_FLAGS_DEBUG "${BASE_FLAGS} -O1 -g")  
 SET(CMAKE_CXX_FLAGS_RELEASE "${BASE_FLAGS} -O3")
-SET(CMAKE_EXE_LINKER_FLAGS["Debug"] "-g")
+SET(CMAKE_EXE_LINKER_FLAGS["debug"] "-g")
 
 INCLUDE_DIRECTORIES(src googletest/googletest/include spdlog/include)
 

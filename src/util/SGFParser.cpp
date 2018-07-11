@@ -190,7 +190,7 @@ vector<GameInfo> SGFParser::get_game_infos(const string &fname) {
    vector<GameInfo> game_infos;
 
    for (auto &str : strs) {
-     static regex PATTERN("([WB])\\[([a-z][a-z])\\]");
+     static regex PATTERN(";([WB])\\[([a-t]?[a-t]?)\\]");
      vector<Move> moves;
      for (sregex_iterator it =
          sregex_iterator(str.begin(), str.end(), PATTERN);
@@ -207,14 +207,18 @@ vector<GameInfo> SGFParser::get_game_infos(const string &fname) {
        }
        move.force = force;
 
-       char col_ch = it->str(2).at(0);
-       int x = col_ch - 'a';
+       PositionIndex indx;
+       if (it->str(2) == "" || it->str(2) == "tt") {
+         indx = POSITION_INDEX_PASS;
+       } else {
+         char col_ch = it->str(2).at(0);
+         int x = col_ch - 'a';
 
-       char row_ch = it->str(2).at(1);
-       int y = row_ch - 'a';
+         char row_ch = it->str(2).at(1);
+         int y = row_ch - 'a';
 
-       PositionIndex indx =
-         PstionAndIndxCcltr<19>::Ins().GetIndex(Position(x, y));
+         indx = PstionAndIndxCcltr<19>::Ins().GetIndex(Position(x, y));
+       }
        move.position_index = indx;
 
        moves.push_back(move);

@@ -58,7 +58,11 @@ void Game<BOARD_LEN>::Run() {
     Force current_force = NextForce(full_board_);
     Player<BOARD_LEN> *current_player = player_ptrs_.at(current_force);
     PositionIndex next_index = current_player->NextMove(full_board_);
-    Play(&full_board_, next_index);
+    if (next_index == POSITION_INDEX_END) {
+      full_board_.SetAsEnd();
+    } else {
+      Play(&full_board_, next_index);
+    }
 
     if (ShouldLog()) {
       std::cout << full_board_.ToString(next_index, only_log_board_) <<

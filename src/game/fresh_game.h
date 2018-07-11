@@ -12,10 +12,6 @@
 
 namespace foolgo {
 
-namespace player {
-template<BoardLen BOARD_LEN> class Player;
-}
-
 template<BoardLen BOARD_LEN>
 class FreshGame : public Game<BOARD_LEN> {
  public:
@@ -77,9 +73,9 @@ template<BoardLen BOARD_LEN>
 FreshGame<BOARD_LEN>* FreshGame<BOARD_LEN>::BuildAiVsAiGame(
     uint32_t seed, int mc_game_count, int thread_couunt, bool only_log_board) {
   auto black_player = new UctPlayer<BOARD_LEN>(seed, mc_game_count,
-                                                       thread_couunt);
+      thread_couunt);
   auto white_player = new UctPlayer<BOARD_LEN>(seed, mc_game_count,
-                                                       thread_couunt);
+      thread_couunt);
 
   FullBoard<BOARD_LEN> full_board;
   full_board.Init();
