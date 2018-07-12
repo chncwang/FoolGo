@@ -16,6 +16,11 @@ SET(CMAKE_CXX_FLAGS_DEBUG "${BASE_FLAGS} -O1 -g")
 SET(CMAKE_CXX_FLAGS_RELEASE "${BASE_FLAGS} -O3")
 SET(CMAKE_EXE_LINKER_FLAGS["Debug"] "-g")
 
+FIND_PACKAGE(boost)
+IF(Boost_FOUND)
+  include_directories(${Boost_INCLUDE_DIRS})
+ENDIF()
+
 INCLUDE_DIRECTORIES(src googletest/googletest/include spdlog/include)
 
 AUX_SOURCE_DIRECTORY(src SRCS)
