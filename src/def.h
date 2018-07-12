@@ -26,7 +26,7 @@ const PointState BLACK_POINT = 0;
 const PointState WHITE_POINT = 1;
 const PointState EMPTY_POINT = 2;
 
-constexpr int MAIN_BOARD_LEN = 9;
+constexpr int MAIN_BOARD_LEN = 17;
 
 }
 

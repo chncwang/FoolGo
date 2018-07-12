@@ -42,9 +42,9 @@ PositionIndex InputPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
     const FullBoard<BOARD_LEN> &full_board) {
   Position position;
   std::cout << "x, y: ";
-  int x, y;
+  char x, y;
   std::cin >> x >> y;
-  position = Position(x, y);
+  position = Position(x - 'a', y - 'a');
 
   return PstionAndIndxCcltr<BOARD_LEN>::Ins().GetIndex(position);
 }
