@@ -2,12 +2,14 @@
 #define FOOLGO_SRC_GAME_FRESH_GAME_H_
 
 #include <cstdint>
+#include <memory>
 
-#include "../board/position.h"
-#include "../def.h"
-#include "../player/player.h"
-#include "../player/uct_player.h"
-#include "../player/input_player.h"
+#include "board/position.h"
+#include "board/full_board.h"
+#include "def.h"
+#include "player/player.h"
+#include "player/uct_player.h"
+#include "player/input_player.h"
 #include "game.h"
 
 namespace foolgo {
@@ -19,10 +21,19 @@ class FreshGame : public Game<BOARD_LEN> {
                                        uint32_t seed,
                                        int mc_game_count,
                                        int thread_count);
-  static FreshGame* BuildHumanVsHumanGame(bool only_log_board);
+  static FreshGame* BuildHumanVsHumanGame(bool only_log_board = true);
   static FreshGame* BuildAiVsAiGame(uint32_t seed, int mc_game_count,
                                     int thread_couunt,
-                                    bool only_log_board);
+                                    bool only_log_board = true);
+  static std::unique_ptr<FreshGame<BOARD_LEN>> BuildFreshGame(
+          Player<BOARD_LEN> *black_player,
+          Player<BOARD_LEN> *white_player) {
+      FullBoard<BOARD_LEN> full_board;
+      full_board.Init();
+      return std::unique_ptr<FreshGame<BOARD_LEN>>(
+              new FreshGame<BOARD_LEN>(full_board, black_player,
+                  white_player));
+  }
   ~FreshGame() = default;
   bool ShouldLog() const override {
     return true;

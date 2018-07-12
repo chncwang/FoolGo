@@ -83,13 +83,13 @@ std::string BoardToString(std::function<std::string(PositionIndex)> get_output,
   std::string result = RETURN + std::string(2, BLANK);
 
   for (int i=0; i<BOARD_LEN; ++i) {
-    result += (boost::format("%1% ") % i).str();
+    result += (boost::format("%1% ") % static_cast<char>('a' + i)).str();
   }
 
   result += RETURN;
 
   for (int y=0; y<BOARD_LEN; ++y) {
-    result += (boost::format("%1% ") % y).str();
+    result += (boost::format("%1% ") % static_cast<char>('a' + y)).str();
 
     for (int x=0; x<BOARD_LEN; ++x) {
       PositionIndex position_index = PstionAndIndxCcltr<BOARD_LEN>::Ins()

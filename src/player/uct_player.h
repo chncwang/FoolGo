@@ -247,6 +247,7 @@ PositionIndex UctPlayer<BOARD_LEN>::BestChild(
     const NodeRecord *node_record = transposition_table_.GetChild(full_board,
                                                                   index);
     assert(node_record != nullptr);
+    std::cout << node_record->GetVisitedTime() << std::endl;
     if (node_record->GetVisitedTime() > max_visited_count) {
       max_visited_count = node_record->GetVisitedTime();
       most_visited_index = index;

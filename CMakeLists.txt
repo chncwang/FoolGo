@@ -33,6 +33,8 @@ IF (APPLE)
     TARGET_LINK_LIBRARIES(foolgo c++)
 ENDIF()
 TARGET_LINK_LIBRARIES(foolgo pthread)
+ADD_EXECUTABLE(lab ${SRCS} src/lab.cc)
+TARGET_LINK_LIBRARIES(lab pthread)
 ADD_EXECUTABLE(trainer ${SRCS} src/trainer.cc)
 
 # Test configs.

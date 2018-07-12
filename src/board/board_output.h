@@ -8,9 +8,9 @@
 namespace foolgo {
 
 const char BLACK_OUTPUT = 'x';
-const char LAST_MOVE_BLACK_OUTPUT = 'X';
+const char LAST_MOVE_BLACK_OUTPUT = 'B';
 const char WHITE_OUTPUT = 'o';
-const char LAST_MOVE_WHITE_OUTPUT = 'O';
+const char LAST_MOVE_WHITE_OUTPUT = 'W';
 const char EMPTY_OUTPUT = '.';
 const char LAST_MOVE_EMPTY_OUTPUT = '*';
 

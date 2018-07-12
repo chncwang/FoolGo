@@ -49,7 +49,7 @@ void ZobHasher<BOARD_LEN>::Init(uint32_t seed) {
 
 template<BoardLen BOARD_LEN>
 ZobHasher<BOARD_LEN>::ZobHasher(uint32_t seed) {
-  uint32_t max = ~0;
+  uint32_t max = ~0 - 1;
 
   for (int i = 0; i < BoardLenSquare<BOARD_LEN>(); ++i) {
     for (int j = 0; j < 3; ++j) {

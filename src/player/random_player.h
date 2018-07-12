@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <iostream>
 
 #include "board/full_board.h"
 #include "board/position.h"

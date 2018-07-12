@@ -3,14 +3,15 @@
 #include <algorithm>
 #include <cstdint>
 #include <random>
+#include <cstdlib>
+#include <iostream>
 
+using namespace std;
 
 namespace foolgo {
 
 uint32_t Rand(uint32_t max, uint32_t seed) {
-  static std::mt19937 gen(seed);
-  std::uniform_int_distribution<uint32_t> dstrbtion(0, max);
-  return dstrbtion(gen);
+  return rand() % (max + 1);
 }
 
 }
