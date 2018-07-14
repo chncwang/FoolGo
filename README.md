@@ -32,7 +32,7 @@ C++编码指南
 2. 根据论文中罗列的特征，加特征，以期达到论文中rollout policy network的准确率（也有论文提到可以用CNN实现rollout policy network）
 3. 用单层的CNN，实现policy network
 4. 把policy network融合进蒙特卡罗树搜索
-5. 尝试用多层CNN（估计不用指望能达到论文中的准确率）
+5. 尝试用多层CNN
 6. 以上步骤都采用通过人类的棋谱有监督学习，至于value network和强化学习部分，我还不太会，欢迎邮件交流
 
 本人实在是没时间继续写这个项目，欢迎有兴趣的同学pull request，或者邮件交流~
@@ -44,4 +44,5 @@ C++编码指南
 * make
 
 ## 问题交流
-* Send me an email : chncwang@gmail.com
+* email : chncwang@gmail.com
+* QQ群：823648893
