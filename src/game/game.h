@@ -27,6 +27,7 @@ class Game {
        Player<BOARD_LEN> *black_player,
        Player<BOARD_LEN> *white_player,
        bool only_log_board = true);
+
   virtual bool ShouldLog() const {
     return false;
   }

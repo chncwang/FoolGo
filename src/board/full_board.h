@@ -99,7 +99,7 @@ class FullBoard : private Board<BOARD_LEN> {
   bool IsEnd() const;
 
   void SetAsEnd() {
-    is_end = true;
+    is_end_ = true;
   }
 
   bool IsSuicide(const Move &move) const;
@@ -122,7 +122,7 @@ class FullBoard : private Board<BOARD_LEN> {
   PositionIndex black_pieces_count_;
   foolgo::HashKey hash_key_;
   int move_count_ = 0;
-  bool is_end = false;
+  bool is_end_ = false;
 
   void SetSpecifiedAirForAdjacentChains(PositionIndex indx, bool v);
 
@@ -177,7 +177,7 @@ void Play(FullBoard<BOARD_LEN> *full_board, PositionIndex position_index) {
 
 template<BoardLen BOARD_LEN>
 bool FullBoard<BOARD_LEN>::IsEnd() const {
-  return is_end || (PlayableIndexBitSet(Force::BLACK_FORCE).none()
+  return is_end_ || (PlayableIndexBitSet(Force::BLACK_FORCE).none()
       && PlayableIndexBitSet(Force::WHITE_FORCE).none());
 }
 
@@ -232,6 +232,8 @@ void FullBoard<BOARD_LEN>::Copy(const FullBoard &b) {
   last_force_ = b.last_force_;
   black_pieces_count_ = b.black_pieces_count_;
   hash_key_ = b.hash_key_;
+  move_count_ = b.move_count_;
+  is_end_ = b.is_end_;
 
   for (int i = 0; i < 2; ++i) {
     playable_states_array_[i] = b.playable_states_array_[i];

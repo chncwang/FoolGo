@@ -17,11 +17,9 @@ int main(int argc, const char *argv[]) {
 
   ZobHasher<MAIN_BOARD_LEN>::Init(seed);
 
-  Game<MAIN_BOARD_LEN>* game =
-      FreshGame<MAIN_BOARD_LEN>::BuildHumanVsAiGame(false, seed, 10000, 4);
+  auto game = FreshGame<MAIN_BOARD_LEN>::BuildHumanVsAiGame(false, seed, 10000,
+      4);
   game->Run();
-
-  delete game;
 
   return 0;
 }
