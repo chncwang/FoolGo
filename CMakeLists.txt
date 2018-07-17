@@ -1,6 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
-ADD_SUBDIRECTORY(googletest/googletest)
+ADD_SUBDIRECTORY(3rd/googletest/googletest)
 
 PROJECT(FoolGo)
 
@@ -18,10 +18,11 @@ SET(CMAKE_EXE_LINKER_FLAGS["debug"] "-g")
 
 FIND_PACKAGE(boost)
 IF(Boost_FOUND)
-  include_directories(${Boost_INCLUDE_DIRS})
+    INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 ENDIF()
 
-INCLUDE_DIRECTORIES(src googletest/googletest/include googletest/googlemock/include spdlog/include)
+INCLUDE_DIRECTORIES(src 3rd/googletest/googletest/include 3rd/googletest/googlemock/include spdlog/include)
+INCLUDE_DIRECTORIES(3rd/N3LDG/include 3rd/eigen/include)
 
 AUX_SOURCE_DIRECTORY(src/board SRCS)
 AUX_SOURCE_DIRECTORY(src/piece_structure SRCS)
@@ -41,7 +42,7 @@ ADD_EXECUTABLE(trainer ${SRCS} src/trainer.cc)
 # Test configs.
 ENABLE_TESTING()
 
-SET(GTEST_MAIN googletest/googletest/src/gtest_main.cc)
+SET(GTEST_MAIN 3rd/googletest/googletest/src/gtest_main.cc)
 SET(TESTS ${SRCS} ${GTEST_MAIN})
 AUX_SOURCE_DIRECTORY(test TESTS)
 AUX_SOURCE_DIRECTORY(test/board TESTS)

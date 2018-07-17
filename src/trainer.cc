@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <functional>
 
 #include "board/full_board.h"
 #include "game/game_info.h"
@@ -10,6 +11,8 @@
 #include "def.h"
 #include "util/cxxopts.hpp"
 #include "util/SGFParser.h"
+#include "deep_learning/sample.h"
+#include "N3LDG.h"
 
 using namespace foolgo;
 using namespace std;
@@ -30,10 +33,13 @@ int main(int argc, char *argv[]) {
   vector<string> strs = parser.chop_all(sgf_file_name);
   cout << strs.size() << endl;
   vector<GameInfo> game_infos = parser.get_game_infos(sgf_file_name);
+  vector<Sample> samples;
+  auto collect_samples = [&](const Sample &sample) {
+  }
+
   for (const GameInfo &game_info : game_infos) {
-    auto sgf_game = SgfGame<19>::BuildSgfGame(game_info);
+    auto sgf_game = SgfGame<19>::BuildSgfGame(game_info, collect_samples);
     sgf_game->Run();
-    break;
   }
 
   return 0;
