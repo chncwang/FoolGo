@@ -3,11 +3,13 @@
 
 #include <cstdint>
 #include <memory>
+#include <functional>
 
-#include "../board/position.h"
-#include "../def.h"
-#include "../player/player.h"
-#include "../player/sgf_player.h"
+#include "board/position.h"
+#include "def.h"
+#include "player/player.h"
+#include "player/sgf_player.h"
+#include "deep_learning/sample.h"
 #include "game.h"
 
 namespace foolgo {
@@ -21,7 +23,8 @@ class SgfGame : public Game<BOARD_LEN> {
 
   ~SgfGame() = default;
 
-  static std::unique_ptr<SgfGame> BuildSgfGame(const GameInfo &game_info) {
+  static std::unique_ptr<SgfGame> BuildSgfGame(const GameInfo &game_info,
+      const std::function<void(const Sample<BOARD_LEN>&)> &collect_sample = nullptr) {
     SgfPlayer<BOARD_LEN> *black_player = new SgfPlayer<BOARD_LEN>(game_info);
     SgfPlayer<BOARD_LEN> *white_player = new SgfPlayer<BOARD_LEN>(game_info);
     FullBoard<BOARD_LEN> full_board;
@@ -43,9 +46,19 @@ class SgfGame : public Game<BOARD_LEN> {
     return true;
   }
 
+  void BeforePlay (PositionIndex index) override {
+    if (collect_sample_ != nullptr) {
+      Sample<BOARD_LEN> sample;
+      sample.full_board.Copy(this->GetFullBoard());
+      sample.position_index = index;
+      collect_sample_(sample);
+    }
+  }
+
  private:
   DISALLOW_COPY_AND_ASSIGN_AND_MOVE(SgfGame);
   GameInfo game_info_;
+  std::function<void(const Sample<BOARD_LEN> &)> collect_sample_;
 };
 
 }

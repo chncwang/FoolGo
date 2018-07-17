@@ -36,8 +36,8 @@ class FreshGame : public Game<BOARD_LEN> {
     FullBoard<BOARD_LEN> full_board;
     full_board.Init();
 
-    return std::unique_ptr<FreshGame<BOARD_LEN>>(full_board, black_player,
-        white_player);
+    return std::unique_ptr<FreshGame<BOARD_LEN>>(new FreshGame<BOARD_LEN>(
+          full_board, black_player, white_player));
   }
 
   static std::unique_ptr<FreshGame<BOARD_LEN>> BuildHumanVsHumanGame(

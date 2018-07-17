@@ -54,10 +54,7 @@ class FullBoard : private Board<BOARD_LEN> {
  public:
   static const PositionIndex NONE = -1;
 
-  explicit FullBoard()
-      : ko_indx_(-1),
-        last_force_(WHITE_FORCE),
-        black_pieces_count_(0),
+  FullBoard() : ko_indx_(-1), last_force_(WHITE_FORCE), black_pieces_count_(0),
         hash_key_(0) {}
   ~FullBoard() = default;
   DISALLOW_COPY_AND_ASSIGN_AND_MOVE(FullBoard);

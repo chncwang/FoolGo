@@ -20,6 +20,7 @@ class Game {
   const FullBoard<BOARD_LEN>& GetFullBoard() const {
     return full_board_;
   }
+
   void Run();
 
  protected:
