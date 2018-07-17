@@ -32,6 +32,8 @@ class Game {
     return false;
   }
 
+  virtual void BeforePlay(PositionIndex index) {}
+
  private:
   FullBoard<BOARD_LEN> full_board_;
   std::array<Player<BOARD_LEN>*, 2> player_ptrs_;
@@ -59,9 +61,11 @@ void Game<BOARD_LEN>::Run() {
     Force current_force = NextForce(full_board_);
     Player<BOARD_LEN> *current_player = player_ptrs_.at(current_force);
     PositionIndex next_index = current_player->NextMove(full_board_);
+
     if (next_index == POSITION_INDEX_END) {
       full_board_.SetAsEnd();
     } else {
+      BeforePlay(next_index);
       Play(&full_board_, next_index);
     }
 

@@ -21,11 +21,13 @@ int main(int argc, const char *argv[]) {
 
   ZobHasher<MAIN_BOARD_LEN>::Init(seed);
 
-  Player<MAIN_BOARD_LEN> *black_player = new RandomPlayer<MAIN_BOARD_LEN>(seed);
-  cout << "black_player:" << black_player << endl;
+  //Player<MAIN_BOARD_LEN> *black_player = new RandomPlayer<MAIN_BOARD_LEN>(seed);
+
+  Player<MAIN_BOARD_LEN> *black_player =
+      new UctPlayer<MAIN_BOARD_LEN>(seed, 1000, 1);
 
   Player<MAIN_BOARD_LEN> *white_player =
-      new UctPlayer<MAIN_BOARD_LEN>(seed, 1000, 4);
+      new UctPlayer<MAIN_BOARD_LEN>(seed, 1000, 1);
 
   auto game =
       FreshGame<MAIN_BOARD_LEN>::BuildFreshGame(black_player, white_player);
