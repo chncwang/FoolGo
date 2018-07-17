@@ -12,6 +12,7 @@
 #include "util/cxxopts.hpp"
 #include "util/SGFParser.h"
 #include "deep_learning/sample.h"
+#include "deep_learning/resnet/graph_builder.h"
 #include "N3LDG.h"
 
 using namespace foolgo;
@@ -27,19 +28,21 @@ int main(int argc, char *argv[]) {
     ("s,sgf", "sgf file name", cxxopts::value<string>());
   auto args = options.parse(argc, argv);
   string sgf_file_name = args["sgf"].as<string>();
-  cout << "sgf:" << sgf_file_name << endl;
 
   SGFParser parser;
   vector<string> strs = parser.chop_all(sgf_file_name);
   cout << strs.size() << endl;
   vector<GameInfo> game_infos = parser.get_game_infos(sgf_file_name);
-  vector<Sample> samples;
-  auto collect_samples = [&](const Sample &sample) {
-  }
+  vector<Sample<19>> samples;
 
+  int iter = 0;
   for (const GameInfo &game_info : game_infos) {
-    auto sgf_game = SgfGame<19>::BuildSgfGame(game_info, collect_samples);
+    auto sgf_game = SgfGame<19>::BuildSgfGame(game_info, &samples);
     sgf_game->Run();
+    if (++iter % 100 == 0) {
+      cout << "iter:" << iter << "sample count:" << samples.size() << endl;
+      break;
+    }
   }
 
   return 0;

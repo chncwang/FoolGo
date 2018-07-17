@@ -22,7 +22,7 @@ IF(Boost_FOUND)
 ENDIF()
 
 INCLUDE_DIRECTORIES(src 3rd/googletest/googletest/include 3rd/googletest/googlemock/include spdlog/include)
-INCLUDE_DIRECTORIES(3rd/N3LDG/include 3rd/eigen/include)
+INCLUDE_DIRECTORIES(3rd/N3LDG/include 3rd/eigen)
 
 AUX_SOURCE_DIRECTORY(src/board SRCS)
 AUX_SOURCE_DIRECTORY(src/piece_structure SRCS)

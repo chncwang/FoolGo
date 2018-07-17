@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <memory>
 #include <functional>
+#include <vector>
 
 #include "board/position.h"
 #include "def.h"
@@ -24,14 +25,14 @@ class SgfGame : public Game<BOARD_LEN> {
   ~SgfGame() = default;
 
   static std::unique_ptr<SgfGame> BuildSgfGame(const GameInfo &game_info,
-      const std::function<void(const Sample<BOARD_LEN>&)> &collect_sample = nullptr) {
+      std::vector<Sample<BOARD_LEN>> *samples = nullptr) {
     SgfPlayer<BOARD_LEN> *black_player = new SgfPlayer<BOARD_LEN>(game_info);
     SgfPlayer<BOARD_LEN> *white_player = new SgfPlayer<BOARD_LEN>(game_info);
     FullBoard<BOARD_LEN> full_board;
     full_board.Init();
 
     return std::unique_ptr<SgfGame>(new SgfGame<BOARD_LEN>(
-          full_board, black_player, white_player, game_info));
+          full_board, black_player, white_player, game_info, samples));
   }
 
  protected:
@@ -39,26 +40,28 @@ class SgfGame : public Game<BOARD_LEN> {
        Player<BOARD_LEN> *black_player,
        Player<BOARD_LEN> *white_player,
        const GameInfo &game_info,
+       std::vector<Sample<BOARD_LEN>> *samples,
        bool only_log_board = true) : Game<BOARD_LEN>(full_board, black_player,
-           white_player, only_log_board), game_info_(game_info) {}
+           white_player, only_log_board), game_info_(game_info),
+           samples_(samples) {}
 
   bool ShouldLog() const override {
-    return true;
+    return false;
   }
 
   void BeforePlay (PositionIndex index) override {
-    if (collect_sample_ != nullptr) {
+    if (samples_ != nullptr) {
       Sample<BOARD_LEN> sample;
       sample.full_board.Copy(this->GetFullBoard());
       sample.position_index = index;
-      collect_sample_(sample);
+      samples_->push_back(sample);
     }
   }
 
  private:
   DISALLOW_COPY_AND_ASSIGN_AND_MOVE(SgfGame);
   GameInfo game_info_;
-  std::function<void(const Sample<BOARD_LEN> &)> collect_sample_;
+  std::vector<Sample<BOARD_LEN>> *samples_ = nullptr;
 };
 
 }

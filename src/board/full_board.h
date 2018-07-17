@@ -245,7 +245,13 @@ void FullBoard<BOARD_LEN>::PlayMove(const Move &move) {
   PositionIndex move_index = move.position_index;
 
   assert(PstionAndIndxCcltr<BOARD_LEN>::Ins().IsInBoard(move_index));
-  assert(GetPointState(move_index) == EMPTY_POINT);
+  if (GetPointState(move_index) != EMPTY_POINT) {
+    const Position &pos = PstionAndIndxCcltr<BOARD_LEN>::Ins().GetPosition(
+        move_index);
+    std::cout << "x:" << (char)(pos.x + 'a') << " y:" << (char)(pos.y + 'a') <<
+      std::endl;
+    abort();
+  }
 
   BoardDifference board_difference;
   board_difference.Init(LastForce(), KoIndex());
