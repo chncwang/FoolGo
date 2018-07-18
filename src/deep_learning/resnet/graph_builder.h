@@ -8,7 +8,7 @@
 
 struct GraphBuilder {
   std::vector<BucketNode> input_nodes;
-  std::array<std::vector<ConcatNode>, > concat_nodes;
+  std::array<std::vector<ConcatNode>, 20> concat_nodes;
 
   void CreateNodes() {
     input_nodes.resize(441);
