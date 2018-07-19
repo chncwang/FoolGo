@@ -12,7 +12,8 @@
 #include "util/cxxopts.hpp"
 #include "util/SGFParser.h"
 #include "deep_learning/sample.h"
-#include "deep_learning/resnet/graph_builder.h"
+#include "deep_learning/engine.h"
+#include "deep_learning/cnn/graph_builder.h"
 #include "N3LDG.h"
 
 using namespace foolgo;
