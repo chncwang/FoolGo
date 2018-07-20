@@ -80,8 +80,7 @@ struct GraphBuilder {
     }
   }
 
-  void forward(const FullBoard<19> &full_board, bool on_train) {
-    graph->train = on_train;
+  void forward(const FullBoard<19> &full_board) {
     auto board_feature = GetBoardFreature(full_board);
 
     int i = 0;
