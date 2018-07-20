@@ -1,3 +1,27 @@
+A Go A.I. based on MCTS(Monte Carlo Tree Search).
+
+it only shows beginner level on 9x9 board by far, for the temporary lack of deep learning.
+
+The underlying data structure and algorithms are quite efficient, and I can run 40 thousands monte carlo game on my MacBook Air(multithread & 9x9 board)
+
+Key implementation of the board structure：
+* Piece strings are implemented with disjoint sets.
+* Liberty intersections of piece strings are modified fast by bit operations.
+* Boards' hash algorithm is the zobrist hash and game states' information is all stored in a hash table.
+
+This projectr is highly readable and scalable, for its well-designed OOP design (I learned it from the book《现代计算围棋基础》 authored by Professor Liu).
+Here lists several important classes:
+
+* FullBoard is a fully functional board class which supplies efficient methods such as PlayMove
+* Player interface supplies scalable methods such as NextMove. For example, RandomPlayer which is an implementation of Player, chooses a random position per time in NextMove's implementation.
+* Game interface is the combination of two Player classes. For example MonteCarloGame accepts two RandomPlayer instances in its build method.
+
+C++ coding style
+* This project mainly follows google C++ coding style guideline, approving most items.
+* Considering both performance and supporting boards of variant sizes, it uses template classes, which treat board size as template parameters. Thus it allocates boards on stack area.
+* std::unique_ptr is prefered, instead of raw pointers.
+* Unit tests are prefered, using gtest.
+
 基于蒙特卡罗树搜索的围棋A.I.
 
 目前只有在9路棋盘上表现出入门级棋力。
