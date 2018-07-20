@@ -5,7 +5,6 @@
 #include "position.h"
 
 namespace foolgo {
-namespace board {
 
 class BoardDifference;
 template<BoardLen BOARD_LEN> class FullBoard;
@@ -18,7 +17,6 @@ class FullBoardHasher {
   virtual HashKey GetHash(HashKey hash, const BoardDifference &change) const = 0;
 };
 
-}
 }
 
 #endif

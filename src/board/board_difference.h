@@ -8,7 +8,6 @@
 #include "position.h"
 
 namespace foolgo {
-namespace board {
 
 class BoardDifference {
  public:
@@ -61,7 +60,6 @@ inline void BoardDifference::Init(Force last_force,
   last_force_difference_.old_state = last_force;
 }
 
-}
 }
 
 #endif

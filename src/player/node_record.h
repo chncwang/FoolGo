@@ -11,7 +11,6 @@
 #include "../def.h"
 
 namespace foolgo {
-namespace player {
 
 class NodeRecord {
  public:
@@ -40,22 +39,21 @@ class NodeRecord {
   void SetIsInSearch(bool is_in_search) {
     is_in_search_ = is_in_search;
   }
-  const HashKey* GetChildHashKeyPtr(board::PositionIndex position_index) const;
-  void InsertChildHashKey(board::PositionIndex position_index,
+  const HashKey* GetChildHashKeyPtr(PositionIndex position_index) const;
+  void InsertChildHashKey(PositionIndex position_index,
                           HashKey hash_key);
 
  private:
   int32_t visited_time_;
   float average_profit_;
   bool is_in_search_;
-  std::map<board::PositionIndex, HashKey> child_hash_keys_;
+  std::map<PositionIndex, HashKey> child_hash_keys_;
   mutable std::mutex mutex_;
 
   friend std::ostream& operator <<(std::ostream &os,
                                    const NodeRecord &node_record);
 };
 
-}
 }
 
 #endif /* FOOLGO_SRC_PLAYER_NODE_RECORD_H_ */

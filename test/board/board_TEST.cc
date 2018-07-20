@@ -7,7 +7,6 @@
 #include "../test.h"
 
 namespace foolgo {
-namespace board {
 
 class BoardTest : public Test {
  protected:
@@ -44,5 +43,4 @@ TEST_F(BoardTest, Copy) {
   }
 }
 
-}
 }

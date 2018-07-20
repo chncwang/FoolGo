@@ -1,0 +1,235 @@
+/*
+    This file is part of Leela Zero.
+    Copyright (C) 2017-2018 Gian-Carlo Pascutto and contributors
+
+    Leela Zero is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Leela Zero is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Leela Zero.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "SGFParser.h"
+
+#include <cassert>
+#include <cctype>
+#include <fstream>
+#include <stdexcept>
+#include <string>
+#include <iostream>
+#include <regex>
+#include <utility>
+
+namespace foolgo {
+
+using std::cout;
+using std::endl;
+using std::string;
+using std::vector;
+using std::regex;
+using std::sregex_iterator;
+using std::move;
+
+std::vector<std::string> SGFParser::chop_stream(std::istream& ins,
+                                                size_t stopat) {
+    std::vector<std::string> result;
+    std::string gamebuff;
+
+    ins >> std::noskipws;
+
+    int nesting = 0;      // parentheses
+    bool intag = false;   // brackets
+    int line = 0;
+    gamebuff.clear();
+
+    char c;
+    while (ins >> c && result.size() <= stopat) {
+        if (c == '\n') line++;
+
+        gamebuff.push_back(c);
+        if (c == '\\') {
+            // read literal char
+            ins >> c;
+            gamebuff.push_back(c);
+            // Skip special char parsing
+            continue;
+        }
+
+        if (c == '(' && !intag) {
+            if (nesting == 0) {
+                // eat ; too
+                do {
+                    ins >> c;
+                } while (std::isspace(c) && c != ';');
+                gamebuff.clear();
+            }
+            nesting++;
+        } else if (c == ')' && !intag) {
+            nesting--;
+
+            if (nesting == 0) {
+                result.push_back(gamebuff);
+            }
+        } else if (c == '[' && !intag) {
+            intag = true;
+        } else if (c == ']') {
+            if (intag == false) {
+              cout << "Tag error on line " << line << endl;
+            }
+            intag = false;
+        }
+    }
+
+    // No game found? Assume closing tag was missing (OGS)
+    if (result.size() == 0) {
+        result.push_back(gamebuff);
+    }
+
+    return result;
+}
+
+std::vector<std::string> SGFParser::chop_all(const std::string &filename,
+                                             size_t stopat) {
+    std::ifstream ins(filename.c_str(), std::ifstream::binary | std::ifstream::in);
+
+    if (ins.fail()) {
+        throw std::runtime_error("Error opening file");
+    }
+
+    auto result = chop_stream(ins, stopat);
+    ins.close();
+
+    return result;
+}
+
+// scan the file and extract the game with number index
+std::string SGFParser::chop_from_file(const std::string &filename, size_t index) {
+    auto vec = chop_all(filename, index);
+    return vec[index];
+}
+
+std::string SGFParser::parse_property_name(std::istringstream & strm) {
+    std::string result;
+
+    char c;
+    while (strm >> c) {
+        // SGF property names are guaranteed to be uppercase,
+        // except that some implementations like IGS are retarded
+        // and don't folow the spec. So allow both upper/lowercase.
+        if (!std::isupper(c) && !std::islower(c)) {
+            strm.unget();
+            break;
+        } else {
+            result.push_back(c);
+        }
+    }
+
+    return result;
+}
+
+bool SGFParser::parse_property_value(std::istringstream & strm,
+                                     std::string & result) {
+    strm >> std::noskipws;
+
+    char c;
+    while (strm >> c) {
+        if (!std::isspace(c)) {
+            strm.unget();
+            break;
+        }
+    }
+
+    strm >> c;
+
+    if (c != '[') {
+        strm.unget();
+        return false;
+    }
+
+    while (strm >> c) {
+        if (c == ']') {
+            break;
+        } else if (c == '\\') {
+            strm >> c;
+        }
+        result.push_back(c);
+    }
+
+    strm >> std::skipws;
+
+    return true;
+}
+
+void Validate(const GameInfo &game_info) {
+  const Move *last_move = nullptr;
+
+  for (const Move &move : game_info.moves) {
+    if (last_move == nullptr) {
+      if (move.force != Force::BLACK_FORCE) {
+        abort();
+      }
+    } else {
+      if (OppositeForce(move.force) != last_move->force) {
+        abort();
+      }
+    }
+
+    last_move = &move;
+  }
+}
+
+vector<GameInfo> SGFParser::get_game_infos(const string &fname) {
+   vector<string> strs = chop_all(fname);
+   vector<GameInfo> game_infos;
+
+   for (auto &str : strs) {
+     static regex PATTERN(";([WB])\\[([a-t]?[a-t]?)\\]");
+     vector<Move> moves;
+     for (sregex_iterator it =
+         sregex_iterator(str.begin(), str.end(), PATTERN);
+         it != sregex_iterator(); ++it) {
+       Move move;
+       Force force;
+       string force_str = it->str(1);
+       if (force_str == "B") {
+         force = Force::BLACK_FORCE;
+       } else if (force_str == "W") {
+         force = Force::WHITE_FORCE;
+       } else {
+         abort();
+       }
+       move.force = force;
+
+       PositionIndex indx;
+       if (it->str(2) == "" || it->str(2) == "tt") {
+         indx = POSITION_INDEX_PASS;
+       } else {
+         char col_ch = it->str(2).at(0);
+         int x = col_ch - 'a';
+
+         char row_ch = it->str(2).at(1);
+         int y = row_ch - 'a';
+
+         indx = PstionAndIndxCcltr<19>::Ins().GetIndex(Position(x, y));
+       }
+       move.position_index = indx;
+
+       moves.push_back(move);
+     }
+     GameInfo game_info;
+     game_info.moves = move(moves);
+
+     game_infos.push_back(move(game_info));
+   }
+
+   return game_infos;
+}
+
+}

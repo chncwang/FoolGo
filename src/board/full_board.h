@@ -23,9 +23,9 @@
 #include "zob_hasher.h"
 
 namespace foolgo {
-namespace board {
 
 const PositionIndex POSITION_INDEX_PASS = -1;
+const PositionIndex POSITION_INDEX_END = -2;
 
 struct Move {
   Force force;
@@ -54,10 +54,7 @@ class FullBoard : private Board<BOARD_LEN> {
  public:
   static const PositionIndex NONE = -1;
 
-  explicit FullBoard()
-      : ko_indx_(-1),
-        last_force_(WHITE_FORCE),
-        black_pieces_count_(0),
+  FullBoard() : ko_indx_(-1), last_force_(WHITE_FORCE), black_pieces_count_(0),
         hash_key_(0) {}
   ~FullBoard() = default;
   DISALLOW_COPY_AND_ASSIGN_AND_MOVE(FullBoard);
@@ -67,20 +64,29 @@ class FullBoard : private Board<BOARD_LEN> {
   PointState GetPointState(PositionIndex indx) const {
     return Board<BOARD_LEN>::GetPoint(indx);
   }
+
   PointState GetPointState(const Position &pos) const {
     return Board<BOARD_LEN>::GetPoint(pos);
   }
+
   Force LastForce() const {
     return last_force_;
   }
+
   PositionIndex KoIndex() const {
     return ko_indx_;
   }
+
   PositionIndex BlackRegion() const {
     return black_pieces_count_ + eye_states_array_[BLACK_FORCE].RealCount();
   }
+
   foolgo::HashKey HashKey() const {
     return hash_key_;
+  }
+
+  int MoveCount() const {
+    return move_count_;
   }
 
   void PlayMove(const Move &move);
@@ -88,6 +94,11 @@ class FullBoard : private Board<BOARD_LEN> {
 
   std::vector<PositionIndex> PlayableIndexes(Force force) const;
   bool IsEnd() const;
+
+  void SetAsEnd() {
+    is_end_ = true;
+  }
+
   bool IsSuicide(const Move &move) const;
 
   std::string ToString(
@@ -107,6 +118,8 @@ class FullBoard : private Board<BOARD_LEN> {
   Force last_force_;
   PositionIndex black_pieces_count_;
   foolgo::HashKey hash_key_;
+  int move_count_ = 0;
+  bool is_end_ = false;
 
   void SetSpecifiedAirForAdjacentChains(PositionIndex indx, bool v);
 
@@ -161,8 +174,8 @@ void Play(FullBoard<BOARD_LEN> *full_board, PositionIndex position_index) {
 
 template<BoardLen BOARD_LEN>
 bool FullBoard<BOARD_LEN>::IsEnd() const {
-  return PlayableIndexBitSet(Force::BLACK_FORCE).none()
-      && PlayableIndexBitSet(Force::WHITE_FORCE).none();
+  return is_end_ || (PlayableIndexBitSet(Force::BLACK_FORCE).none()
+      && PlayableIndexBitSet(Force::WHITE_FORCE).none());
 }
 
 template<BoardLen BOARD_LEN>
@@ -216,6 +229,8 @@ void FullBoard<BOARD_LEN>::Copy(const FullBoard &b) {
   last_force_ = b.last_force_;
   black_pieces_count_ = b.black_pieces_count_;
   hash_key_ = b.hash_key_;
+  move_count_ = b.move_count_;
+  is_end_ = b.is_end_;
 
   for (int i = 0; i < 2; ++i) {
     playable_states_array_[i] = b.playable_states_array_[i];
@@ -230,7 +245,13 @@ void FullBoard<BOARD_LEN>::PlayMove(const Move &move) {
   PositionIndex move_index = move.position_index;
 
   assert(PstionAndIndxCcltr<BOARD_LEN>::Ins().IsInBoard(move_index));
-  assert(GetPointState(move_index) == EMPTY_POINT);
+  if (GetPointState(move_index) != EMPTY_POINT) {
+    const Position &pos = PstionAndIndxCcltr<BOARD_LEN>::Ins().GetPosition(
+        move_index);
+    std::cout << "x:" << (char)(pos.x + 'a') << " y:" << (char)(pos.y + 'a') <<
+      std::endl;
+    abort();
+  }
 
   BoardDifference board_difference;
   board_difference.Init(LastForce(), KoIndex());
@@ -356,7 +377,8 @@ void FullBoard<BOARD_LEN>::PlayMove(const Move &move) {
   }
 
   hash_key_ = ZobHasher<BOARD_LEN>::InstancePtr()->GetHash(hash_key_,
-                                                           board_difference);
+      board_difference);
+  ++move_count_;
 }
 
 template<BoardLen BOARD_LEN>
@@ -364,13 +386,14 @@ void FullBoard<BOARD_LEN>::Pass(Force force) {
   last_force_ = force;
   ko_indx_ = FullBoard<BOARD_LEN>::NONE;
   hash_key_ = ZobHasher<BOARD_LEN>::InstancePtr()->GetHash(*this);
+  ++move_count_;
 }
 
 template<BoardLen BOARD_LEN>
 std::vector<PositionIndex> FullBoard<BOARD_LEN>::PlayableIndexes(
     Force force) const {
   auto index_bitset = PlayableIndexBitSet(force);
-  return util::GetOnePositionIndexes<board::BoardLenSquare<BOARD_LEN>()>(
+  return util::GetOnePositionIndexes<BoardLenSquare<BOARD_LEN>()>(
       index_bitset);
 }
 
@@ -397,7 +420,7 @@ std::string FullBoard<BOARD_LEN>::ToString(const PositionIndex &last_move_index,
     return GetPointStateOutput(point_state, last_move_index == position_index);
   };
   auto board_to_string = [this, get_output](const Board<BOARD_LEN> &board) {
-    return board::ToString<BOARD_LEN>(get_output);
+    return BoardToString<BOARD_LEN>(get_output);
   };
   return ToString(board_to_string, board_only);
 }
@@ -405,7 +428,7 @@ std::string FullBoard<BOARD_LEN>::ToString(const PositionIndex &last_move_index,
 template<BoardLen BOARD_LEN>
 std::string FullBoard<BOARD_LEN>::ToString(bool board_only) const {
   auto board_to_string = [this](const Board<BOARD_LEN> &board) {
-    return board::ToString(board);
+    return BoardToString(board);
   };
   return ToString(board_to_string, board_only);
 }
@@ -700,7 +723,7 @@ std::string FullBoard<BOARD_LEN>::PlayableStatesToString() const {
     }
     return output;
   };
-  return board::ToString<BOARD_LEN>(get_output);
+  return BoardToString<BOARD_LEN>(get_output);
 }
 
 template<BoardLen BOARD_LEN>
@@ -732,13 +755,12 @@ std::string FullBoard<BOARD_LEN>::EyeStatesToString() const {
       return output;
     };
 
-    result += board::ToString<BOARD_LEN>(get_output);
+    result += BoardToString<BOARD_LEN>(get_output);
   }
 
   return result;
 }
 
-}
 }
 
 #endif

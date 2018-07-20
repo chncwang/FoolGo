@@ -6,7 +6,6 @@
 #include <iostream>
 
 namespace foolgo {
-namespace board {
 
 typedef char BoardLen;
 typedef int16_t PositionIndex;
@@ -51,7 +50,6 @@ constexpr int16_t MoveCountUpperBoundPerGame() {
   return BoardLenSquare<BOARD_LEN>() * 4;
 }
 
-}
 }
 
 #endif

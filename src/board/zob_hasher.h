@@ -10,7 +10,6 @@
 #include "position.h"
 
 namespace foolgo {
-namespace board {
 
 class BoardDifference;
 
@@ -50,23 +49,23 @@ void ZobHasher<BOARD_LEN>::Init(uint32_t seed) {
 
 template<BoardLen BOARD_LEN>
 ZobHasher<BOARD_LEN>::ZobHasher(uint32_t seed) {
-  uint32_t max = ~0;
+  uint32_t max = ~0 - 1;
 
   for (int i = 0; i < BoardLenSquare<BOARD_LEN>(); ++i) {
     for (int j = 0; j < 3; ++j) {
-      board_hash_[i][j] = util::Rand(max, seed);
+      board_hash_[i][j] = Rand(max, seed);
     }
   }
 
   for (int i = 0; i < 2; ++i) {
-    player_hash_[i] = util::Rand(max, seed);
+    player_hash_[i] = Rand(max, seed);
   }
 
   for (int i = 0; i < BoardLenSquare<BOARD_LEN>(); ++i) {
-    ko_hash_[i] = util::Rand(max, seed);
+    ko_hash_[i] = Rand(max, seed);
   }
 
-  noko_hash_ = util::Rand(max, seed);
+  noko_hash_ = Rand(max, seed);
 }
 
 template<typename T, typename GetHash>
@@ -117,7 +116,6 @@ HashKey ZobHasher<BOARD_LEN>::GetHash(HashKey hash,
   return r;
 }
 
-}
 }
 
 #endif

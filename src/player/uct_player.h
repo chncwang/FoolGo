@@ -22,16 +22,15 @@
 #include "transposition_table.h"
 
 namespace foolgo {
-namespace player {
 
-template<board::BoardLen BOARD_LEN>
+template<BoardLen BOARD_LEN>
 class UctPlayer : public PassablePlayer<BOARD_LEN> {
  public:
   UctPlayer(uint32_t seed, int mc_game_count_per_move, int thread_count);
 
  protected:
-  board::PositionIndex NextMoveWithPlayableBoard(
-      const board::FullBoard<BOARD_LEN> &full_board);
+  PositionIndex NextMoveWithPlayableBoard(
+      const FullBoard<BOARD_LEN> &full_board);
 
  private:
   int mc_game_count_per_move_;
@@ -42,19 +41,19 @@ class UctPlayer : public PassablePlayer<BOARD_LEN> {
 
   //std::shared_ptr<spdlog::logger> logger_;
 
-  void SearchAndModifyNodes(const board::FullBoard<BOARD_LEN> &full_board,
+  void SearchAndModifyNodes(const FullBoard<BOARD_LEN> &full_board,
                             std::atomic<int> *mc_game_count_ptr,
                             std::atomic<bool> *is_end_ptr,
                             int thread_index);
-  board::PositionIndex MaxUcbChild(
-      const board::FullBoard<BOARD_LEN> &full_board,
+  PositionIndex MaxUcbChild(
+      const FullBoard<BOARD_LEN> &full_board,
       int thread_index);
   float ModifyAverageProfitAndReturnNewProfit(
-      board::FullBoard<BOARD_LEN> *full_board_ptr,
+      FullBoard<BOARD_LEN> *full_board_ptr,
       std::atomic<int> *mc_game_count_ptr,
       int thread_index);
-  board::PositionIndex BestChild(const board::FullBoard<BOARD_LEN> &full_board);
-  void LogProfits(const board::FullBoard<BOARD_LEN> &full_board);
+  PositionIndex BestChild(const FullBoard<BOARD_LEN> &full_board);
+  void LogProfits(const FullBoard<BOARD_LEN> &full_board);
 };
 
 namespace {
@@ -65,27 +64,27 @@ float Ucb(const NodeRecord &node_record, int visited_count_sum) {
       + sqrt(2 * log(visited_count_sum) / node_record.GetVisitedTime());
 }
 
-template<board::BoardLen BOARD_LEN>
-float GetRegionRatio(const board::FullBoard<BOARD_LEN> &full_board,
-                board::Force force) {
+template<BoardLen BOARD_LEN>
+float GetRegionRatio(const FullBoard<BOARD_LEN> &full_board,
+                Force force) {
   int black_region = full_board.BlackRegion();
   float black_ratio = static_cast<float>(black_region)
-      / board::BoardLenSquare<BOARD_LEN>();
-  return force == board::Force::BLACK_FORCE ? black_ratio : 1 - black_ratio;
+      / BoardLenSquare<BOARD_LEN>();
+  return force == Force::BLACK_FORCE ? black_ratio : 1 - black_ratio;
 }
 
 }
 
-template<board::BoardLen BOARD_LEN>
+template<BoardLen BOARD_LEN>
 UctPlayer<BOARD_LEN>::UctPlayer(uint32_t seed, int mc_game_count_per_move,
                                 int thread_count)
     : seed_(seed),
       mc_game_count_per_move_(mc_game_count_per_move),
       thread_count_(thread_count) {}
 
-template<board::BoardLen BOARD_LEN>
-board::PositionIndex UctPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
-      const board::FullBoard<BOARD_LEN> &full_board) {
+template<BoardLen BOARD_LEN>
+PositionIndex UctPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
+      const FullBoard<BOARD_LEN> &full_board) {
   std::atomic<int> current_mc_game_count(0);
   std::atomic<bool> is_end(false);
   std::vector<std::future<void>> futures;
@@ -111,37 +110,37 @@ board::PositionIndex UctPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
   return BestChild(full_board);
 }
 
-template<board::BoardLen BOARD_LEN>
+template<BoardLen BOARD_LEN>
 void UctPlayer<BOARD_LEN>::SearchAndModifyNodes(
-    const board::FullBoard<BOARD_LEN> &full_board,
+    const FullBoard<BOARD_LEN> &full_board,
     std::atomic<int> *mc_game_count_ptr,
     std::atomic<bool> *is_end_ptr,
     int thread_index) {
   while (*mc_game_count_ptr < mc_game_count_per_move_) {
-    board::PositionIndex max_ucb_index = MaxUcbChild(full_board, thread_index);
-    board::FullBoard<BOARD_LEN> max_ucb_child;
+    PositionIndex max_ucb_index = MaxUcbChild(full_board, thread_index);
+    FullBoard<BOARD_LEN> max_ucb_child;
     max_ucb_child.Copy(full_board);
-    board::Play(&max_ucb_child, max_ucb_index);
+    Play(&max_ucb_child, max_ucb_index);
     ModifyAverageProfitAndReturnNewProfit(&max_ucb_child, mc_game_count_ptr,
                                           thread_index);
   }
 }
 
-template<board::BoardLen BOARD_LEN>
-board::PositionIndex UctPlayer<BOARD_LEN>::MaxUcbChild(
-    const board::FullBoard<BOARD_LEN> &full_board,
+template<BoardLen BOARD_LEN>
+PositionIndex UctPlayer<BOARD_LEN>::MaxUcbChild(
+    const FullBoard<BOARD_LEN> &full_board,
     int thread_index) {
   std::lock_guard<std::mutex> lock(mutex_);
 
-  board::Force current_force = board::NextForce(full_board);
+  Force current_force = NextForce(full_board);
   auto playable_index_vector = full_board.PlayableIndexes(current_force);
 
   assert(!playable_index_vector.empty());
 
   int visited_count_sum = 0;
-  std::vector<board::PositionIndex> null_indexes;
+  std::vector<PositionIndex> null_indexes;
 
-  for (board::PositionIndex position_index : playable_index_vector) {
+  for (PositionIndex position_index : playable_index_vector) {
     const NodeRecord *node_record_ptr = transposition_table_.GetChild(
         full_board, position_index);
     if (node_record_ptr == nullptr) {
@@ -160,9 +159,9 @@ board::PositionIndex UctPlayer<BOARD_LEN>::MaxUcbChild(
   }
 
   float max_ucb = -1.0f;
-  board::PositionIndex max_ucb_index = board::POSITION_INDEX_PASS;
+  PositionIndex max_ucb_index = POSITION_INDEX_PASS;
 
-  for (board::PositionIndex position_index : playable_index_vector) {
+  for (PositionIndex position_index : playable_index_vector) {
     const NodeRecord *node_record_ptr = transposition_table_.GetChild(
         full_board, position_index);
     if (node_record_ptr == nullptr || node_record_ptr->IsInSearch()) {
@@ -172,7 +171,7 @@ board::PositionIndex UctPlayer<BOARD_LEN>::MaxUcbChild(
     float ucb = Ucb(*node_record_ptr, visited_count_sum);
     if (ucb > max_ucb
         && !full_board.IsSuicide(
-            board::Move(board::NextForce(full_board), position_index))) {
+            Move(NextForce(full_board), position_index))) {
       max_ucb = ucb;
       max_ucb_index = position_index;
     }
@@ -181,23 +180,23 @@ board::PositionIndex UctPlayer<BOARD_LEN>::MaxUcbChild(
   return max_ucb_index;
 }
 
-template<board::BoardLen BOARD_LEN>
+template<BoardLen BOARD_LEN>
 float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
-    board::FullBoard<BOARD_LEN> *full_board_ptr,
+    FullBoard<BOARD_LEN> *full_board_ptr,
     std::atomic<int> *mc_game_count_ptr,
     int thread_index) {
   float new_profit;
   NodeRecord *node_record_ptr = transposition_table_.Get(*full_board_ptr);
 
   if (node_record_ptr == nullptr) {
-    game::MonteCarloGame<BOARD_LEN> monte_carlo_game(*full_board_ptr, seed_);
+    MonteCarloGame<BOARD_LEN> monte_carlo_game(*full_board_ptr, seed_);
     if (!full_board_ptr->IsEnd()) {
       monte_carlo_game.Run();
     }
     ++(*mc_game_count_ptr);
-    board::Force force = full_board_ptr->LastForce();
+    Force force = full_board_ptr->LastForce();
     new_profit = GetRegionRatio(monte_carlo_game.GetFullBoard(), force);
-    player::NodeRecord node_record(1, new_profit, false);
+    NodeRecord node_record(1, new_profit, false);
     transposition_table_.Insert(*full_board_ptr, node_record);
   } else {
     mutex_.lock();
@@ -208,13 +207,13 @@ float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
       ++(*mc_game_count_ptr);
       new_profit = node_record_ptr->GetAverageProfit();
     } else {
-      if (full_board_ptr->PlayableIndexes(board::NextForce(*full_board_ptr))
+      if (full_board_ptr->PlayableIndexes(NextForce(*full_board_ptr))
           .empty()) {
-        full_board_ptr->Pass(board::NextForce(*full_board_ptr));
+        full_board_ptr->Pass(NextForce(*full_board_ptr));
       } else {
-        board::PositionIndex max_ucb_index = MaxUcbChild(*full_board_ptr,
+        PositionIndex max_ucb_index = MaxUcbChild(*full_board_ptr,
                                                          thread_index);
-        board::Play(full_board_ptr, max_ucb_index);
+        Play(full_board_ptr, max_ucb_index);
       }
       new_profit = 1.0f - ModifyAverageProfitAndReturnNewProfit(full_board_ptr,
                                                   mc_game_count_ptr,
@@ -236,18 +235,19 @@ float UctPlayer<BOARD_LEN>::ModifyAverageProfitAndReturnNewProfit(
   return new_profit;
 }
 
-template<board::BoardLen BOARD_LEN>
-board::PositionIndex UctPlayer<BOARD_LEN>::BestChild(
-    const board::FullBoard<BOARD_LEN> &full_board) {
-  board::Force force = board::NextForce(full_board);
+template<BoardLen BOARD_LEN>
+PositionIndex UctPlayer<BOARD_LEN>::BestChild(
+    const FullBoard<BOARD_LEN> &full_board) {
+  Force force = NextForce(full_board);
   auto playable_index_vector = full_board.PlayableIndexes(force);
   int max_visited_count = -1;
-  board::PositionIndex most_visited_index;
+  PositionIndex most_visited_index;
 
-  for (board::PositionIndex index : playable_index_vector) {
+  for (PositionIndex index : playable_index_vector) {
     const NodeRecord *node_record = transposition_table_.GetChild(full_board,
                                                                   index);
     assert(node_record != nullptr);
+    std::cout << node_record->GetVisitedTime() << std::endl;
     if (node_record->GetVisitedTime() > max_visited_count) {
       max_visited_count = node_record->GetVisitedTime();
       most_visited_index = index;
@@ -257,12 +257,12 @@ board::PositionIndex UctPlayer<BOARD_LEN>::BestChild(
   return most_visited_index;
 }
 
-template<board::BoardLen BOARD_LEN>
+template<BoardLen BOARD_LEN>
 void UctPlayer<BOARD_LEN>::LogProfits(
-    const board::FullBoard<BOARD_LEN> &full_board) {
+    const FullBoard<BOARD_LEN> &full_board) {
   auto get_profit_str =
-      [this, &full_board](board::PositionIndex position_index) {
-    board::Force force = board::NextForce(full_board);
+      [this, &full_board](PositionIndex position_index) {
+    Force force = NextForce(full_board);
     auto indexes = full_board.PlayableIndexes(force);
     auto it = std::find(indexes.begin(), indexes.end(), position_index);
     if (it == indexes.end()) {
@@ -277,7 +277,6 @@ void UctPlayer<BOARD_LEN>::LogProfits(
   };
 }
 
-}
 }
 
 #endif /* FOOLGO_SRC_PLAYER_UCT_PLAYER_H_ */

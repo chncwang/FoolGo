@@ -4,13 +4,11 @@
 #include <utility>
 
 namespace foolgo {
-namespace player {
 
 using std::make_pair;
 using std::lock_guard;
 using std::mutex;
 using std::ostream;
-using board::PositionIndex;
 using boost::format;
 
 NodeRecord::NodeRecord() : NodeRecord(0, 0.0f, false) {}
@@ -45,5 +43,4 @@ ostream& operator <<(ostream &os, const NodeRecord &node_record) {
   return os;
 }
 
-}
 }

@@ -5,7 +5,7 @@
 
 namespace foolgo {
 
-constexpr board::BoardLen DEFAULT_BOARD_LEN = 5;
+constexpr BoardLen DEFAULT_BOARD_LEN = 5;
 
 const uint32_t SEED = 1;
 

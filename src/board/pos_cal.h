@@ -7,7 +7,6 @@
 #include "position.h"
 
 namespace foolgo {
-namespace board {
 
 template<BoardLen BOARD_LEN>
 class PstionAndIndxCcltr {
@@ -19,20 +18,20 @@ class PstionAndIndxCcltr {
   } CentralEdgeCorner;
   static PstionAndIndxCcltr &Ins();
 
-  inline const Position &GetPosition(PositionIndex index) const {
+  const Position &GetPosition(PositionIndex index) const {
     assert(IsInBoard(index));
     return position_[index];
   }
-  inline PositionIndex GetIndex(const Position &pos) const {
+  PositionIndex GetIndex(const Position &pos) const {
     assert(IsInBoard(pos));
     return indexes_[pos.y][pos.x];
   }
 
-  inline bool IsInBoard(const Position &pos) const {
+  bool IsInBoard(const Position &pos) const {
     return pos.x >= 0 && pos.x < BOARD_LEN && pos.y >= 0
         && pos.y < BOARD_LEN;
   }
-  inline bool IsInBoard(PositionIndex indx) const {
+  bool IsInBoard(PositionIndex indx) const {
     return indx >= 0 && indx < BoardLenSquare<BOARD_LEN>();
   }
   CentralEdgeCorner CentralOrEdgeOrCorner(const Position &pos);
@@ -82,7 +81,6 @@ PstionAndIndxCcltr<BOARD_LEN>::PstionAndIndxCcltr() {
   }
 }
 
-}
 }
 
 #endif

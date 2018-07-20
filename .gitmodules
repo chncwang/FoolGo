@@ -1,3 +1,9 @@
 [submodule "googletest"]
-	path = googletest
+	path = 3rd/googletest
 	url = https://github.com/google/googletest
+[submodule "3rd/N3LDG"]
+	path = 3rd/N3LDG
+	url = https://github.com/chncwang/N3LDG-1
+[submodule "3rd/eigen"]
+	path = 3rd/eigen
+	url = https://github.com/eigenteam/eigen-git-mirror

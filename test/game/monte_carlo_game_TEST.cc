@@ -9,17 +9,15 @@
 #include "../test.h"
 
 namespace foolgo {
-namespace game {
 
-using board::FullBoard;
-using board::ZobHasher;
+using namespace foolgo;
 
 class MonteCarloGameTest : public Test {
  protected:
   virtual void SetUp() {
     Test::SetUp();
 
-    uint32_t seed = util::GetTimeSeed();
+    uint32_t seed = GetTimeSeed();
     std::cout << "seed:" << seed << std::endl;
 
     ZobHasher<DEFAULT_BOARD_LEN>::Init(seed);
@@ -40,5 +38,4 @@ TEST_F(MonteCarloGameTest, Run) {
   game_->Run();
 }
 
-}
 }

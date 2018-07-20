@@ -14,7 +14,6 @@
 #include "position.h"
 
 namespace foolgo {
-namespace board {
 
 template<BoardLen BOARD_LEN>
 class Board {
@@ -76,7 +75,7 @@ inline void Board<BOARD_LEN>::SetPoint(const Position &pos, PointState point) {
 }
 
 template<BoardLen BOARD_LEN>
-std::string ToString(std::function<std::string(PositionIndex)> get_output,
+std::string BoardToString(std::function<std::string(PositionIndex)> get_output,
                      int width = 1) {
   int final_width = width % 2 == 1 ? width + 1 : width + 2;
   int blank_line_count = final_width / 2 - 1;
@@ -84,13 +83,13 @@ std::string ToString(std::function<std::string(PositionIndex)> get_output,
   std::string result = RETURN + std::string(2, BLANK);
 
   for (int i=0; i<BOARD_LEN; ++i) {
-    result += (boost::format("%1% ") % i).str();
+    result += (boost::format("%1% ") % static_cast<char>('a' + i)).str();
   }
 
   result += RETURN;
 
   for (int y=0; y<BOARD_LEN; ++y) {
-    result += (boost::format("%1% ") % y).str();
+    result += (boost::format("%1% ") % static_cast<char>('a' + y)).str();
 
     for (int x=0; x<BOARD_LEN; ++x) {
       PositionIndex position_index = PstionAndIndxCcltr<BOARD_LEN>::Ins()
@@ -105,19 +104,18 @@ std::string ToString(std::function<std::string(PositionIndex)> get_output,
 }
 
 template<BoardLen BOARD_LEN>
-std::string ToString(const Board<BOARD_LEN> &board) {
+std::string BoardToString(const Board<BOARD_LEN> &board) {
   auto get_output = [&](PositionIndex position_index) {
     return GetPointStateOutput(board.GetPoint(position_index), false);
   };
-  return ToString<BOARD_LEN>(get_output);
+  return BoardToString<BOARD_LEN>(get_output);
 }
 
 template<BoardLen BOARD_LEN>
 std::ostream &operator <<(std::ostream &os, const Board<BOARD_LEN> &board) {
-  return os << ToString(board);
+  return os << BoardToString(board);
 }
 
-}
 }
 
 #endif

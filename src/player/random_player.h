@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <iostream>
 
 #include "board/full_board.h"
 #include "board/position.h"
@@ -11,37 +12,32 @@
 
 namespace foolgo {
 
-namespace board {
-template<board::BoardLen BOARD_LEN> class FullBoard;
+template<BoardLen BOARD_LEN> class FullBoard;
 struct Move;
-} /* namespace board */
 
-namespace player {
-
-template <board::BoardLen BOARD_LEN>
+template <BoardLen BOARD_LEN>
 class RandomPlayer : public PassablePlayer<BOARD_LEN> {
  public:
   explicit RandomPlayer(uint32_t seed) : seed_(seed) {}
 
  protected:
-  board::PositionIndex NextMoveWithPlayableBoard(
-      const board::FullBoard<BOARD_LEN> &full_board);
+  PositionIndex NextMoveWithPlayableBoard(
+      const FullBoard<BOARD_LEN> &full_board);
 
  private:
   uint32_t seed_;
 };
 
-template<board::BoardLen BOARD_LEN>
-board::PositionIndex RandomPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
-    const board::FullBoard<BOARD_LEN>& full_board) {
-  auto playable_indexes = full_board.PlayableIndexes(board::NextForce(full_board));
+template<BoardLen BOARD_LEN>
+PositionIndex RandomPlayer<BOARD_LEN>::NextMoveWithPlayableBoard(
+    const FullBoard<BOARD_LEN>& full_board) {
+  auto playable_indexes = full_board.PlayableIndexes(NextForce(full_board));
   assert(!playable_indexes.empty());
 
-  board::PositionIndex rand = util::Rand(playable_indexes.size() - 1, seed_);
+  PositionIndex rand = Rand(playable_indexes.size() - 1, seed_);
   return playable_indexes.at(rand);
 }
 
-} /* namespace player */
 } /* namespace foolgo */
 
 #endif
