@@ -21,21 +21,18 @@ C++编码指南
 * 本项目遵循google的guideline中的多数条目。
 * 出于性能的考虑，本项目大量使用模板类，在编译期确定棋盘的大小，以便尽可能多地使用静态数组。
 * C + class + 模板，不使用模板元编程。
-* 尽量用智能指针管理内存，极少数地方用了raw pointer（方法名New前缀），杜绝内存泄露。
-* 用gtest做单元测试，用log4cplus打log
+* 用智能指针管理内存
+* 用gtest做单元测试
+
+有关N3LDG
+
+* 本项目的深度学习部分采用经我魔改过（主要是针对每一类节点，实现了cuda部分，以期更好地压榨GPU性能）的N3LDG框架。
+* N3LDG是一个用于自然语言处理的深度学习框架，支持动态计算图，C++实现。
 
 ## TODO
-如果你有兴趣模仿一下AlphaGo，并且也不喜欢python，那么基于这个项目，从实现论文中的rollout policy network开始，替换掉原来的RandomPlayer，是个非常好的选择。
 
-有想过基于tensorflow，开始做这个事情，大致的步骤：
-1. 只过一个隐层实现rollout policy network
-2. 根据论文中罗列的特征，加特征，以期达到论文中rollout policy network的准确率（也有论文提到可以用CNN实现rollout policy network）
-3. 用单层的CNN，实现policy network
-4. 把policy network融合进蒙特卡罗树搜索
-5. 尝试用多层CNN
-6. 以上步骤都采用通过人类的棋谱有监督学习，至于value network和强化学习部分，我还不太会，欢迎邮件交流
-
-本人实在是没时间继续写这个项目，欢迎有兴趣的同学pull request，或者邮件交流~
+* 正实现policy network，俟国庆再续。
+* 被value network要用的计算资源吓了一跳，如果谁有用有监督学习训练value network的思路，请不吝赐教！
 
 ## Make
 * boost is required
