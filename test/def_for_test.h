@@ -12,3 +12,5 @@ const uint32_t SEED = 1;
 }
 
 #endif /* FOOLGO_TEST_DEF_FOR_TEST_H_ */
+
+//fangjy
