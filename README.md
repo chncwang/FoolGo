@@ -1,4 +1,4 @@
-This is a Go A.I. based on *MCTS* (Monte Carlo Tree Search).
+FoolGo is a Go A.I. based on *MCTS* (Monte Carlo Tree Search).
 
 It shows the beginner level on the 9x9 board currently, for it does not use neural networks, but only the simple *UCT* (*UCB* for Tree) algorithm and Monte Carlo simulation.
 
