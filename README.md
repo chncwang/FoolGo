@@ -12,7 +12,7 @@ The key ideas of the Go game's implementation are as follows：
 This project is highly readable and extensible, due to its well-designed OOP design. Some important classes are listed as follows:
 
 * **FullBoard** A game board class providing efficient methods such as *PlayMove* to update the game state.
-* **Player** An interface providing inheritable methods such as *NextMove*. For example, *RandomPlayer*, a subclass of *Player*, will return a random legal position of the next move when being called its *NextMove*.
+* **Player** An interface providing inheritable methods such as *NextMove*. For example, *RandomPlayer*, a subclass of *Player*, will return a random legal position of the next move when being called its *NextMove*, while *UCTPlayer* performs the UCT algorithm to find the next move.
 * **Game** An interface containing two *Player* objects. For example, *MonteCarloGame* contains two *RandomPlayer* objects.
 
 ## Make
