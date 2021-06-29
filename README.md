@@ -9,6 +9,8 @@ The key ideas of the Go game's implementation are as follows：
 * We use bit operations to update the liberty point number of piece strings efficiently. For example, we use or when merging several piece strings into a single one.
 * We do not implement a tree structure for tree search, but use a hash table to keep game states. Especially, we use Zobrist Hashing to compute the hash value of a game state incrementally.
 
+For MCTS, we use multi-thread search on CPU. In detail, we simply prohibit a thread from exploring nodes that are being explored by peer threads.
+
 This project is highly readable and extensible due to its well-designed OOP design. Some important classes are listed as follows:
 
 * **FullBoard** A game board class providing efficient methods such as *PlayMove* to update the game state.
